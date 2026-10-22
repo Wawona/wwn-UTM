@@ -16,7 +16,7 @@
       "location" : "https://github.com/utmapp/CocoaSpice.git",
       "state" : {
         "branch" : "main",
-        "revision" : "52b1535824657354fc3089eab24f1827280f9143"
+        "revision" : "d8d29fc810047a3ddcebb351cdadc8fe4b4f308d"
       }
     },
     {
@@ -26,6 +26,15 @@
       "state" : {
         "branch" : "main",
         "revision" : "c359a08accfb49662a17cdfc5e333c7b4e5c2c56"
+      }
+    },
+    {
+      "identity" : "h",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rarestype/h",
+      "state" : {
+        "revision" : "aa3626829160917d4378330617971977cbd78f5b",
+        "version" : "1.0.1"
       }
     },
     {
@@ -52,7 +61,7 @@
       "location" : "https://github.com/utmapp/QEMUKit.git",
       "state" : {
         "branch" : "main",
-        "revision" : "589765abff27a8764d58b1a90999a204ac09881e"
+        "revision" : "e8e9e877619d0c68db07ae582f7cfe39063cbcca"
       }
     },
     {
@@ -71,6 +80,15 @@
       "state" : {
         "revision" : "532d8b529501fb73a2455b179e0bbb6d49b652ed",
         "version" : "1.5.3"
+      }
+    },
+    {
+      "identity" : "swift-png",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/tayloraswift/swift-png",
+      "state" : {
+        "revision" : "8a0bcd4df5e4b307c804937776a56dd6ecdf6396",
+        "version" : "4.5.1"
       }
     },
     {
@@ -103,10 +121,10 @@
     {
       "identity" : "swiftterm",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/migueldeicaza/SwiftTerm.git",
+      "location" : "https://github.com/osy/SwiftTerm.git",
       "state" : {
-        "branch" : "main",
-        "revision" : "ea0f681b25c8385b4a5a48d435e61d11392216e0"
+        "branch" : "fix/visionos-build",
+        "revision" : "f2f5349b2a1c629ec6c87286d814147136e44eca"
       }
     },
     {
@@ -132,8 +150,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/weichsel/ZIPFoundation.git",
       "state" : {
-        "revision" : "a3f5c2bae0f04b0bce9ef3c4ba6bd1031a0564c4",
-        "version" : "0.9.17"
+        "revision" : "22787ffb59de99e5dc1fbfe80b19c97a904ad48d",
+        "version" : "0.9.20"
       }
     }
   ],

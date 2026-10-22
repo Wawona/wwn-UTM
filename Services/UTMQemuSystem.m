@@ -58,7 +58,6 @@ static int startQemu(UTMProcess *process, int argc, const char *argv[], const ch
 }
 
 - (void)setVulkanDriver:(UTMQEMUVulkanDriver)vulkanDriver {
-    _vulkanDriver = vulkanDriver;
     NSURL *vulkanIcds = [[NSBundle.mainBundle URLForResource:@"vulkan" withExtension:nil] URLByAppendingPathComponent:@"icd.d" isDirectory:YES];
     NSURL *driver;
     switch (vulkanDriver) {
@@ -77,12 +76,101 @@ static int startQemu(UTMProcess *process, int argc, const char *argv[], const ch
     if (driver) {
         self.mutableEnvironment[@"VK_DRIVER_FILES"] = driver.path;
         self.resources = [self.resources arrayByAddingObject:driver];
+        _vulkanDriver = vulkanDriver;
+    } else {
+        [self.mutableEnvironment removeObjectForKey:@"VK_DRIVER_FILES"];
+        _vulkanDriver = kQEMUVulkanDriverDisabled;
+    }
+}
+
+- (void)setDirectXDriver:(UTMQEMUDirectXDriver)directXDriver {
+    NSString *backend;
+    NSString *frameworkName;
+    NSURL *library;
+    if (@available(macOS 13, iOS 16, *)) {
+    } else {
+        return;
+    }
+    NSURL *bundleURL = NSBundle.mainBundle.bundleURL;
+#if TARGET_OS_OSX
+    NSURL *contentsURL = [bundleURL URLByAppendingPathComponent:@"Contents" isDirectory:YES];
+    NSString *versionPath = @"Versions/A/";
+#else
+    NSURL *contentsURL = bundleURL;
+    NSString *versionPath = @"";
+#endif
+    NSURL *frameworksURL = [contentsURL URLByAppendingPathComponent:@"Frameworks" isDirectory:YES];
+    NSString *d3dMetal = @"D3DMetal";
+    NSURL *d3dMetalURL = [frameworksURL URLByAppendingPathComponent:[NSString stringWithFormat:@"%@.framework/%@%@", d3dMetal, versionPath, d3dMetal] isDirectory:NO];
+    if (directXDriver == kQEMUDirectXDriverDefault) {
+        if (@available(macOS 14, *)) {
+            if ([NSFileManager.defaultManager fileExistsAtPath:d3dMetalURL.path]) {
+                directXDriver = kQEMUDirectXDriverD3DMetal;
+            }
+        }
+    }
+    switch (directXDriver) {
+        case kQEMUDirectXDriverDefault:
+        case kQEMUDirectXDriverDXMT:
+            backend = @"dxmt";
+            frameworkName = @"dxmt-native";
+            break;
+        case kQEMUDirectXDriverD3DMetal:
+            backend = @"d3dmetal";
+            frameworkName = @"d3dmetal-native";
+            break;
+        case kQEMUDirectXDriverDisabled:
+        default:
+            break;
+    }
+    if (frameworkName) {
+        library = [frameworksURL URLByAppendingPathComponent:[NSString stringWithFormat:@"%@.framework/%@%@", frameworkName, versionPath, frameworkName] isDirectory:NO];
+        if (![NSFileManager.defaultManager fileExistsAtPath:library.path]) {
+            UTMLog(@"DirectX driver '%@' is not available in this build", backend);
+            backend = nil;
+            library = nil;
+        } else if (directXDriver == kQEMUDirectXDriverD3DMetal) {
+            self.mutableEnvironment[@"D3DMETAL_FRAMEWORK_PATH"] = d3dMetalURL.path;
+            self.resources = [self.resources arrayByAddingObject:d3dMetalURL];
+        }
+    }
+    if (backend && library) {
+        self.mutableEnvironment[@"NPT_D3D11_LIBRARY_PATH"] = library.path;
+        self.mutableEnvironment[@"NPT_D3D12_LIBRARY_PATH"] = library.path;
+        self.mutableEnvironment[@"NPT_DXGI_LIBRARY_PATH"] = library.path;
+        self.mutableEnvironment[@"NPT_BACKEND"] = backend;
+        if (directXDriver == kQEMUDirectXDriverD3DMetal) {
+            self.mutableEnvironment[@"NPT_CAPSET_D3D12"] = @"1";
+        }
+        self.resources = [self.resources arrayByAddingObject:library];
+        _directXDriver = directXDriver;
+    } else {
+        [self.mutableEnvironment removeObjectForKey:@"NPT_D3D11_LIBRARY_PATH"];
+        [self.mutableEnvironment removeObjectForKey:@"NPT_D3D12_LIBRARY_PATH"];
+        [self.mutableEnvironment removeObjectForKey:@"NPT_DXGI_LIBRARY_PATH"];
+        [self.mutableEnvironment removeObjectForKey:@"NPT_BACKEND"];
+        [self.mutableEnvironment removeObjectForKey:@"NPT_CAPSET_D3D12"];
+        [self.mutableEnvironment removeObjectForKey:@"D3DMETAL_FRAMEWORK_PATH"];
+        _directXDriver = kQEMUDirectXDriverDisabled;
     }
 }
 
 - (void)setShmemDirectoryURL:(NSURL *)shmemDirectoryURL {
     _shmemDirectoryURL = shmemDirectoryURL;
-    self.mutableEnvironment[@"XDG_RUNTIME_DIR"] = shmemDirectoryURL.path;
+    if (shmemDirectoryURL) {
+        self.mutableEnvironment[@"XDG_RUNTIME_DIR"] = shmemDirectoryURL.path;
+    } else {
+        [self.mutableEnvironment removeObjectForKey:@"XDG_RUNTIME_DIR"];
+    }
+}
+
+- (void)setAppSandboxGroupId:(NSString *)appSandboxGroupId {
+    _appSandboxGroupId = appSandboxGroupId;
+    if (appSandboxGroupId) {
+        self.mutableEnvironment[@"APP_SANDBOX_GROUP_ID"] = appSandboxGroupId;
+    } else {
+        [self.mutableEnvironment removeObjectForKey:@"APP_SANDBOX_GROUP_ID"];
+    }
 }
 
 - (NSPipe *)standardOutput {
@@ -112,6 +200,24 @@ static int startQemu(UTMProcess *process, int argc, const char *argv[], const ch
 
 - (void)setHasDebugLog:(BOOL)hasDebugLog {
     _hasDebugLog = hasDebugLog;
+    /* The graphics API validation layers are not loggers: they wrap every
+     * Metal object and validate every call, which costs far more than the
+     * drivers they wrap (measured: a 3D benchmark loses ~20% of its frame
+     * rate with them on). Verbose logging must stay usable for performance
+     * bug reports, so validation is a separate opt-in:
+     *   defaults write com.utmapp.UTM GraphicsValidation -bool YES
+     */
+    BOOL hasGraphicsValidation = hasDebugLog &&
+        [NSUserDefaults.standardUserDefaults boolForKey:@"GraphicsValidation"];
+    if (hasGraphicsValidation) {
+        self.mutableEnvironment[@"MTL_DEBUG_LAYER"] = @"1";
+        self.mutableEnvironment[@"MTL_DEBUG_LAYER_ERROR_MODE"] = @"nslog";
+        self.mutableEnvironment[@"ANGLE_METAL_DEBUG_BINDINGS"] = @"1";
+    } else {
+        [self.mutableEnvironment removeObjectForKey:@"MTL_DEBUG_LAYER"];
+        [self.mutableEnvironment removeObjectForKey:@"MTL_DEBUG_LAYER_ERROR_MODE"];
+        [self.mutableEnvironment removeObjectForKey:@"ANGLE_METAL_DEBUG_BINDINGS"];
+    }
     if (hasDebugLog) {
 #if TARGET_OS_OSX // FIXME: verbose logging is broken on iOS
         self.mutableEnvironment[@"G_MESSAGES_DEBUG"] = @"all";
@@ -121,7 +227,7 @@ static int startQemu(UTMProcess *process, int argc, const char *argv[], const ch
         self.mutableEnvironment[@"MESA_DEBUG"] = @"1";
         self.mutableEnvironment[@"MVK_CONFIG_LOG_LEVEL"] = @"4";
         self.mutableEnvironment[@"MVK_DEBUG"] = @"1";
-        self.mutableEnvironment[@"MTL_DEBUG_LAYER"] = @"1";
+        self.mutableEnvironment[@"ANGLE_ENABLE_DEBUG_TRACE"] = @"1";
     } else {
         [self.mutableEnvironment removeObjectForKey:@"G_MESSAGES_DEBUG"];
         [self.mutableEnvironment removeObjectForKey:@"VK_LOADER_DEBUG"];
@@ -129,7 +235,7 @@ static int startQemu(UTMProcess *process, int argc, const char *argv[], const ch
         [self.mutableEnvironment removeObjectForKey:@"MESA_DEBUG"];
         [self.mutableEnvironment removeObjectForKey:@"MVK_CONFIG_LOG_LEVEL"];
         [self.mutableEnvironment removeObjectForKey:@"MVK_DEBUG"];
-        [self.mutableEnvironment removeObjectForKey:@"MTL_DEBUG_LAYER"];
+        [self.mutableEnvironment removeObjectForKey:@"ANGLE_ENABLE_DEBUG_TRACE"];
     }
 }
 

@@ -37,9 +37,7 @@ class VMDisplayWindowController: NSWindowController, UTMVirtualMachineDelegate {
     @IBOutlet private weak var startButton: NSButton!
 
     @IBOutlet private weak var toolbar: NSToolbar!
-    @IBOutlet private weak var stopToolbarItem: NSMenuToolbarItem!
-    @IBOutlet private weak var startPauseToolbarItem: NSToolbarItem!
-    @IBOutlet private weak var restartToolbarItem: NSToolbarItem!
+    @IBOutlet private weak var powerSegmentedControl: NSSegmentedControl!
     @IBOutlet private weak var captureMouseToolbarItem: NSToolbarItem!
     @IBOutlet weak var captureMouseToolbarButton: NSButton!
     @IBOutlet private weak var usbToolbarItem: NSToolbarItem!
@@ -48,6 +46,13 @@ class VMDisplayWindowController: NSWindowController, UTMVirtualMachineDelegate {
     @IBOutlet private weak var resizeConsoleToolbarItem: NSToolbarItem!
     @IBOutlet private weak var windowsToolbarItem: NSToolbarItem!
     @IBOutlet private weak var keyboardShortcutsItem: NSToolbarItem!
+
+    /// Segments of the power control, in the order the toolbar draws them.
+    private enum PowerSegment: Int {
+        case stop
+        case startPause
+        case restart
+    }
 
     private var mainMenu: NSMenu!
     private var mainMenuItem: NSMenuItem!
@@ -104,7 +109,7 @@ class VMDisplayWindowController: NSWindowController, UTMVirtualMachineDelegate {
     private func stop(isKill: Bool = false) {
         showConfirmAlert(NSLocalizedString("This may corrupt the VM and any unsaved changes will be lost. To quit safely, shut down from the guest.", comment: "VMDisplayWindowController")) {
             self.enterSuspended(isBusy: true) // early indicator
-            if self.vm.registryEntry.isSuspended {
+            if self.vm.registryEntry.isSuspended && !self.vm.isRunningAsDisposible {
                 self.vm.requestVmDeleteState()
             }
             self.vm.requestVmStop(force: isKill)
@@ -138,6 +143,19 @@ class VMDisplayWindowController: NSWindowController, UTMVirtualMachineDelegate {
         }
     }
     
+    @IBAction private func powerSegmentPressed(_ sender: NSSegmentedControl) {
+        switch PowerSegment(rawValue: sender.selectedSegment) {
+        case .stop:
+            stopButtonPressed(sender)
+        case .startPause:
+            startPauseButtonPressed(sender)
+        case .restart:
+            restartButtonPressed(sender)
+        case nil:
+            break
+        }
+    }
+
     @IBAction dynamic func captureMouseButtonPressed(_ sender: Any) {
     }
     
@@ -179,13 +197,13 @@ class VMDisplayWindowController: NSWindowController, UTMVirtualMachineDelegate {
         for control in controls {
             switch control {
             case .power:
-                stopToolbarItem.isEnabled = isEnabled
+                powerSegmentedControl.setEnabled(isEnabled, forSegment: PowerSegment.stop.rawValue)
                 stopMenuItem.isEnabled = isEnabled
             case .startPause:
-                startPauseToolbarItem.isEnabled = isEnabled
+                powerSegmentedControl.setEnabled(isEnabled, forSegment: PowerSegment.startPause.rawValue)
                 startPauseMenuItem.isEnabled = isEnabled
             case .restart:
-                restartToolbarItem.isEnabled = isEnabled
+                powerSegmentedControl.setEnabled(isEnabled, forSegment: PowerSegment.restart.rawValue)
                 restartMenuItem.isEnabled = isEnabled
             case .captureInput:
                 captureMouseToolbarItem.isEnabled = isEnabled
@@ -220,14 +238,29 @@ class VMDisplayWindowController: NSWindowController, UTMVirtualMachineDelegate {
         window!.recalculateKeyViewLoop()
         setupStopButtonMenu()
         setupMainMenu()
+        setupToolbarIcons()
 
         if vm.state == .stopped {
             enterSuspended(isBusy: false)
         } else {
             enterLive()
         }
-        
+
         super.windowDidLoad()
+    }
+
+    private func setupToolbarIcons() {
+        // cable.connector ships in SF Symbols 3, so the USB toolbar item
+        // visually matches the surrounding system symbols.
+        usbToolbarItem.image = NSImage(systemSymbolName: "cable.connector",
+                                       accessibilityDescription: usbToolbarItem.label)
+        // segments have no label for VoiceOver to read, only their image
+        let stopDescription = NSLocalizedString("Stop", comment: "VMDisplayWindowController")
+        powerSegmentedControl.setImage(NSImage(systemSymbolName: "power", accessibilityDescription: stopDescription),
+                                       forSegment: PowerSegment.stop.rawValue)
+        let restartDescription = NSLocalizedString("Restart", comment: "VMDisplayWindowController")
+        powerSegmentedControl.setImage(NSImage(systemSymbolName: "restart", accessibilityDescription: restartDescription),
+                                       forSegment: PowerSegment.restart.rawValue)
     }
     
     public func requestAutoStart(options: UTMVirtualMachineStartOptions = []) {
@@ -247,8 +280,8 @@ class VMDisplayWindowController: NSWindowController, UTMVirtualMachineDelegate {
         overlayView.isHidden = true
         activityIndicator.stopAnimation(self)
         let pauseDescription = NSLocalizedString("Pause", comment: "VMDisplayWindowController")
-        startPauseToolbarItem.image = NSImage(systemSymbolName: "pause", accessibilityDescription: pauseDescription)
-        startPauseToolbarItem.label = pauseDescription
+        powerSegmentedControl.setImage(NSImage(systemSymbolName: "pause", accessibilityDescription: pauseDescription),
+                                       forSegment: PowerSegment.startPause.rawValue)
         startPauseMenuItem.title = pauseDescription
         setControl([.startPause, .power, .restart, .captureInput, .resize, .windows, .keyboardShortcut], isEnabled: true)
         window!.makeFirstResponder(displayView.subviews.first)
@@ -268,8 +301,8 @@ class VMDisplayWindowController: NSWindowController, UTMVirtualMachineDelegate {
         overlayView.isHidden = false
         let playDescription = NSLocalizedString("Start", comment: "VMDisplayWindowController")
         let stopped = vm.state == .stopped
-        startPauseToolbarItem.image = NSImage(systemSymbolName: "play.fill", accessibilityDescription: playDescription)
-        startPauseToolbarItem.label = playDescription
+        powerSegmentedControl.setImage(NSImage(systemSymbolName: "play.fill", accessibilityDescription: playDescription),
+                                       forSegment: PowerSegment.startPause.rawValue)
         startPauseMenuItem.title = playDescription
         if busy {
             activityIndicator.startAnimation(self)
@@ -277,7 +310,6 @@ class VMDisplayWindowController: NSWindowController, UTMVirtualMachineDelegate {
             startButton.isHidden = true
         } else {
             activityIndicator.stopAnimation(self)
-            startPauseToolbarItem.isEnabled = true
             setControl(.startPause, isEnabled: true)
             startButton.isHidden = false
             setControl([.power, .restart], isEnabled: !stopped)
@@ -387,14 +419,19 @@ class VMDisplayWindowController: NSWindowController, UTMVirtualMachineDelegate {
 
 extension VMDisplayWindowController: NSWindowDelegate {
     func window(_ window: NSWindow, willUseFullScreenPresentationOptions proposedOptions: NSApplication.PresentationOptions = []) -> NSApplication.PresentationOptions {
-        return proposedOptions.union([.autoHideToolbar])
+        var options = proposedOptions.union([.autoHideToolbar])
+        if #available(macOS 27, *) {
+            // the guest owns the whole screen, so its corners should not trigger Hot Corners on the host
+            options.insert(.disableScreenCornerInteractions)
+        }
+        return options
     }
     
     func windowShouldClose(_ sender: NSWindow) -> Bool {
         guard !isSecondary else {
             return true
         }
-        guard !(vm.state == .stopped || (vm.state == .paused && vm.registryEntry.isSuspended)) else {
+        guard !(vm.state == .stopped || (vm.state == .paused && vm.registryEntry.isSuspended && !vm.isRunningAsDisposible)) else {
             return true
         }
         if let snapshotUnsupportedError = vm.snapshotUnsupportedError {
@@ -421,7 +458,7 @@ extension VMDisplayWindowController: NSWindowDelegate {
         if let error = error {
             alert.informativeText = error.localizedDescription + "\n" + alert.informativeText
         }
-        alert.addButton(withTitle: NSLocalizedString("OK", comment: "VMDisplayWindowController"))
+        alert.addButton(withTitle: NSLocalizedString("Close", comment: "VMDisplayWindowController"))
         alert.addButton(withTitle: NSLocalizedString("Cancel", comment: "VMDisplayWindowController"))
         alert.showsSuppressionButton = true
         alert.beginSheetModal(for: sender) { response in
@@ -518,11 +555,8 @@ extension VMDisplayWindowController {
     private func setupStopButtonMenu() {
         let menu = NSMenu()
         updateStopButtonMenu(menu)
-        stopToolbarItem.menu = menu
-        if #unavailable(macOS 12), let view = stopToolbarItem.value(forKey: "_control") as? NSView {
-            // BUG in macOS 11 results in the button not working without this
-            stopToolbarItem.view = view
-        }
+        // shown when the segment is clicked and held
+        powerSegmentedControl.setMenu(menu, forSegment: PowerSegment.stop.rawValue)
     }
     
     @MainActor @objc private func requestPowerDown(sender: AnyObject) {

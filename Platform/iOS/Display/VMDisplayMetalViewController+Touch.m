@@ -30,6 +30,9 @@
 const CGFloat kScrollSpeedReduction = 100.0f;
 const CGFloat kCursorResistance = 50.0f;
 const CGFloat kScrollResistance = 10.0f;
+const CGFloat kLongPressDragThreshold = 10.0f;
+const CGFloat kRepeatTapDistance = 24.0f;
+const NSTimeInterval kRepeatTapInterval = 0.5;
 
 @implementation VMDisplayMetalViewController (Gestures)
 
@@ -165,6 +168,11 @@ const CGFloat kScrollResistance = 10.0f;
     return [self gestureTypeForSetting:@"GestureTwoScroll"];
 }
 
+/// A two finger swipe must be told apart from a two finger pan unless both scroll
+- (BOOL)isTwoFingerSwipeExclusive {
+    return self.twoFingerScrollType != VMGestureTypeNone && self.twoFingerPanType != VMGestureTypeMouseWheel;
+}
+
 - (VMGestureType)threeFingerPanType {
     return [self gestureTypeForSetting:@"GestureThreePan"];
 }
@@ -190,11 +198,7 @@ const CGFloat kScrollResistance = 10.0f;
 #if TARGET_OS_VISION
     return VMMouseTypeAbsolute;
 #else
-    if (@available(iOS 14.0, *)) {
-        return VMMouseTypeRelative;
-    } else {
-        return VMMouseTypeAbsolute; // legacy iOS 13.4 mouse handling requires absolute
-    }
+    return VMMouseTypeRelative;
 #endif
 }
 
@@ -291,6 +295,10 @@ static CGRect CGRectClipToBounds(CGRect rect1, CGRect rect2) {
 - (void)scrollWithInertia:(UIPanGestureRecognizer *)sender {
     CGPoint location = [sender locationInView:sender.view];
     CGPoint velocity = [sender velocityInView:sender.view];
+    if (sender == self.pan) { // one finger drags the content along with it, the opposite of turning a wheel
+        location.y = -location.y;
+        velocity.y = -velocity.y;
+    }
     if (sender.state == UIGestureRecognizerStateBegan) {
         [self.scroll startMovement:location];
     }
@@ -305,6 +313,8 @@ static CGRect CGRectClipToBounds(CGRect rect1, CGRect rect2) {
 - (IBAction)gesturePan:(UIPanGestureRecognizer *)sender {
     if (self.serverModeCursor) {  // otherwise we handle in touchesMoved
         [self moveMouseWithInertia:sender];
+    } else if (self.isTouchScrolling) {
+        [self scrollWithInertia:sender];
     }
 }
 
@@ -332,7 +342,9 @@ static CGRect CGRectClipToBounds(CGRect rect1, CGRect rect2) {
             [self moveScreen:sender];
             break;
         case VMGestureTypeDragCursor:
-            [self dragCursor:sender.state primary:YES secondary:NO middle:NO];
+        case VMGestureTypeRightDrag:
+        case VMGestureTypeMiddleDrag:
+            [self dragCursor:sender.state gestureType:self.twoFingerPanType];
             [self moveMouseWithInertia:sender];
             break;
         case VMGestureTypeMouseWheel:
@@ -349,7 +361,9 @@ static CGRect CGRectClipToBounds(CGRect rect1, CGRect rect2) {
             [self moveScreen:sender];
             break;
         case VMGestureTypeDragCursor:
-            [self dragCursor:sender.state primary:YES secondary:NO middle:NO];
+        case VMGestureTypeRightDrag:
+        case VMGestureTypeMiddleDrag:
+            [self dragCursor:sender.state gestureType:self.threeFingerPanType];
             [self moveMouseWithInertia:sender];
             break;
         case VMGestureTypeMouseWheel:
@@ -435,7 +449,7 @@ static CGRect CGRectClipToBounds(CGRect rect1, CGRect rect2) {
             self.mouseMiddleDown = YES;
         }
         [self.vmInput sendMouseButton:button mask:self.mouseButtonDown pressed:YES];
-    } else if (state == UIGestureRecognizerStateEnded) {
+    } else if (state == UIGestureRecognizerStateEnded || state == UIGestureRecognizerStateCancelled) {
         self.mouseLeftDown = NO;
         self.mouseRightDown = NO;
         self.mouseMiddleDown = NO;
@@ -443,26 +457,118 @@ static CGRect CGRectClipToBounds(CGRect rect1, CGRect rect2) {
     }
 }
 
+- (CSInputButton)buttonForGestureType:(VMGestureType)type {
+    switch (type) {
+        case VMGestureTypeDragCursor:
+            return kCSInputButtonLeft;
+        case VMGestureTypeRightClick:
+        case VMGestureTypeRightDrag:
+            return kCSInputButtonRight;
+        case VMGestureTypeMiddleClick:
+        case VMGestureTypeMiddleDrag:
+            return kCSInputButtonMiddle;
+        default:
+            return kCSInputButtonNone;
+    }
+}
+
+- (void)dragCursor:(UIGestureRecognizerState)state gestureType:(VMGestureType)type {
+    CSInputButton button = [self buttonForGestureType:type];
+    [self dragCursor:state
+             primary:button == kCSInputButtonLeft
+           secondary:button == kCSInputButtonRight
+              middle:button == kCSInputButtonMiddle];
+}
+
+/// A finger never lands on the same spot twice and the guest only counts clicks on the same spot as a double click
+- (BOOL)isRepeatTapAtLocation:(CGPoint)location {
+    CGFloat distance = hypot(location.x - self.lastTapLocation.x, location.y - self.lastTapLocation.y);
+    NSTimeInterval elapsed = NSProcessInfo.processInfo.systemUptime - self.lastTapTime;
+    return elapsed < kRepeatTapInterval && distance < kRepeatTapDistance;
+}
+
 - (IBAction)gestureTap:(UITapGestureRecognizer *)sender {
-    if (sender.state == UIGestureRecognizerStateEnded &&
-        self.serverModeCursor) { // otherwise we handle in touchesBegan
-        [self mouseClick:kCSInputButtonLeft location:[sender locationInView:sender.view]];
+    if (sender.state != UIGestureRecognizerStateEnded) {
+        return;
+    }
+    CGPoint location = [sender locationInView:sender.view];
+    if (self.isTouchScrolling) {
+        if ([self isRepeatTapAtLocation:location]) {
+            location = self.lastTapLocation;
+        }
+        self.lastTapLocation = location;
+        self.lastTapTime = NSProcessInfo.processInfo.systemUptime;
+        [self mouseClick:kCSInputButtonLeft location:location];
+    } else if (self.serverModeCursor) { // otherwise we handle in touchesBegan
+        [self mouseClick:kCSInputButtonLeft location:location];
     }
 }
 
 - (IBAction)gestureTwoTap:(UITapGestureRecognizer *)sender {
-    if (sender.state == UIGestureRecognizerStateEnded &&
-        self.twoFingerTapType == VMGestureTypeRightClick) {
-        [self mouseClick:kCSInputButtonRight location:[sender locationInView:sender.view]];
+    CSInputButton button = [self buttonForGestureType:self.twoFingerTapType];
+    if (sender.state == UIGestureRecognizerStateEnded && button != kCSInputButtonNone) {
+        [self mouseClick:button location:[sender locationInView:sender.view]];
+    }
+}
+
+- (void)showLongPressIndicatorAtLocation:(CGPoint)location {
+    UIView *indicator = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 80, 80)];
+    indicator.center = location;
+    indicator.userInteractionEnabled = NO;
+    indicator.layer.cornerRadius = 40;
+    indicator.layer.borderWidth = 3;
+    indicator.layer.borderColor = UIColor.whiteColor.CGColor;
+    indicator.layer.shadowOpacity = 0.5f;
+    indicator.layer.shadowRadius = 3;
+    indicator.layer.shadowOffset = CGSizeZero;
+    [self.mtkView addSubview:indicator];
+    [UIView animateWithDuration:0.3 delay:0 options:UIViewAnimationOptionCurveEaseOut animations:^{
+        indicator.alpha = 0;
+        indicator.transform = CGAffineTransformMakeScale(1.4f, 1.4f);
+    } completion:^(BOOL finished) {
+        [indicator removeFromSuperview];
+    }];
+}
+
+/// A touch does not hold the button when it scrolls so a long press that moves becomes the drag
+- (void)touchScrollLongPress:(UILongPressGestureRecognizer *)sender {
+    CGPoint location = [sender locationInView:sender.view];
+    if (sender.state == UIGestureRecognizerStateBegan) {
+        self.lastLongPressOrigin = location;
+        [self.cursor startMovement:location];
+        [self.cursor updateMovement:location];
+        [self showLongPressIndicatorAtLocation:location];
+        if (self.longPressType == VMGestureTypeDragCursor) {
+            [self dragCursor:sender.state gestureType:VMGestureTypeDragCursor];
+        }
+    } else if (sender.state == UIGestureRecognizerStateChanged) {
+        CGFloat distance = hypot(location.x - self.lastLongPressOrigin.x, location.y - self.lastLongPressOrigin.y);
+        if (!self.mouseLeftDown && distance >= kLongPressDragThreshold) {
+            [self dragCursor:UIGestureRecognizerStateBegan gestureType:VMGestureTypeDragCursor];
+        }
+        if (self.mouseLeftDown) {
+            [self.cursor updateMovement:location];
+        }
+    } else if (self.mouseLeftDown) {
+        [self dragCursor:UIGestureRecognizerStateEnded gestureType:VMGestureTypeDragCursor];
+    } else if (sender.state == UIGestureRecognizerStateEnded) {
+        CSInputButton button = [self buttonForGestureType:self.longPressType];
+        if (button != kCSInputButtonNone) {
+            [self mouseClick:button location:self.lastLongPressOrigin];
+        }
     }
 }
 
 - (IBAction)gestureLongPress:(UILongPressGestureRecognizer *)sender {
-    if (sender.state == UIGestureRecognizerStateEnded &&
-        self.longPressType == VMGestureTypeRightClick) {
-        [self mouseClick:kCSInputButtonRight location:[sender locationInView:sender.view]];
+    if (self.isTouchScrolling) {
+        [self touchScrollLongPress:sender];
     } else if (self.longPressType == VMGestureTypeDragCursor) {
-        [self dragCursor:sender.state primary:YES secondary:NO middle:NO];
+        [self dragCursor:sender.state gestureType:self.longPressType];
+    } else if (sender.state == UIGestureRecognizerStateEnded) {
+        CSInputButton button = [self buttonForGestureType:self.longPressType];
+        if (button != kCSInputButtonNone) {
+            [self mouseClick:button location:[sender locationInView:sender.view]];
+        }
     }
 }
 
@@ -503,25 +609,45 @@ static CGRect CGRectClipToBounds(CGRect rect1, CGRect rect2) {
 - (IBAction)gestureSwipeScroll:(UISwipeGestureRecognizer *)sender {
     if (sender.state == UIGestureRecognizerStateEnded &&
         self.twoFingerScrollType == VMGestureTypeMouseWheel) {
+        // same direction as the pan that may be scrolling along with the swipe
+        CSInputScroll up = self.isInvertScroll ? kCSInputScrollDown : kCSInputScrollUp;
+        CSInputScroll down = self.isInvertScroll ? kCSInputScrollUp : kCSInputScrollDown;
         if (sender == self.swipeScrollUp) {
-            [self.vmInput sendMouseScroll:kCSInputScrollUp buttonMask:self.mouseButtonDown dy:0];
+            [self.vmInput sendMouseScroll:up buttonMask:self.mouseButtonDown dy:0];
         } else if (sender == self.swipeScrollDown) {
-            [self.vmInput sendMouseScroll:kCSInputScrollDown buttonMask:self.mouseButtonDown dy:0];
+            [self.vmInput sendMouseScroll:down buttonMask:self.mouseButtonDown dy:0];
         } else {
             NSAssert(0, @"Invalid call to gestureSwipeScroll");
         }
     }
 }
 
+#pragma mark - Touchpad
+
+- (void)prepareForTouchpad {
+    [self switchMouseType:VMMouseTypeRelative];
+}
+
+- (void)touchpadMoveBy:(CGPoint)delta {
+    [self switchMouseType:VMMouseTypeRelative];
+    CGFloat multiplier = self.cursor.cursorSpeedMultiplier;
+    [self moveMouseRelative:CGPointMake(delta.x * multiplier, delta.y * multiplier)];
+}
+
+- (void)touchpadPressButton:(CSInputButton)button pressed:(BOOL)pressed {
+    [self switchMouseType:VMMouseTypeRelative];
+    switch (button) {
+        case kCSInputButtonLeft: self.mouseLeftDown = pressed; break;
+        case kCSInputButtonRight: self.mouseRightDown = pressed; break;
+        case kCSInputButtonMiddle: self.mouseMiddleDown = pressed; break;
+        default: break;
+    }
+    [self.vmInput sendMouseButton:button mask:self.mouseButtonDown pressed:pressed];
+}
+
 #pragma mark - UIGestureRecognizerDelegate
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRequireFailureOfGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {
-    if (gestureRecognizer == self.twoPan && otherGestureRecognizer == self.swipeUp) {
-        return YES;
-    }
-    if (gestureRecognizer == self.twoPan && otherGestureRecognizer == self.swipeDown) {
-        return YES;
-    }
     if (gestureRecognizer == self.twoTap && otherGestureRecognizer == self.swipeDown) {
         return YES;
     }
@@ -531,32 +657,17 @@ static CGRect CGRectClipToBounds(CGRect rect1, CGRect rect2) {
     if (gestureRecognizer == self.tap && otherGestureRecognizer == self.twoTap) {
         return YES;
     }
-    if (gestureRecognizer == self.longPress && otherGestureRecognizer == self.tap) {
+    if (gestureRecognizer == self.tap && otherGestureRecognizer == self.longPress) {
         return YES;
     }
-    if (gestureRecognizer == self.longPress && otherGestureRecognizer == self.twoTap) {
-        return YES;
-    }
-    if (gestureRecognizer == self.pinch && otherGestureRecognizer == self.swipeDown) {
-        return YES;
-    }
-    if (gestureRecognizer == self.pinch && otherGestureRecognizer == self.swipeUp) {
-        return YES;
-    }
-    if (gestureRecognizer == self.pan && otherGestureRecognizer == self.swipeUp) {
-        return YES;
-    }
-    if (gestureRecognizer == self.pan && otherGestureRecognizer == self.swipeDown) {
-        return YES;
-    }
+    // a swipe can take half a second to fail so a pan only waits for one that matches the same number of touches
     if (gestureRecognizer == self.threePan && otherGestureRecognizer == self.swipeUp) {
         return YES;
     }
     if (gestureRecognizer == self.threePan && otherGestureRecognizer == self.swipeDown) {
         return YES;
     }
-    // only if we do not disable two finger swipe
-    if (self.twoFingerScrollType != VMGestureTypeNone) {
+    if (self.isTwoFingerSwipeExclusive) {
         if (gestureRecognizer == self.twoPan && otherGestureRecognizer == self.swipeScrollUp) {
             return YES;
         }
@@ -571,6 +682,18 @@ static CGRect CGRectClipToBounds(CGRect rect1, CGRect rect2) {
 #endif
 }
 
+- (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer {
+    if (gestureRecognizer == self.pinch) {
+        // before iOS 18 a pinch begins with two of three fingers and takes them from the three finger gestures
+        return self.threePan.numberOfTouches < 3;
+    }
+    if (gestureRecognizer == self.longPress) {
+        // otherwise a disabled long press would swallow the tap waiting on it
+        return self.longPressType != VMGestureTypeNone;
+    }
+    return YES;
+}
+
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {
     if (gestureRecognizer == self.twoPan && otherGestureRecognizer == self.pinch) {
         if (self.twoFingerPanType == VMGestureTypeMoveScreen) {
@@ -579,9 +702,8 @@ static CGRect CGRectClipToBounds(CGRect rect1, CGRect rect2) {
             return NO;
         }
     } else if (gestureRecognizer == self.pan && otherGestureRecognizer == self.longPress) {
-        return YES;
-    } else if (self.twoFingerScrollType == VMGestureTypeNone && otherGestureRecognizer == self.twoPan) {
-        // if two finger swipe is disabled, we can also recognize two finger pans
+        return !self.isTouchScrolling; // there the pan scrolls and the long press moves the cursor itself
+    } else if (!self.isTwoFingerSwipeExclusive && otherGestureRecognizer == self.twoPan) {
         if (gestureRecognizer == self.swipeScrollUp) {
             return YES;
         } else if (gestureRecognizer == self.swipeScrollDown) {
@@ -594,7 +716,7 @@ static CGRect CGRectClipToBounds(CGRect rect1, CGRect rect2) {
     }
 }
 
-- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveEvent:(UIEvent *)event API_AVAILABLE(ios(13.4)) {
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveEvent:(UIEvent *)event {
     if (event.type == UIEventTypeTransform) {
         UTMLog(@"ignoring UIEventTypeTransform");
         return NO;
@@ -617,10 +739,8 @@ static CGRect CGRectClipToBounds(CGRect rect1, CGRect rect2) {
             return self.indirectMouseType;
         }
         default: {
-            if (@available(iOS 13.4, *)) {
-                if (type == UITouchTypeIndirectPointer) {
-                    return self.indirectMouseType;
-                }
+            if (type == UITouchTypeIndirectPointer) {
+                return self.indirectMouseType;
             }
             return self.touchMouseType; // compatibility with future values
         }
@@ -655,37 +775,60 @@ static CGRect CGRectClipToBounds(CGRect rect1, CGRect rect2) {
 
 #pragma mark - Touch event handling
 
+/// Touches on the input deck reach the controller through the responder chain but are not for the guest.
+- (NSSet<UITouch *> *)displayTouches:(NSSet<UITouch *> *)touches {
+    return [touches objectsPassingTest:^BOOL(UITouch *touch, BOOL *stop) {
+        return [touch.view isDescendantOfView:self.mtkView];
+    }];
+}
+
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
+    NSSet<UITouch *> *displayTouches = [self displayTouches:touches];
+    if (displayTouches.count == 0) {
+        [super touchesBegan:touches withEvent:event];
+        return;
+    }
+    NSUInteger allDisplayTouches = [self displayTouches:event.allTouches].count;
     if (!self.delegate.qemuInputLegacy) {
-        for (UITouch *touch in touches) {
+        for (UITouch *touch in displayTouches) {
             VMMouseType type = [self touchTypeToMouseType:touch.type];
 #if TARGET_OS_VISION
             if ([self isTouchGazeGesture:touch]) {
                 type = VMMouseTypeRelative;
             }
 #endif
+            if (allDisplayTouches == displayTouches.count) { // a touch joining later does not change the gesture
+                self.isTouchScrolling = (type == VMMouseTypeAbsoluteScroll);
+            }
             if ([self switchMouseType:type]) {
+                self.isTouchScrolling = NO; // the cursor mode changes under this touch
                 [self dragCursor:UIGestureRecognizerStateEnded primary:YES secondary:YES middle:YES]; // reset drag
             } else if (!self.vmInput.serverModeCursor) { // start click for client mode
+                if (self.isTouchScrolling) { // clicks come from the gestures instead
+                    if (allDisplayTouches == 1) {
+                        CGPoint pos = [touch locationInView:self.mtkView];
+                        if (![self isRepeatTapAtLocation:pos]) { // else leave the cursor for the double click
+                            [self.cursor startMovement:pos];
+                            [self.cursor updateMovement:pos];
+                        }
+                        [self.scroll startMovement:pos]; // stop a fling like a touch screen does
+                    }
+                    break;
+                }
                 BOOL primary = YES;
                 BOOL secondary = NO;
                 BOOL middle = NO;
                 CGPoint pos = [touch locationInView:self.mtkView];
-                // iOS 13.4+ Pointing device support
-                if (@available(iOS 13.4, *)) {
-                    if (touch.type == UITouchTypeIndirectPointer) {
-                        primary = (event.buttonMask & UIEventButtonMaskPrimary) != 0;
-                        secondary = (event.buttonMask & UIEventButtonMaskSecondary) != 0;
-                        middle = (event.buttonMask & 0x4) != 0; // undocumented mask
-                    }
+                if (touch.type == UITouchTypeIndirectPointer) {
+                    primary = (event.buttonMask & UIEventButtonMaskPrimary) != 0;
+                    secondary = (event.buttonMask & UIEventButtonMaskSecondary) != 0;
+                    middle = (event.buttonMask & 0x4) != 0; // undocumented mask
                 }
 #if !defined(TARGET_OS_VISION) || !TARGET_OS_VISION
                 // Apple Pencil 2 right click mode
-                if (@available(iOS 12.1, *)) {
-                    if ([self pencilRightClickForTouch:touch]) {
-                        primary = NO;
-                        secondary = YES;
-                    }
+                if ([self pencilRightClickForTouch:touch]) {
+                    primary = NO;
+                    secondary = YES;
                 }
 #endif
                 [self.cursor startMovement:pos];
@@ -702,8 +845,8 @@ static CGRect CGRectClipToBounds(CGRect rect1, CGRect rect2) {
 
 - (void)touchesMoved:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
     // move cursor in client mode, in server mode we handle in gesturePan
-    if (!self.delegate.qemuInputLegacy && !self.vmInput.serverModeCursor) {
-        for (UITouch *touch in touches) {
+    if (!self.delegate.qemuInputLegacy && !self.vmInput.serverModeCursor && !self.isTouchScrolling) {
+        for (UITouch *touch in [self displayTouches:touches]) {
             [self.cursor updateMovement:[touch locationInView:self.mtkView]];
             break; // handle single touch
         }
@@ -713,7 +856,7 @@ static CGRect CGRectClipToBounds(CGRect rect1, CGRect rect2) {
 
 - (void)touchesCancelled:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
     // release click in client mode, in server mode we handle in gesturePan
-    if (!self.delegate.qemuInputLegacy && !self.vmInput.serverModeCursor) {
+    if (!self.delegate.qemuInputLegacy && !self.vmInput.serverModeCursor && !self.isTouchScrolling && [self displayTouches:touches].count > 0) {
         [self dragCursor:UIGestureRecognizerStateEnded primary:YES secondary:YES middle:YES];
     }
     [super touchesCancelled:touches withEvent:event];
@@ -721,7 +864,7 @@ static CGRect CGRectClipToBounds(CGRect rect1, CGRect rect2) {
 
 - (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
     // release click in client mode, in server mode we handle in gesturePan
-    if (!self.delegate.qemuInputLegacy && !self.vmInput.serverModeCursor) {
+    if (!self.delegate.qemuInputLegacy && !self.vmInput.serverModeCursor && !self.isTouchScrolling && [self displayTouches:touches].count > 0) {
         [self dragCursor:UIGestureRecognizerStateEnded primary:YES secondary:YES middle:YES];
     }
     [super touchesEnded:touches withEvent:event];

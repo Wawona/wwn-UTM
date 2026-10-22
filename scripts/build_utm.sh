@@ -55,7 +55,7 @@ while [ "x$1" != "x" ]; do
 done
 
 case $SDK in
-macos )
+macosx )
     SCHEME="macOS"
     ;;
 * )
@@ -65,12 +65,33 @@ macos )
     ;;
 esac
 
-ARCH_ARGS=$(echo $ARCH | xargs printf -- "-arch %s ")
+# -sdk would also apply to host tools such as package build plugins, so select
+# the platform with a destination instead
+case $SDK in
+iphoneos )
+    PLATFORM="iOS"
+    ;;
+iphonesimulator )
+    PLATFORM="iOS Simulator"
+    ;;
+xros )
+    PLATFORM="visionOS"
+    ;;
+xrsimulator )
+    PLATFORM="visionOS Simulator"
+    ;;
+macosx )
+    PLATFORM="macOS"
+    ;;
+* )
+    usage
+    ;;
+esac
 if [ ! -z "$TEAM_IDENTIFIER" ]; then
     TEAM_IDENTIFIER_PREFIX="TeamIdentifierPrefix=${TEAM_IDENTIFIER}."
 fi
 
-xcodebuild archive -archivePath "$OUTPUT" -scheme "$SCHEME" -sdk "$SDK" $ARCH_ARGS -configuration Release CODE_SIGNING_ALLOWED=NO $TEAM_IDENTIFIER_PREFIX
+xcodebuild archive -archivePath "$OUTPUT" -scheme "$SCHEME" -destination "generic/platform=$PLATFORM" ARCHS="$ARCH" -configuration Release -skipPackagePluginValidation CODE_SIGNING_ALLOWED=NO $TEAM_IDENTIFIER_PREFIX
 BUILT_PATH=$(find $OUTPUT.xcarchive -name '*.app' -type d | head -1)
 # Only retain the target architecture to address < iOS 15 crash & save disk space
 if [ "$SDK" == "iphoneos" ]; then
@@ -92,10 +113,12 @@ if [ "$SDK" == "macosx" ]; then
     # this way we can import into Xcode and re-sign from there
     UTM_ENTITLEMENTS="/tmp/utm.$$.entitlements"
     LAUNCHER_ENTITLEMENTS="/tmp/launcher.$$.entitlements"
+    RENDERER_ENTITLEMENTS="/tmp/renderer.$$.entitlements"
     HELPER_ENTITLEMENTS="/tmp/helper.$$.entitlements"
     CLI_ENTITLEMENTS="/tmp/cli.$$.entitlements"
     cp "$BASEDIR/../Platform/macOS/macOS.entitlements" "$UTM_ENTITLEMENTS"
     cp "$BASEDIR/../QEMULauncher/QEMULauncher.entitlements" "$LAUNCHER_ENTITLEMENTS"
+    cp "$BASEDIR/../QEMURenderServer/QEMURenderServer.entitlements" "$RENDERER_ENTITLEMENTS"
     cp "$BASEDIR/../QEMUHelper/QEMUHelper.entitlements" "$HELPER_ENTITLEMENTS"
     cp "$BASEDIR/../utmctl/utmctl.entitlements" "$CLI_ENTITLEMENTS"
     if [ ! -z "$TEAM_IDENTIFIER" ]; then
@@ -105,12 +128,15 @@ if [ "$SDK" == "macosx" ]; then
     /usr/libexec/PlistBuddy -c "Set :com.apple.security.application-groups:0 ${TEAM_ID_PREFIX}${PRODUCT_BUNDLE_PREFIX}.UTM" "$UTM_ENTITLEMENTS"
     /usr/libexec/PlistBuddy -c "Set :com.apple.security.application-groups:0 ${TEAM_ID_PREFIX}${PRODUCT_BUNDLE_PREFIX}.UTM" "$HELPER_ENTITLEMENTS"
     /usr/libexec/PlistBuddy -c "Set :com.apple.security.application-groups:0 ${TEAM_ID_PREFIX}${PRODUCT_BUNDLE_PREFIX}.UTM" "$CLI_ENTITLEMENTS"
+    # nested bundles must be signed before the XPC service that contains them
     codesign --force --sign - --entitlements "$LAUNCHER_ENTITLEMENTS" --timestamp=none --options runtime "$BUILT_PATH/Contents/XPCServices/QEMUHelper.xpc/Contents/MacOS/QEMULauncher.app/Contents/MacOS/QEMULauncher"
+    codesign --force --sign - --entitlements "$RENDERER_ENTITLEMENTS" --timestamp=none --options runtime "$BUILT_PATH/Contents/XPCServices/QEMUHelper.xpc/Contents/MacOS/QEMURenderServer.app/Contents/MacOS/QEMURenderServer"
     codesign --force --sign - --entitlements "$HELPER_ENTITLEMENTS" --timestamp=none --options runtime "$BUILT_PATH/Contents/XPCServices/QEMUHelper.xpc/Contents/MacOS/QEMUHelper"
     codesign --force --sign - --entitlements "$CLI_ENTITLEMENTS" --timestamp=none --options runtime "$BUILT_PATH/Contents/MacOS/utmctl"
     codesign --force --sign - --entitlements "$UTM_ENTITLEMENTS" --timestamp=none --options runtime "$BUILT_PATH/Contents/MacOS/UTM"
     rm "$UTM_ENTITLEMENTS"
     rm "$LAUNCHER_ENTITLEMENTS"
+    rm "$RENDERER_ENTITLEMENTS"
     rm "$HELPER_ENTITLEMENTS"
     rm "$CLI_ENTITLEMENTS"
 fi

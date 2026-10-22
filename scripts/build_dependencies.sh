@@ -21,9 +21,13 @@ RED='\033[0;31m'
 NC='\033[0m'
 
 # Knobs
-IOS_SDKMINVER="14.0"
-MAC_SDKMINVER="11.0"
+IOS_SDKMINVER="15.0"
+MAC_SDKMINVER="12.0"
 VISIONOS_SDKMINVER="1.0"
+# Network operations are retried because concurrent builds on the same CI runner
+# get rate limited by GitHub and fail to clone/fetch.
+RETRY_ATTEMPTS="${RETRY_ATTEMPTS:-5}"
+RETRY_DELAY="${RETRY_DELAY:-15}"
 
 # Build environment
 PLATFORM=
@@ -90,6 +94,26 @@ check_env () {
     version_check "2.4" "$(bison -V | head -1 | awk '{ print $NF }')" || { echo >&2 "${RED}'bison' >= 2.4 is required. Did you install from Homebrew and updated your \$PATH variable?"; exit 1; }
 }
 
+# Run a command, retrying with exponential backoff if it fails. Jitter is derived
+# from the PID so that concurrent builds do not retry in lockstep.
+retry () {
+    ATTEMPT=1
+    DELAY="$RETRY_DELAY"
+    while true; do
+        "$@" && return 0
+        STATUS=$?
+        if [ $ATTEMPT -ge $RETRY_ATTEMPTS ]; then
+            echo >&2 "${RED}'$*' failed after $ATTEMPT attempts.${NC}"
+            return $STATUS
+        fi
+        SLEEP=$(( DELAY + ($$ + ATTEMPT) % 10 ))
+        echo >&2 "${RED}'$*' failed (attempt $ATTEMPT of $RETRY_ATTEMPTS), retrying in ${SLEEP}s...${NC}"
+        sleep $SLEEP
+        ATTEMPT=$(( ATTEMPT + 1 ))
+        DELAY=$(( DELAY * 2 ))
+    done
+}
+
 download () {
     URL=$1
     FILE="$(basename $URL)"
@@ -102,7 +126,7 @@ download () {
         echo "${GREEN}$TARGET already downloaded! Run with -d to force re-download.${NC}"
     else
         echo "${GREEN}Downloading ${URL}${NC}"
-        curl -L -O "$URL"
+        retry curl -f -L -O "$URL"
         mv "$FILE" "$TARGET"
     fi
     if [ -d "$DIR" ]; then
@@ -121,6 +145,12 @@ download () {
     fi
 }
 
+# Discard any partial clone from a previous attempt so that a retry starts clean.
+clone_fresh () {
+    rm -rf "$2"
+    git clone --filter=tree:0 --no-checkout "$1" "$2"
+}
+
 clone () {
     REPO="$1"
     COMMIT="$2"
@@ -130,15 +160,26 @@ clone () {
     if [ -d "$DIR" -a -z "$REDOWNLOAD" ]; then
         echo "${GREEN}$DIR already downloaded! Run with -d to force re-download.${NC}"
     else
-        rm -rf "$DIR"
         echo "${GREEN}Cloning ${REPO}...${NC}"
-        git clone --filter=tree:0 --no-checkout "$REPO" "$DIR"
+        retry clone_fresh "$REPO" "$DIR"
         if [ ! -z "$SUBDIRS" ]; then
             git -C "$DIR" sparse-checkout init
             git -C "$DIR" sparse-checkout set $SUBDIRS
         fi
     fi
-    git -C "$DIR" checkout "$COMMIT"
+    # tree:0 filtered clones fetch missing objects here, so these hit the network too
+    retry git -C "$DIR" checkout "$COMMIT"
+    retry git -C "$DIR" submodule update --init --recursive --filter=tree:0
+}
+
+clone_moltenvk_dependences () {
+    REPO="$1"
+    NAME="$(basename $REPO)"
+    DIR="$BUILD_DIR/$NAME"
+    pwd="$(pwd)"
+    cd "$DIR"
+    retry "./fetchDependencies" --none -v
+    cd "$pwd"
 }
 
 download_all () {
@@ -182,9 +223,17 @@ download_all () {
     clone $LIBUCONTEXT_REPO $LIBUCONTEXT_COMMIT
     clone $MESA_REPO $MESA_COMMIT
     clone $MOLTENVK_REPO $MOLTENVK_COMMIT
+    clone_moltenvk_dependences $MOLTENVK_REPO
+    download $LLVM15_SRC
+    clone $DXMT_REPO $DXMT_COMMIT
+    clone $D3DMETAL_REPO $D3DMETAL_COMMIT
 }
 
 copy_private_headers() {
+    if [ "$PLATFORM" == "macos" ]; then
+        # already in the SDK and a second copy conflicts with the IOKit module
+        return
+    fi
     MACOS_SDK_PATH="$(xcrun --sdk macosx --show-sdk-path)"
     IOKIT_HEADERS_PATH="$MACOS_SDK_PATH/System/Library/Frameworks/IOKit.framework/Headers"
     OSTYPES_HEADERS_PATH="$MACOS_SDK_PATH/usr/include/libkern"
@@ -221,17 +270,26 @@ generate_meson_cross() {
     echo "# Automatically generated - do not modify" > $cross
     echo "[properties]" >> $cross
     echo "needs_exe_wrapper = true" >> $cross
+    # pipe2() and dup3() are new in the 27.0 SDKs. Meson's has_function() check declares
+    # its own prototype, so it never sees the availability attribute and reports them
+    # present no matter the deployment target. The real call sites do include the system
+    # header, which leaves a weak import that is NULL when running on an older OS.
+    echo "has_function_pipe2 = false" >> $cross
+    echo "has_function_dup3 = false" >> $cross
     echo "[built-in options]" >> $cross
     echo "c_args = [${CFLAGS:+$(meson_quote $CFLAGS)}]" >> $cross
     echo "cpp_args = [${CXXFLAGS:+$(meson_quote $CXXFLAGS)}]" >> $cross
     echo "objc_args = [${OBJCFLAGS:+$(meson_quote $OBJCFLAGS)}]" >> $cross
+    echo "objcpp_args = [${OBJCFLAGS:+$(meson_quote $OBJCFLAGS)}]" >> $cross
     echo "c_link_args = [${LDFLAGS:+$(meson_quote $LDFLAGS)}]" >> $cross
     echo "cpp_link_args = [${LDFLAGS:+$(meson_quote $LDFLAGS)}]" >> $cross
     echo "objc_link_args = [${LDFLAGS:+$(meson_quote $LDFLAGS)}]" >> $cross
+    echo "objcpp_link_args = [${LDFLAGS:+$(meson_quote $LDFLAGS)}]" >> $cross
     echo "[binaries]" >> $cross
     echo "c = [$(meson_quote $CC)]" >> $cross
     echo "cpp = [$(meson_quote $CXX)]" >> $cross
     echo "objc = [$(meson_quote $OBJCC)]" >> $cross
+    echo "objcpp = [$(meson_quote $OBJCC)]" >> $cross
     echo "ar = [$(meson_quote $AR)]" >> $cross
     echo "nm = [$(meson_quote $NM)]" >> $cross
     echo "pkgconfig = ['$PREFIX/host/bin/pkg-config']" >> $cross
@@ -252,6 +310,26 @@ generate_meson_cross() {
         esac
     else
         echo "system = '$system'" >> $cross
+    fi
+    if [ "$system" == "darwin" ]; then
+        echo "kernel = 'xnu'" >> $cross
+        case $PLATFORM in
+        ios_simulator* )
+            echo "subsystem = 'ios-simulator'" >> $cross
+            ;;
+        ios* )
+            echo "subsystem = 'ios'" >> $cross
+            ;;
+        visionos_simulator* )
+            echo "subsystem = 'visionos-simulator'" >> $cross
+            ;;
+        visionos* )
+            echo "subsystem = 'visionos'" >> $cross
+            ;;
+        macos )
+            echo "subsystem = 'macos'" >> $cross
+            ;;
+        esac
     fi
     case "$ARCH" in
     armv7 | armv7s )
@@ -293,19 +371,19 @@ generate_cmake_toolchain() {
     case $PLATFORM in
     ios_simulator* )
         echo "set(CMAKE_SYSTEM_NAME iOS)" >> "$toolchain"
-        echo "set(CMAKE_OSX_SYSROOT iphonesimulator)" >> "$toolchain"
+        echo "set(CMAKE_OSX_SYSROOT iphonesimulator CACHE STRING \"\" FORCE)" >> "$toolchain"
         ;;
     ios* )
         echo "set(CMAKE_SYSTEM_NAME iOS)" >> "$toolchain"
-        echo "set(CMAKE_OSX_SYSROOT iphoneos)" >> "$toolchain"
+        echo "set(CMAKE_OSX_SYSROOT iphoneos CACHE STRING \"\" FORCE)" >> "$toolchain"
         ;;
     visionos_simulator* )
         echo "set(CMAKE_SYSTEM_NAME visionOS)" >> "$toolchain"
-        echo "set(CMAKE_OSX_SYSROOT xrsimulator)" >> "$toolchain"
+        echo "set(CMAKE_OSX_SYSROOT xrsimulator CACHE STRING \"\" FORCE)" >> "$toolchain"
         ;;
     visionos* )
         echo "set(CMAKE_SYSTEM_NAME visionOS)" >> "$toolchain"
-        echo "set(CMAKE_OSX_SYSROOT xros)" >> "$toolchain"
+        echo "set(CMAKE_OSX_SYSROOT xros CACHE STRING \"\" FORCE)" >> "$toolchain"
         ;;
     macos )
         echo "set(CMAKE_SYSTEM_NAME Darwin)" >> "$toolchain"
@@ -317,7 +395,7 @@ generate_cmake_toolchain() {
     # Architecture
     #
     echo "set(CMAKE_SYSTEM_PROCESSOR \"$ARCH\")" >> "$toolchain"
-    echo "set(CMAKE_OSX_ARCHITECTURES \"$ARCH\")" >> "$toolchain"
+    echo "set(CMAKE_OSX_ARCHITECTURES \"$ARCH\" CACHE STRING \"\" FORCE)" >> "$toolchain"
     echo "set(CMAKE_MACOSX_BUNDLE OFF CACHE BOOL \"\")" >> "$toolchain"
     echo "" >> "$toolchain"
 
@@ -343,6 +421,7 @@ generate_cmake_toolchain() {
     echo "set(CMAKE_C_COMPILER \"$CC_BIN\")" >> "$toolchain"
     echo "set(CMAKE_CXX_COMPILER \"$CXX_BIN\")" >> "$toolchain"
     echo "set(CMAKE_OBJC_COMPILER \"$OBJC_BIN\")" >> "$toolchain"
+    echo "set(CMAKE_ASM_COMPILER \"$CC_BIN\")" >> "$toolchain"
     echo "" >> "$toolchain"
 
     #
@@ -359,6 +438,7 @@ generate_cmake_toolchain() {
     #
     if [ -n "$CFLAGS" ]; then
         echo "set(CMAKE_C_FLAGS \"$CFLAGS\" CACHE STRING \"\" FORCE)" >> "$toolchain"
+        echo "set(CMAKE_ASM_FLAGS \"$CFLAGS\" CACHE STRING \"\" FORCE)" >> "$toolchain"
     fi
 
     if [ -n "$OBJCFLAGS" ]; then
@@ -542,7 +622,7 @@ meson_cross_build () {
         SRCDIR="$BUILD_DIR/$NAME"
         ;;
     esac
-    MESON_CROSS="$(realpath "$BUILD_DIR")/meson-$CROSS.cross"
+    MESON_CROSS="$(realpath "$BUILD_DIR")/meson-$CROSS$MESON_CROSS_SUFFIX.cross"
     if [ ! -f "$MESON_CROSS" ]; then
         generate_meson_cross "$MESON_CROSS" "$CROSS"
     fi
@@ -575,6 +655,19 @@ meson_darwin_build () {
     meson_cross_build darwin $@
 }
 
+# The generated toolchain file is the single source of truth for CMake builds:
+# it sets every compiler, binutil, and flag variable with CACHE FORCE. The
+# exported CC/CFLAGS/... are needed by the autotools and meson builds, but for
+# CMake they are redundant *and* harmful: a nested host configure that does not
+# get the toolchain file (such as LLVM's NATIVE sub-build for llvm-tblgen)
+# inherits them from the environment and ends up compiling for the target while
+# discovering and linking host libraries. Drop them for every cmake invocation.
+cmake_clean_env () {
+    env -u CC -u CPP -u CXX -u OBJCC -u LD -u AR -u NM -u RANLIB -u STRIP \
+        -u CFLAGS -u CPPFLAGS -u CXXFLAGS -u OBJCFLAGS -u LDFLAGS \
+        cmake "$@"
+}
+
 cmake_build () {
     SRCDIR="$1"
     shift 1
@@ -600,7 +693,7 @@ cmake_build () {
         mkdir -p "$BUILDDIR"
 
         echo "${GREEN}Configuring ${NAME}...${NC}"
-        cmake -S . -B "$BUILDDIR" \
+        cmake_clean_env -S . -B "$BUILDDIR" \
             -DCMAKE_INSTALL_PREFIX="$PREFIX" \
             -DCMAKE_BUILD_TYPE="$BUILD_CONFIGURATION" \
             -DCMAKE_TOOLCHAIN_FILE="$CMAKE_TOOLCHAIN" \
@@ -608,10 +701,10 @@ cmake_build () {
     fi
 
     echo "${GREEN}Building ${NAME}...${NC}"
-    cmake --build "$BUILDDIR" --parallel "$NCPU"
+    cmake_clean_env --build "$BUILDDIR" --parallel "$NCPU"
 
     echo "${GREEN}Installing ${NAME}...${NC}"
-    cmake --install "$BUILDDIR"
+    cmake_clean_env --install "$BUILDDIR"
 
     cd "$pwd"
 }
@@ -629,9 +722,10 @@ build_angle () {
                                          WEBCORE_LIBRARY_DIR="/usr/local/lib" \
                                          NORMAL_UMBRELLA_FRAMEWORKS_DIR="" \
                                          CODE_SIGNING_ALLOWED=NO \
-                                         IPHONEOS_DEPLOYMENT_TARGET="14.0" \
-                                         MACOSX_DEPLOYMENT_TARGET="11.0" \
-                                         XROS_DEPLOYMENT_TARGET="1.0"
+                                         GCC_TREAT_WARNINGS_AS_ERRORS=NO \
+                                         IPHONEOS_DEPLOYMENT_TARGET="$IOS_SDKMINVER" \
+                                         MACOSX_DEPLOYMENT_TARGET="$MAC_SDKMINVER" \
+                                         XROS_DEPLOYMENT_TARGET="$VISIONOS_SDKMINVER"
     rsync -a "ANGLE.xcarchive/Products/usr/local/lib/" "$PREFIX/lib"
     rsync -a "include/" "$PREFIX/include"
     cd "$pwd"
@@ -654,7 +748,10 @@ build_hypervisor () {
     esac
 
     echo "${GREEN}Building Hypervisor...${NC}"
-    env -i PATH=$PATH xcodebuild archive -archivePath "Hypervisor" -scheme "$scheme" -sdk $SDK -configuration "$BUILD_CONFIGURATION"
+    env -i PATH=$PATH xcodebuild archive -archivePath "Hypervisor" -scheme "$scheme" -sdk $SDK -configuration "$BUILD_CONFIGURATION" \
+                                         IPHONEOS_DEPLOYMENT_TARGET="$IOS_SDKMINVER" \
+                                         MACOSX_DEPLOYMENT_TARGET="$MAC_SDKMINVER" \
+                                         XROS_DEPLOYMENT_TARGET="$VISIONOS_SDKMINVER"
 
     rsync -a "Hypervisor.xcarchive/Products/Library/Frameworks/" "$PREFIX/Frameworks"
     cd "$pwd"
@@ -695,7 +792,12 @@ build_qemu_dependencies () {
     # strip the minor versions
     VULKAN_DYLIB="$PREFIX/lib/libvulkan.1.dylib"
     mv "$(dirname $VULKAN_DYLIB)/$(readlink $VULKAN_DYLIB)" "$VULKAN_DYLIB"
-    meson_darwin_build $VIRGLRENDERER_REPO -Dtests=false -Dcheck-gl-errors=false -Dvenus=true -Dvulkan-dload=false -Drender-server-worker=thread
+    if [ "$PLATFORM" == "macos" ]; then
+        VIRGL_RENDER_SERVER_MODE="process"
+    else
+        VIRGL_RENDER_SERVER_MODE="thread"
+    fi
+    meson_darwin_build $VIRGLRENDERER_REPO -Dtests=false -Dcheck-gl-errors=false -Dvenus=true -Dneptune=true -Dvulkan-dload=false -Drender-server-mode="$VIRGL_RENDER_SERVER_MODE"
     # Hypervisor for iOS
     if [ "$PLATFORM" == "ios" ] || [ "$PLATFORM" == "ios_simulator" ]; then
         build_hypervisor
@@ -768,7 +870,7 @@ build_mesa_host () {
 
     HOST_PATH="$(brew --prefix llvm)/bin:$CLEAN_PATH"
     env -i PATH="$HOST_PATH" meson host_build --prefix="$PREFIX/host" --buildtype=release \
-        -Dllvm=enabled -Dstrip=true -Dopengl=false -Dgallium-drivers= -Dvulkan-drivers= -Dmesa-clc=enabled -Dinstall-mesa-clc=true
+        -Dllvm=enabled -Dstrip=true -Dopengl=false -Dgallium-drivers= -Dvulkan-drivers=kosmickrisp -Dplatforms=macos -Dmesa-clc=enabled -Dinstall-mesa-clc=true -Dprecomp-compiler=enabled -Dinstall-precomp-compiler=true
     env -i PATH="$HOST_PATH" meson compile -C host_build -j $NCPU
     env -i PATH="$HOST_PATH" meson install -C host_build
 
@@ -777,75 +879,67 @@ build_mesa_host () {
 
 build_vulkan_drivers () {
     mkdir -p "$PREFIX/share/vulkan/icd.d"
-    build_mesa_host
-    meson_darwin_build $MESA_REPO -Dmesa-clc=system -Dgallium-drivers= -Dvulkan-drivers=kosmickrisp -Dplatforms=macos
-    patch_vulkan_icd "$PREFIX/share/vulkan/icd.d/kosmickrisp_mesa_icd.$ARCH.json"
-    mv "$PREFIX/share/vulkan/icd.d/kosmickrisp_mesa_icd.$ARCH.json" "$PREFIX/share/vulkan/icd.d/kosmickrisp_mesa_icd.json"
+    case $PLATFORM in
+    *simulator* )
+        # KosmicKrisp requires Metal 4 which the simulator SDKs do not provide
+        $CC -dynamiclib -x c /dev/null -o "$PREFIX/lib/libvulkan_kosmickrisp.dylib"
+        ;;
+    * )
+        build_mesa_host
+        meson_darwin_build $MESA_REPO -Dmesa-clc=system -Dprecomp-compiler=system -Dgallium-drivers= -Dvulkan-drivers=kosmickrisp -Dplatforms=macos
+        patch_vulkan_icd "$PREFIX/share/vulkan/icd.d/kosmickrisp_mesa_icd.$ARCH.json"
+        mv "$PREFIX/share/vulkan/icd.d/kosmickrisp_mesa_icd.$ARCH.json" "$PREFIX/share/vulkan/icd.d/kosmickrisp_mesa_icd.json"
+        ;;
+    esac
     build_moltenvk
     patch_vulkan_icd "$PREFIX/share/vulkan/icd.d/MoltenVK_icd.json"
 }
 
-fixup () {
-    FILE=$1
-    BASE=$(basename "$FILE")
-    BASEFILENAME=${BASE%.*}
-    LIBNAME=${BASEFILENAME#lib*}
-    BUNDLE_ID="com.utmapp.${LIBNAME//_/-}"
-    FRAMEWORKNAME="$LIBNAME.framework"
-    BASEFRAMEWORKPATH="$PREFIX/Frameworks/$FRAMEWORKNAME"
-    if [ "$PLATFORM" == "macos" ]; then
-        FRAMEWORKPATH="$BASEFRAMEWORKPATH/Versions/A"
-        INFOPATH="$FRAMEWORKPATH/Resources"
+build_d3d_drivers () {
+    LLVM15_NAME=$(basename "${LLVM15_SRC%.tar.*}")
+    cmake_build "$BUILD_DIR/$LLVM15_NAME/llvm" -DLLVM_ENABLE_ZSTD=Off -DLLVM_TARGETS_TO_BUILD="" -DLLVM_BUILD_TOOLS=Off -DLLVM_VERSION_PRINTER_SHOW_HOST_TARGET_INFO=Off -DLLVM_ENABLE_TERMINFO=Off
+    (
+        case $PLATFORM in
+        ios* )
+            DXMT_SDKMINVER="16.0"
+            ;;
+        macos )
+            DXMT_SDKMINVER="13.0"
+            ;;
+        * )
+            DXMT_SDKMINVER="$SDKMINVER"
+            ;;
+        esac
+        DXMT_CFLAGS_TARGET="${CFLAGS_TARGET/$SDKMINVER/$DXMT_SDKMINVER}"
+        CC="${CC/$CFLAGS_TARGET/$DXMT_CFLAGS_TARGET}"
+        CPPFLAGS="${CPPFLAGS/$CFLAGS_TARGET/$DXMT_CFLAGS_TARGET}"
+        CXXFLAGS="${CXXFLAGS/$CFLAGS_TARGET/$DXMT_CFLAGS_TARGET}"
+        OBJCFLAGS="${OBJCFLAGS/$CFLAGS_TARGET/$DXMT_CFLAGS_TARGET}"
+        LDFLAGS="${LDFLAGS/$CFLAGS_TARGET/$DXMT_CFLAGS_TARGET}"
+        MESON_CROSS_SUFFIX="-dxmt"
+        meson_darwin_build $DXMT_REPO -Dnative_llvm_path="$PREFIX"
+    )
+    if [ "$ARCH" == "x86_64" -a "$PLATFORM" == "macos" ]; then
+        meson_build $D3DMETAL_REPO -Dtests=disabled
+        # used by install_d3dmetal.sh to rebind D3DMetal's private imports to
+        # this d3dmetal-native
+        mkdir -p "$PREFIX/share/d3dmetal-native"
+        cp "$BUILD_DIR/$(basename $D3DMETAL_REPO)/scripts/patch_d3dmetal_imports.py" "$PREFIX/share/d3dmetal-native/"
     else
-        FRAMEWORKPATH="$BASEFRAMEWORKPATH"
-        INFOPATH="$FRAMEWORKPATH"
+        # empty placeholder file
+        $CC -dynamiclib -x c /dev/null -o "$PREFIX/lib/libd3dmetal-native.dylib"
     fi
-    NEWFILE="$FRAMEWORKPATH/$LIBNAME"
-    LIST=$(otool -L "$FILE" | tail -n +2 | cut -d ' ' -f 1 | awk '{$1=$1};1')
-    OLDIFS=$IFS
-    IFS=$'\n'
-    echo "${GREEN}Fixing up $FILE...${NC}"
-    mkdir -p "$FRAMEWORKPATH"
-    mkdir -p "$INFOPATH"
-    cp -a "$FILE" "$NEWFILE"
-    /usr/libexec/PlistBuddy -c "Add :CFBundleExecutable string $LIBNAME" "$INFOPATH/Info.plist"
-    /usr/libexec/PlistBuddy -c "Add :CFBundleIdentifier string $BUNDLE_ID" "$INFOPATH/Info.plist"
-    /usr/libexec/PlistBuddy -c "Add :MinimumOSVersion string $SDKMINVER" "$INFOPATH/Info.plist"
-    /usr/libexec/PlistBuddy -c "Add :CFBundleVersion string 1" "$INFOPATH/Info.plist"
-    /usr/libexec/PlistBuddy -c "Add :CFBundleShortVersionString string 1.0" "$INFOPATH/Info.plist"
-    if [ "$PLATFORM" == "macos" ]; then
-        ln -sf "A" "$BASEFRAMEWORKPATH/Versions/Current"
-        ln -sf "Versions/Current/Resources" "$BASEFRAMEWORKPATH/Resources"
-        ln -sf "Versions/Current/$LIBNAME" "$BASEFRAMEWORKPATH/$LIBNAME"
-    fi
-    newname="@rpath/$FRAMEWORKNAME/$LIBNAME"
-    install_name_tool -id "$newname" "$NEWFILE"
-    for g in $LIST
-    do
-        base=$(basename "$g")
-        basefilename=${base%.*}
-        libname=${basefilename#lib*}
-        dir=$(dirname "$g")
-        if [ "$dir" == "$PREFIX/lib" ] || [ "$dir" == "@rpath" ]; then
-            if [ "$PLATFORM" == "macos" ]; then
-                newname="@rpath/$libname.framework/Versions/A/$libname"
-            else
-                newname="@rpath/$libname.framework/$libname"
-            fi
-            install_name_tool -change "$g" "$newname" "$NEWFILE"
-        fi
-    done
-    IFS=$OLDIFS
 }
 
 fixup_all () {
     OLDIFS=$IFS
     IFS=$'\n'
     FILES=$(find "$SYSROOT_DIR/lib" -type f -maxdepth 1 -name "*.dylib")
-    for f in $FILES
-    do
-        fixup $f
-    done
+    "$BASEDIR/fixup.sh" -p "$PLATFORM" -s "$PREFIX" -m "$SDKMINVER" $FILES
+    FILES=$(find "$SYSROOT_DIR/libexec" -type f -maxdepth 1 -perm +111)
+    if [ -n "$FILES" ]; then
+        "$BASEDIR/fixup.sh" -p "$PLATFORM" -s "$PREFIX" -i $FILES
+    fi
     IFS=$OLDIFS
 }
 
@@ -968,7 +1062,7 @@ ios* | visionos* )
         PLATFORM_FAMILY_NAME="$PLATFORM_FAMILY_PREFIX"
         ;;
     esac
-    QEMU_PLATFORM_BUILD_FLAGS="--enable-shared-lib --disable-cocoa --disable-coreaudio --disable-slirp-smbd --enable-ucontext --with-coroutine=libucontext $HVF_FLAGS $TCI_BUILD_FLAGS"
+    QEMU_PLATFORM_BUILD_FLAGS="--enable-shared-lib --disable-cocoa --disable-sdl --disable-coreaudio --disable-slirp-smbd --enable-ucontext --with-coroutine=libucontext $HVF_FLAGS $TCI_BUILD_FLAGS"
     ;;
 macos )
     if [ -z "$SDKMINVER" ]; then
@@ -976,8 +1070,10 @@ macos )
     fi
     SDK=macosx
     CFLAGS_TARGET="-target $ARCH-apple-macos$SDKMINVER"
+    # libtool drops -target when linking C++ libraries so set the default as well
+    export MACOSX_DEPLOYMENT_TARGET="$SDKMINVER"
     PLATFORM_FAMILY_NAME="macOS"
-    QEMU_PLATFORM_BUILD_FLAGS="--enable-shared-lib --disable-cocoa --cpu=$CPU"
+    QEMU_PLATFORM_BUILD_FLAGS="--enable-shared-lib --disable-cocoa --disable-sdl --cpu=$CPU"
     ;;
 * )
     usage
@@ -1073,6 +1169,11 @@ export CXXFLAGS
 export OBJCFLAGS
 export LDFLAGS
 
+# Same reason as the has_function_* properties in the meson cross file: AC_CHECK_FUNCS
+# declares its own prototype and misses the 27.0 SDK availability attribute.
+export ac_cv_func_pipe2=no
+export ac_cv_func_dup3=no
+
 check_env
 echo "${GREEN}Starting build for ${PLATFORM_FAMILY_NAME} ${ARCH} [${NCPU} jobs]${NC}"
 
@@ -1089,7 +1190,7 @@ fi
 echo "${GREEN}Deleting old sysroot!${NC}"
 rm -rf "$PREFIX/"*
 rm -f "$BUILD_DIR/BUILD_SUCCESS"
-rm -f "$BUILD_DIR/meson*.cross"
+rm -f "$BUILD_DIR"/meson*.cross
 rm -f "$BUILD_DIR/cross.cmake"
 mkdir -p "$PREFIX/Frameworks"
 copy_private_headers
@@ -1098,6 +1199,7 @@ build_qemu_dependencies
 build $QEMU_DIR --cross-prefix="" $QEMU_PLATFORM_BUILD_FLAGS $QEMU_DEBUG_FLAGS
 build_spice_client
 build_vulkan_drivers
+build_d3d_drivers
 fixup_all
 remove_shared_gst_plugins # another hack...
 echo "${GREEN}All done!${NC}"

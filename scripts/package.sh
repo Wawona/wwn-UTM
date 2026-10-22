@@ -8,7 +8,7 @@ command -v realpath >/dev/null 2>&1 || realpath() {
 BASEDIR="$(dirname "$(realpath $0)")"
 
 usage() {
-	echo "usage: $0 MODE inputXcarchive outputPath [TEAM_ID PROFILE_NAME SIGNING_METHOD]"
+	echo "usage: $0 MODE inputXcarchive outputPath [TEAM_ID PROFILE_NAME SIGNING_METHOD HELPER_PROFILE_NAME]"
 	echo "  MODE is one of:"
 	echo "          deb (Cydia DEB)"
 	echo "          ipa (unsigned IPA of full build with all entitlements)"
@@ -21,6 +21,7 @@ usage() {
 	echo "  TEAM_ID is only used for ipa-signed and is the name of the team matching the profile"
 	echo "  PROFILE_NAME is only used for ipa-signed and is the name of the signing profile"
 	echo "  SIGNING_METHOD is only used for ipa-signed and is either 'development' (default) or 'app-store'"
+	echo "  HELPER_PROFILE_NAME is only used for ipa-signed and ipa-se-signed and is the name of the signing profile of the helper extension"
 	exit 1
 }
 
@@ -70,7 +71,13 @@ itunes_sign() {
 	local TEAM_ID=$3
 	local PROFILE_NAME=$4
 	local SIGNING_METHOD=$5
+	local HELPER_PROFILE_NAME=$6
 	local OPTIONS="/tmp/options.$$.plist"
+	local HELPER_PROFILE=
+
+	if [ ! -z "$HELPER_PROFILE_NAME" ]; then
+		HELPER_PROFILE="<key>${BUNDLE_ID}.iOSHelper</key><string>${HELPER_PROFILE_NAME}</string>"
+	fi
 
 	if [ -z "$PROFILE_NAME" -o -z "$TEAM_ID" ]; then
 		echo "Invalid profile name or team id!"
@@ -93,6 +100,7 @@ itunes_sign() {
 	<dict>
 		<key>${BUNDLE_ID}</key>
 		<string>${PROFILE_NAME}</string>
+		${HELPER_PROFILE}
 	</dict>
 	<key>signingStyle</key>
 	<string>manual</string>
@@ -120,6 +128,7 @@ fake_sign() {
 	mkdir -p "$_output"
 	cp -a "$_input" "$_output/"
 	find "$_output" -type d -path '*/Frameworks/*.framework' -exec ldid -S \{\} \;
+	find "$_output" -type d -path '*/Extensions/*.appex' -exec ldid -S \{\} \;
 	if [ ! -z "${_fakeent}" ]; then
 		ldid -S${_fakeent} -I${_bundle_id} "$_output/Applications/$_name.app/$_name"
 	fi
@@ -143,7 +152,7 @@ Package: com.utmapp.UTM
 Version: ${VERSION}
 Section: Productivity
 Architecture: all
-Depends: firmware (>=14.0), net.angelxwind.appsyncunified
+Depends: firmware (>=15.0), net.angelxwind.appsyncunified
 Installed-Size: ${SIZE_KIB}
 Maintainer: osy <dev@getutm.app>
 Description: Virtual machines for iOS
@@ -154,12 +163,12 @@ Depiction: https://cydia.getutm.app/depiction/web/com.utmapp.UTM.html
 Icon: https://cydia.getutm.app/assets/com.utmapp.UTM/icon.png
 Moderndepiction: https://cydia.getutm.app/depiction/native/com.utmapp.UTM.json
 Sileodepiction: https://cydia.getutm.app/depiction/native/com.utmapp.UTM.json
-Tags: compatible_min::ios14.0
+Tags: compatible_min::ios15.0
 EOL
-	xcrun -sdk iphoneos clang -arch arm64 -fobjc-arc -miphoneos-version-min=11.0 "$BASEDIR/deb/postinst.m" "$BASEDIR/deb/MobileCoreServices.tbd" -o "$DEB_TMP/DEBIAN/postinst"
+	xcrun -sdk iphoneos clang -arch arm64 -fobjc-arc -miphoneos-version-min=15.0 "$BASEDIR/deb/postinst.m" "$BASEDIR/deb/MobileCoreServices.tbd" -o "$DEB_TMP/DEBIAN/postinst"
 	strip "$DEB_TMP/DEBIAN/postinst"
 	ldid -S"$BASEDIR/deb/postinst.xml" "$DEB_TMP/DEBIAN/postinst"
-	xcrun -sdk iphoneos clang -arch arm64 -fobjc-arc -miphoneos-version-min=11.0 "$BASEDIR/deb/prerm.m" "$BASEDIR/deb/MobileCoreServices.tbd" -o "$DEB_TMP/DEBIAN/prerm"
+	xcrun -sdk iphoneos clang -arch arm64 -fobjc-arc -miphoneos-version-min=15.0 "$BASEDIR/deb/prerm.m" "$BASEDIR/deb/MobileCoreServices.tbd" -o "$DEB_TMP/DEBIAN/prerm"
 	strip "$DEB_TMP/DEBIAN/prerm"
 	ldid -S"$BASEDIR/deb/prerm.xml" "$DEB_TMP/DEBIAN/prerm"
 	mkdir -p "$IPA_PATH"
@@ -351,7 +360,7 @@ EOL
 	if [ "$PLATFORM" != "xros" ]; then
 		codesign --force --sign - --entitlements "$FAKEENT" --timestamp=none "$BUILT_PATH"
 	fi
-	itunes_sign "$TMPINPUT" "$OUTPUT" $4 $5 $6
+	itunes_sign "$TMPINPUT" "$OUTPUT" $4 $5 $6 $7
 	rm -rf "$TMPINPUT"
 	;;
 ipa-remote-signed )

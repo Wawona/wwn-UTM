@@ -18,7 +18,6 @@ import Foundation
 import Virtualization
 
 @available(iOS, unavailable, message: "Apple Virtualization not available on iOS")
-@available(macOS 11, *)
 struct UTMAppleConfigurationDrive: UTMConfigurationDrive {
     private let bytesInMib = 1048576
     
@@ -102,16 +101,28 @@ struct UTMAppleConfigurationDrive: UTMConfigurationDrive {
         try container.encode(id, forKey: .identifier)
     }
     
-    func vzDiskImage(useFsWorkAround: Bool = false) throws -> VZDiskImageStorageDeviceAttachment? {
-        if let imageURL = imageURL {
-            // Use cached caching mode for virtio drive to prevent fs corruption on linux when possible
-            if #available(macOS 12.0, *), !isNvme, useFsWorkAround {
-                return try VZDiskImageStorageDeviceAttachment(url: imageURL, readOnly: isReadOnly, cachingMode: .cached, synchronizationMode: .full)
-            } else {
-                return try VZDiskImageStorageDeviceAttachment(url: imageURL, readOnly: isReadOnly)
-            }
-        } else {
+    /// Create the storage attachment for this drive
+    /// - Parameters:
+    ///   - useFsWorkAround: Use cached caching mode for virtio drives to prevent fs corruption on Linux
+    ///   - disposableOverlayDirectoryURL: If set, guest writes go to an ephemeral layer in this directory and the image is never modified (macOS 27+)
+    func vzDiskImage(useFsWorkAround: Bool = false, disposableOverlayDirectoryURL: URL? = nil) throws -> VZDiskImageStorageDeviceAttachment? {
+        guard let imageURL = imageURL else {
             return nil
+        }
+        // Use cached caching mode for virtio drive to prevent fs corruption on linux when possible
+        let useCachedMode = !isNvme && useFsWorkAround
+        if #available(macOS 27, *) {
+            let overlayURL = isReadOnly ? nil : disposableOverlayDirectoryURL?.appendingPathComponent("\(id).asif")
+            if let attachment = try UTMAppleDiskImage.attachment(for: imageURL, includesLayers: !isExternal, ephemeralOverlayAt: overlayURL, isReadOnly: isReadOnly, cachingMode: useCachedMode ? .cached : .automatic, synchronizationMode: .full) {
+                return attachment
+            }
+        } else if !isExternal && !UTMAppleDiskImage.layerFileURLs(of: imageURL).isEmpty {
+            throw UTMAppleDiskImageError.snapshotsRequireNewerOS
+        }
+        if useCachedMode {
+            return try VZDiskImageStorageDeviceAttachment(url: imageURL, readOnly: isReadOnly, cachingMode: .cached, synchronizationMode: .full)
+        } else {
+            return try VZDiskImageStorageDeviceAttachment(url: imageURL, readOnly: isReadOnly)
         }
     }
     
@@ -135,7 +146,6 @@ struct UTMAppleConfigurationDrive: UTMConfigurationDrive {
 // MARK: - Conversion of old config format
 
 @available(iOS, unavailable, message: "Apple Virtualization not available on iOS")
-@available(macOS 11, *)
 extension UTMAppleConfigurationDrive {
     init(migrating oldDrive: DiskImage) {
         sizeMib = oldDrive.sizeMib

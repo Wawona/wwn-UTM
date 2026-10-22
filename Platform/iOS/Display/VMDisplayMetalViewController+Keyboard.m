@@ -18,7 +18,6 @@
 #import "VMDisplayMetalViewController+Private.h"
 #import "UTMLogging.h"
 #import "VMKeyboardView.h"
-#import "VMKeyboardButton.h"
 #import "UTM-Swift.h"
 
 @implementation VMDisplayMetalViewController (Keyboard)
@@ -38,11 +37,11 @@
     [self resetModifierToggles];
 }
 
-- (IBAction)keyboardDonePressed:(UIButton *)sender {
+- (void)keyboardDonePressed:(UIButton *)sender {
     [self.keyboardView resignFirstResponder];
 }
 
-- (IBAction)keyboardPastePressed:(UIButton *)sender {
+- (void)keyboardPastePressed:(UIButton *)sender {
     UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
     NSString *string = pasteboard.string;
     if (string) {
@@ -53,30 +52,38 @@
     }
 }
 
+- (void)keyboardTouchpadPressed:(UIButton *)sender {
+    [self.delegate displayDidRequestInputDeck:VMInputDeckTouchpad];
+}
+
+- (void)touchpadKeyboardPressed:(UIButton *)sender {
+    [self.delegate displayDidRequestInputDeck:VMInputDeckKeyboard];
+}
+
 - (void)resetModifierToggles {
-    for (VMKeyboardButton *button in self.customKeyModifierButtons) {
-        if (button.toggled) {
+    for (VMKeyboardButton *button in self.inputAccessoryView.modifierButtons) {
+        if (button.isToggled) {
             [self sendExtendedKey:kCSInputKeyRelease code:button.scanCode];
             dispatch_async(dispatch_get_main_queue(), ^{
-                button.toggled = NO;
+                button.isToggled = NO;
             });
         }
     }
 }
 
-- (IBAction)customKeyTouchDown:(VMKeyboardButton *)sender {
-    if (!sender.toggleable) {
+- (void)customKeyTouchDown:(VMKeyboardButton *)sender {
+    if (!sender.isToggleable) {
         [self sendExtendedKey:kCSInputKeyPress code:sender.scanCode];
     }
 }
 
-- (IBAction)customKeyTouchUp:(VMKeyboardButton *)sender {
-    if (sender.toggleable) {
-        sender.toggled = !sender.toggled;
+- (void)customKeyTouchUp:(VMKeyboardButton *)sender {
+    if (sender.isToggleable) {
+        sender.isToggled = !sender.isToggled;
     } else {
         [self resetModifierToggles];
     }
-    if (sender.toggleable && sender.toggled) {
+    if (sender.isToggleable && sender.isToggled) {
         [self sendExtendedKey:kCSInputKeyPress code:sender.scanCode];
     } else {
         [self onDelay:0.05f action:^{
@@ -158,7 +165,7 @@ static const uint8_t hid_to_ps2_extended_table[] = {
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 };
 
-static int API_AVAILABLE(ios(13.4)) hidToPs2(UIKeyboardHIDUsage hidCode) {
+static int hidToPs2(UIKeyboardHIDUsage hidCode) {
     int ps2Code = 0;
     if (hidCode < 0x100) {
         ps2Code = hid_to_ps2_table[hidCode & 0xFF];

@@ -16,7 +16,6 @@
 
 import SwiftUI
 
-@available(macOS 11, *)
 struct SettingsView: View {
     private enum Selection: CaseIterable, Identifiable {
         case application
@@ -29,15 +28,6 @@ struct SettingsView: View {
 
         var id: Self {
             return self
-        }
-
-        var isAvailable: Bool {
-            if self == .network {
-                if #unavailable(macOS 12) {
-                    return false
-                }
-            }
-            return true
         }
 
         var title: LocalizedStringKey {
@@ -90,11 +80,7 @@ struct SettingsView: View {
             case .input:
                 InputSettingsView()
             case .network:
-                if #available(macOS 12, *) {
-                    NetworkSettingsView()
-                } else {
-                    EmptyView()
-                }
+                NetworkSettingsView()
             case .file:
                 FileSettingsView()
             case .server:
@@ -118,9 +104,7 @@ struct SettingsView: View {
     var newBody: some View {
         NavigationSplitView {
             List(Selection.allCases, selection: $selection) { category in
-                if category.isAvailable {
-                    Label(category.title, systemImage: category.systemImage)
-                }
+                Label(category.title, systemImage: category.systemImage)
             }.toolbar(removing: .sidebarToggle)
         } detail: {
             VStack(alignment: .leading) {
@@ -137,17 +121,15 @@ struct SettingsView: View {
     var oldBody: some View {
         TabView {
             ForEach(Selection.allCases) { category in
-                if category.isAvailable {
-                    VStack(alignment: .leading) {
-                        HStack(alignment: .top) {
-                            category.view.padding()
-                            Spacer()
-                        }
+                VStack(alignment: .leading) {
+                    HStack(alignment: .top) {
+                        category.view.padding()
                         Spacer()
                     }
-                    .tabItem {
-                        Label(category.title, systemImage: category.systemImage)
-                    }
+                    Spacer()
+                }
+                .tabItem {
+                    Label(category.title, systemImage: category.systemImage)
                 }
             }
         }
@@ -161,6 +143,7 @@ struct ApplicationSettingsView: View {
     @AppStorage("PreventIdleSleep") var isPreventIdleSleep = false
     @AppStorage("NoQuitConfirmation") var isNoQuitConfirmation = false
     @AppStorage("NoUsbPrompt") var isNoUsbPrompt = false
+    @AppStorage("QuitRunningVirtualMachinesPolicy") var quitPolicy = UTMQuitPolicy.saveState.rawValue
 
     @State private var isConfirmResetAutoConnect = false
 
@@ -185,6 +168,12 @@ struct ApplicationSettingsView: View {
             Toggle(isOn: $isPreventIdleSleep, label: {
                 Text("Prevent system from sleeping when any VM is running")
             })
+            Picker("Running VMs on quit", selection: $quitPolicy) {
+                Text("Save State (Default)").tag(UTMQuitPolicy.saveState.rawValue)
+                Text("Request Power Down").tag(UTMQuitPolicy.requestPowerDown.rawValue)
+            }
+            .fixedSize(horizontal: true, vertical: false)
+            .help("Choose whether UTM saves the state of running virtual machines or requests that their guest operating systems shut down when UTM quits.")
             Toggle(isOn: $isNoQuitConfirmation, label: {
                 Text("Do not show confirmation when closing a running VM")
             }).help("Closing a VM without properly shutting it down could result in data loss.")
@@ -209,12 +198,31 @@ struct ApplicationSettingsView: View {
 struct DisplaySettingsView: View {
     @AppStorage("NoScreenshot") var isNoScreenshot = false
     @AppStorage("NoSaveScreenshot") var isNoSaveScreenshot = false
+    @AppStorage("FullScreenUseCameraHousingArea") var isFullScreenUseCameraHousingArea = false
     @AppStorage("QEMURendererBackend") var qemuRendererBackend: UTMQEMURendererBackend = .qemuRendererBackendDefault
     @AppStorage("QEMUVulkanDriver") var qemuVulkanDriver: UTMQEMUVulkanDriver = .qemuVulkanDriverDefault
+    @AppStorage("QEMUDirectXDriver") var qemuDirectXDriver: UTMQEMUDirectXDriver = .qemuDirectXDriverDefault
     @AppStorage("QEMURendererFPSLimit") var qemuRendererFpsLimit: Int = 0
 
     private var isVulkanSupported: Bool {
         qemuRendererBackend == .qemuRendererBackendDefault || qemuRendererBackend == .qemuRendererBackendAngleMetal
+    }
+
+    private static var hasD3DMetal: Bool = {
+        let d3dMetalFramework = Bundle.main.bundleURL.appendingPathComponent("Contents/Frameworks/D3DMetal.framework")
+        return FileManager.default.fileExists(atPath: d3dMetalFramework.path)
+    }()
+
+    private var isD3DMetalAvailable: Bool {
+        if qemuDirectXDriver == .qemuDirectXDriverD3DMetal {
+            return true // always show option if already selected
+        } else {
+            if #available(macOS 14, *) {
+                return Self.hasD3DMetal && UTMQemuVirtualMachine.canRunD3DMetal
+            } else {
+                return false
+            }
+        }
     }
 
     var body: some View {
@@ -230,6 +238,9 @@ struct DisplaySettingsView: View {
                     Text("Do not save VM screenshot to disk")
                 }.help("If enabled, any existing screenshot will be deleted the next time the VM is started.")
                 .disabled(isNoScreenshot)
+                Toggle(isOn: $isFullScreenUseCameraHousingArea) {
+                    Text("Fill the area beside the camera housing in full screen")
+                }.help("If enabled, a full screen VM display will use the entire screen including the area beside the built-in camera. The menu bar will cover this area while it is revealed.")
             }
             
             Section(header: Text("QEMU Graphics Acceleration")) {
@@ -243,7 +254,7 @@ struct DisplaySettingsView: View {
                     Text("Default").tag(UTMQEMUVulkanDriver.qemuVulkanDriverDefault)
                     Text("Disabled").tag(UTMQEMUVulkanDriver.qemuVulkanDriverDisabled)
                     Text("MoltenVK").tag(UTMQEMUVulkanDriver.qemuVulkanDriverMoltenVK)
-                    if #available(macOS 15, *) {
+                    if #available(macOS 26, *) {
                         Text("KosmicKrisp").tag(UTMQEMUVulkanDriver.qemuVulkanDriverKosmicKrisp)
                     }
                 }.help("Select the Vulkan driver to use for host passthrough rendering. Vulkan requires guest drivers to be installed.")
@@ -251,6 +262,20 @@ struct DisplaySettingsView: View {
                 .onChange(of: qemuRendererBackend) { _ in
                     if !isVulkanSupported {
                         qemuVulkanDriver = .qemuVulkanDriverDefault
+                    }
+                }
+                Picker("DirectX Driver", selection: $qemuDirectXDriver) {
+                    Text("Default").tag(UTMQEMUDirectXDriver.qemuDirectXDriverDefault)
+                    Text("Disabled").tag(UTMQEMUDirectXDriver.qemuDirectXDriverDisabled)
+                    Text("DXMT").tag(UTMQEMUDirectXDriver.qemuDirectXDriverDXMT)
+                    if isD3DMetalAvailable {
+                        Text("D3DMetal").tag(UTMQEMUDirectXDriver.qemuDirectXDriverD3DMetal)
+                    }
+                }.help("Select the DirectX driver to use for host passthrough rendering. DirectX requires guest drivers to be installed.")
+                .disabled(!isVulkanSupported)
+                .onChange(of: qemuRendererBackend) { _ in
+                    if !isVulkanSupported {
+                        qemuDirectXDriver = .qemuDirectXDriverDefault
                     }
                 }
                 if !isVulkanSupported {
@@ -285,6 +310,12 @@ struct SoundSettingsView: View {
 }
 
 struct InputSettingsView: View {
+    private enum ModifierKeyMapping: Hashable {
+        case none
+        case ctrlCmd
+        case cmdOpt
+    }
+
     @AppStorage("FullScreenAutoCapture") var isFullScreenAutoCapture = false
     @AppStorage("WindowFocusAutoCapture") var isWindowFocusAutoCapture = false
     @AppStorage("OptionAsMetaKey") var isOptionAsMetaKey = false
@@ -293,11 +324,27 @@ struct InputSettingsView: View {
     @AppStorage("IsCapsLockKey") var isCapsLockKey = false
     @AppStorage("IsNumLockForced") var isNumLockForced = false
     @AppStorage("IsCtrlCmdSwapped") var isCtrlCmdSwapped = false
+    @AppStorage("IsCmdOptSwapped") var isCmdOptSwapped = false
     @AppStorage("InvertScroll") var isInvertScroll = false
     @AppStorage("HandleInitialClick") var isHandleInitialClick = false
     @AppStorage("IsISOKeySwapped") var isISOKeySwapped = false
 
     @State private var isKeyboardShortcutsShown = false
+
+    private var modifierKeyMappingBinding: Binding<ModifierKeyMapping> {
+        Binding(get: {
+            if isCtrlCmdSwapped {
+                return .ctrlCmd
+            } else if isCmdOptSwapped {
+                return .cmdOpt
+            } else {
+                return .none
+            }
+        }, set: { mapping in
+            isCtrlCmdSwapped = mapping == .ctrlCmd
+            isCmdOptSwapped = mapping == .cmdOpt
+        })
+    }
     
     var body: some View {
         Form {
@@ -341,9 +388,11 @@ struct InputSettingsView: View {
                 Toggle(isOn: $isNumLockForced, label: {
                     Text("Num Lock is forced on")
                 }).help("If enabled, num lock will always be on to the guest. Note this may make your keyboard's num lock indicator out of sync.")
-                Toggle(isOn: $isCtrlCmdSwapped, label: {
-                    Text("Swap Control (⌃) and Command (⌘) keys")
-                }).help("This does not apply to key binding outside the guest.")
+                Picker("Control, Option, and Command keys", selection: modifierKeyMappingBinding) {
+                    Text("Default").tag(ModifierKeyMapping.none)
+                    Text("Swap Control (⌃) and Command (⌘)").tag(ModifierKeyMapping.ctrlCmd)
+                    Text("Swap Command (⌘) and Option (⌥)").tag(ModifierKeyMapping.cmdOpt)
+                }.help("This does not apply to key binding outside the guest.")
                 Toggle(isOn: $isISOKeySwapped) {
                     Text("Swap the leftmost key on the number row and the key next to left shift on ISO keyboards")
                 }.help("This only applies to ISO layout keyboards.")
@@ -356,7 +405,6 @@ struct InputSettingsView: View {
     }
 }
 
-@available(macOS 12, *)
 struct NetworkSettingsView: View {
     @AppStorage("IsRegenerateMACOnClone") var isRegenerateMACOnClone = false
     @AppStorage("HostNetworks") var hostNetworksData: Data = Data()
@@ -520,6 +568,7 @@ extension UserDefaults {
     @objc dynamic var HideDockIcon: Bool { false }
     @objc dynamic var PreventIdleSleep: Bool { false }
     @objc dynamic var NoQuitConfirmation: Bool { false }
+    @objc dynamic var QuitRunningVirtualMachinesPolicy: Int { UTMQuitPolicy.saveState.rawValue }
     @objc dynamic var NoCursorCaptureAlert: Bool { false }
     @objc dynamic var FullScreenAutoCapture: Bool { false }
     @objc dynamic var OptionAsMetaKey: Bool { false }
@@ -534,7 +583,6 @@ extension UserDefaults {
     @objc dynamic var QEMURendererFPSLimit: Int { 0 }
 }
 
-@available(macOS 11, *)
 struct SettingsView_Previews: PreviewProvider {
     static var previews: some View {
         SettingsView()

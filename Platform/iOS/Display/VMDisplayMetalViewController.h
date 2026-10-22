@@ -23,14 +23,13 @@
 #endif
 
 @class VMKeyboardView;
-@class VMKeyboardButton;
+@class VMKeyboardAccessoryView;
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface VMDisplayMetalViewController : VMDisplayViewController
 
-@property (strong, nonatomic) IBOutlet UIInputView *inputAccessoryView;
-@property (strong, nonatomic) IBOutletCollection(VMKeyboardButton) NSArray *customKeyModifierButtons;
+@property (strong, nonatomic, nullable) VMKeyboardAccessoryView *inputAccessoryView;
 
 @property (nonatomic) IBOutlet MTKView *mtkView;
 @property (nonatomic) IBOutlet VMKeyboardView *keyboardView;
@@ -43,6 +42,18 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) NSMutableArray<UIKeyCommand *> *mutableKeyCommands;
 
 @property (nonatomic) BOOL isDynamicResolutionSupported;
+
+/// Height at the bottom of the view given to the keyboard or touchpad of a device folded like a laptop.
+@property (nonatomic) CGFloat inputDeckHeight;
+
+/// Height of the fold above the input deck, which the accessory row stays clear of.
+@property (nonatomic) CGFloat inputDeckFoldHeight;
+
+/// Shows the touchpad in the input deck.
+@property (nonatomic) BOOL isTouchpadShown;
+
+/// Whether the software keyboard is on the screen, which decides if the accessory row shows in the input deck.
+@property (nonatomic) BOOL isKeyboardShown;
 
 - (instancetype)initWithCoder:(NSCoder *)coder NS_UNAVAILABLE;
 - (instancetype)initWithNibName:(nullable NSString *)nibNameOrNil bundle:(nullable NSBundle *)nibBundleOrNil NS_UNAVAILABLE;

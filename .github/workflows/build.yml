@@ -2,7 +2,7 @@ name: Build
 on:
   push:
     branches:
-      - '**'
+      - 'main'
     tags-ignore:
       - '**'
     paths-ignore:
@@ -23,8 +23,8 @@ on:
         default: 'false'
 
 env:
-  BUILD_XCODE_PATH: /Applications/Xcode_26.0.app
-  RUNNER_IMAGE: macos-15
+  BUILD_XCODE_PATH: ${{ vars.HOST_XCODE_PATH || '/Applications/Xcode.app' }}
+  RUNNER_IMAGE: ${{ vars.RUNNER_IMAGE || 'macos-26' }}
   SEGMENT_DOWNLOAD_TIMEOUT_MINS: 60
 
 jobs:
@@ -75,8 +75,8 @@ jobs:
         uses: actions/cache/restore@v4
         with:
           path: ./sysroot-${{ matrix.platform }}-${{ matrix.arch }}
-          key: ${{ matrix.platform }}-${{ matrix.arch }}-${{ hashFiles('scripts/build_dependencies.sh') }}-${{ hashFiles('patches/**') }}-${{ github.sha }}
-          restore-keys: ${{ matrix.platform }}-${{ matrix.arch }}-${{ hashFiles('scripts/build_dependencies.sh') }}-${{ hashFiles('patches/**') }}
+          key: ${{ matrix.platform }}-${{ matrix.arch }}-${{ hashFiles('scripts/build_dependencies.sh', 'scripts/fixup.sh') }}-${{ hashFiles('patches/**') }}-${{ github.sha }}
+          restore-keys: ${{ matrix.platform }}-${{ matrix.arch }}-${{ hashFiles('scripts/build_dependencies.sh', 'scripts/fixup.sh') }}-${{ hashFiles('patches/**') }}
           lookup-only: github.event_name != 'release' && github.event.inputs.test_release != 'true'
       - name: Setup Path
         shell: bash
@@ -124,8 +124,8 @@ jobs:
         uses: actions/cache/restore@v4
         with:
           path: ./sysroot-macOS-arm64_x86_64
-          key: macos-universal-${{ hashFiles('scripts/build_dependencies.sh', 'scripts/pack_dependencies.sh') }}-${{ hashFiles('patches/**') }}-${{ github.sha }}
-          restore-keys: macos-universal-${{ hashFiles('scripts/build_dependencies.sh', 'scripts/pack_dependencies.sh') }}-${{ hashFiles('patches/**') }}
+          key: macos-universal-${{ hashFiles('scripts/build_dependencies.sh', 'scripts/fixup.sh', 'scripts/pack_dependencies.sh') }}-${{ hashFiles('patches/**') }}-${{ github.sha }}
+          restore-keys: macos-universal-${{ hashFiles('scripts/build_dependencies.sh', 'scripts/fixup.sh', 'scripts/pack_dependencies.sh') }}-${{ hashFiles('patches/**') }}
           lookup-only: github.event_name != 'release' && github.event.inputs.test_release != 'true'
       - name: Cache Sysroot (arm64)
         if: steps.cache-sysroot-universal.outputs.cache-matched-key == ''
@@ -133,7 +133,7 @@ jobs:
         uses: actions/cache/restore@v4
         with:
           path: ./sysroot-macos-arm64
-          key: macos-arm64-${{ hashFiles('scripts/build_dependencies.sh') }}-${{ hashFiles('patches/**') }}
+          key: macos-arm64-${{ hashFiles('scripts/build_dependencies.sh', 'scripts/fixup.sh') }}-${{ hashFiles('patches/**') }}
           fail-on-cache-miss: true
       - name: Cache Sysroot (x86_64)
         if: steps.cache-sysroot-universal.outputs.cache-matched-key == ''
@@ -141,12 +141,15 @@ jobs:
         uses: actions/cache/restore@v4
         with:
           path: ./sysroot-macos-x86_64
-          key: macos-x86_64-${{ hashFiles('scripts/build_dependencies.sh') }}-${{ hashFiles('patches/**') }}
+          key: macos-x86_64-${{ hashFiles('scripts/build_dependencies.sh', 'scripts/fixup.sh') }}-${{ hashFiles('patches/**') }}
           fail-on-cache-miss: true
       - name: Pack Universal Sysroot
         if: steps.cache-sysroot-universal.outputs.cache-matched-key == ''
         run: |
           ./scripts/pack_dependencies.sh . macos arm64 x86_64
+      - name: Install D3DMetal
+        if: steps.cache-sysroot-universal.outputs.cache-matched-key == '' || github.event_name == 'release' || github.event.inputs.test_release == 'true' || github.event.inputs.rebuild_sysroot == 'true'
+        run: ./scripts/install_d3dmetal.sh sysroot-macOS-arm64_x86_64 "${{ secrets.D3DM_DIST_DMG_URL || vars.D3DM_DIST_DMG_URL }}"
       - name: Compress Sysroot
         if: steps.cache-sysroot-universal.outputs.cache-matched-key == '' || github.event_name == 'release' || github.event.inputs.test_release == 'true' || github.event.inputs.rebuild_sysroot == 'true'
         run: tar -acf sysroot.tgz sysroot-macOS-arm64_x86_64
@@ -189,7 +192,7 @@ jobs:
         uses: actions/cache/restore@v4
         with:
           path: ./sysroot-${{ matrix.configuration.platform }}-${{ matrix.configuration.arch }}
-          key: ${{ matrix.configuration.platform }}-${{ matrix.configuration.arch }}-${{ hashFiles('scripts/build_dependencies.sh') }}-${{ hashFiles('patches/**') }}
+          key: ${{ matrix.configuration.platform }}-${{ matrix.configuration.arch }}-${{ hashFiles('scripts/build_dependencies.sh', 'scripts/fixup.sh') }}-${{ hashFiles('patches/**') }}
           fail-on-cache-miss: true
       - name: Setup Xcode
         shell: bash
@@ -218,7 +221,7 @@ jobs:
         uses: actions/cache/restore@v4
         with:
           path: ./sysroot-macOS-arm64_x86_64
-          key: macos-universal-${{ hashFiles('scripts/build_dependencies.sh', 'scripts/pack_dependencies.sh') }}-${{ hashFiles('patches/**') }}
+          key: macos-universal-${{ hashFiles('scripts/build_dependencies.sh', 'scripts/fixup.sh', 'scripts/pack_dependencies.sh') }}-${{ hashFiles('patches/**') }}
           fail-on-cache-miss: true
       - name: Setup Xcode
         shell: bash
@@ -476,12 +479,15 @@ jobs:
           mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
           echo $IOS_REMOTE_PROFILE_DATA | base64 --decode -o ~/Library/MobileDevice/Provisioning\ Profiles/$IOS_REMOTE_PROFILE_UUID.provisionprofile
           echo $IOS_SE_PROFILE_DATA | base64 --decode -o ~/Library/MobileDevice/Provisioning\ Profiles/$IOS_SE_PROFILE_UUID.provisionprofile
+          echo $IOS_SE_HELPER_PROFILE_DATA | base64 --decode -o ~/Library/MobileDevice/Provisioning\ Profiles/$IOS_SE_HELPER_PROFILE_UUID.provisionprofile
           echo $LAUNCHER_PROFILE_DATA | base64 --decode -o ~/Library/MobileDevice/Provisioning\ Profiles/$LAUNCHER_PROFILE_UUID.provisionprofile
         env:
           IOS_REMOTE_PROFILE_DATA: ${{ vars.IOS_REMOTE_PROFILE_DATA }}
           IOS_REMOTE_PROFILE_UUID: ${{ vars.IOS_REMOTE_PROFILE_UUID }}
           IOS_SE_PROFILE_DATA: ${{ vars.IOS_SE_PROFILE_DATA }}
           IOS_SE_PROFILE_UUID: ${{ vars.IOS_SE_PROFILE_UUID }}
+          IOS_SE_HELPER_PROFILE_DATA: ${{ vars.IOS_SE_HELPER_PROFILE_DATA }}
+          IOS_SE_HELPER_PROFILE_UUID: ${{ vars.IOS_SE_HELPER_PROFILE_UUID }}
       - name: Download Artifact
         uses: actions/download-artifact@v4
         with:
@@ -489,10 +495,11 @@ jobs:
       - name: Package for App Store
         run: |
           tar -xf UTM.xcarchive.tgz
-          ./scripts/package.sh ${{ matrix.configuration.mode }} UTM.xcarchive . "$SIGNING_TEAM_ID" "$PROFILE_UUID" app-store
+          ./scripts/package.sh ${{ matrix.configuration.mode }} UTM.xcarchive . "$SIGNING_TEAM_ID" "$PROFILE_UUID" app-store "$HELPER_PROFILE_UUID"
         env:
           SIGNING_TEAM_ID: ${{ vars.SIGNING_TEAM_ID }}
           PROFILE_UUID: ${{ matrix.configuration.scheme == 'iOS-Remote' && vars.IOS_REMOTE_PROFILE_UUID || vars.IOS_SE_PROFILE_UUID }}
+          HELPER_PROFILE_UUID: ${{ matrix.configuration.scheme == 'iOS-SE' && vars.IOS_SE_HELPER_PROFILE_UUID || '' }}
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:

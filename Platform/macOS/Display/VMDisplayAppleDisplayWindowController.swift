@@ -17,7 +17,6 @@
 import Foundation
 import Virtualization
 
-@available(macOS 12, *)
 class VMDisplayAppleDisplayWindowController: VMDisplayAppleWindowController {
     var appleView: VZVirtualMachineView! {
         mainView as? VZVirtualMachineView
@@ -54,6 +53,7 @@ class VMDisplayAppleDisplayWindowController: VMDisplayAppleWindowController {
     override func windowDidLoad() {
         mainView = VZVirtualMachineView()
         captureMouseToolbarButton.image = captureMouseToolbarButton.alternateImage // show capture keyboard image
+        (window as? VMDisplayWindow)?.isCameraHousingAreaAllowed = true
         screenChangedToken = NotificationCenter.default.addObserver(forName: NSWindow.didChangeScreenNotification, object: nil, queue: .main) { [weak self] _ in
             // update minSize when we change screens
             if let self = self,
@@ -99,7 +99,6 @@ class VMDisplayAppleDisplayWindowController: VMDisplayAppleWindowController {
         super.enterSuspended(isBusy: busy)
     }
     
-    @available(macOS 12, *)
     private func windowSize(for display: UTMAppleConfigurationDisplay) -> CGSize {
         let currentScreenScale = window?.screen?.backingScaleFactor ?? 1.0
         let useHidpi = display.pixelsPerInch >= 226
@@ -181,7 +180,6 @@ class VMDisplayAppleDisplayWindowController: VMDisplayAppleWindowController {
 }
 
 // MARK: - Save and restore resolution
-@available(macOS 12, *)
 @MainActor extension VMDisplayAppleDisplayWindowController {
     func saveDynamicResolution() {
         guard supportsReconfiguration && isDynamicResolution && isReadyToSaveResolution else {

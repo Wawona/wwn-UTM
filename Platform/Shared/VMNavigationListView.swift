@@ -19,7 +19,8 @@ import TipKit
 
 struct VMNavigationListView: View {
     @EnvironmentObject private var data: UTMData
-    
+    @State private var confirmAction: ConfirmAction?
+
     var body: some View {
         if #available(iOS 16, macOS 13, *) {
             CompatibleNavigationSplitView {
@@ -57,6 +58,13 @@ struct VMNavigationListView: View {
                     VMCardView(vm: vm)
                         .modifier(VMContextMenuModifier(vm: vm))
                         .tag(vm)
+                        .swipeActions {
+                            Button(role: .destructive) {
+                                confirmAction = .confirmDeleteVM(vm: vm)
+                            } label: {
+                                Label("Delete", systemImage: "trash")
+                            }
+                        }
                 } else {
                     NavigationLink(
                         destination: VMDetailsView(vm: vm),
@@ -67,9 +75,7 @@ struct VMNavigationListView: View {
                 }
             }
         }.onMove(perform: move)
-        #if !WITH_REMOTE // FIXME: implement remote feature
-        .onDelete(perform: delete)
-        #endif
+        .modifier(VMConfirmActionModifier(confirmAction: $confirmAction, workaroundSwipeBug: true, onConfirm: { _ in }))
 
         if data.pendingVMs.count > 0 {
             Section(header: Text("Pending")) {
@@ -179,6 +185,11 @@ private struct VMListModifier: ViewModifier {
             }
             #endif
             #if !WITH_REMOTE
+            #if os(iOS) // ToolbarSpacer is unavailable on visionOS
+            if #available(iOS 26, *) {
+                ToolbarSpacer(.fixed, placement: .navigationBarLeading)
+            }
+            #endif
             ToolbarItem(placement: .navigationBarLeading) {
                 if #available(iOS 17, visionOS 99, *) {
                     Button {
@@ -203,8 +214,10 @@ private struct VMListModifier: ViewModifier {
             #endif
             #if !os(visionOS) && !WITH_REMOTE
             ToolbarItem(placement: .navigationBarTrailing) {
-                Button("Settings") {
+                Button {
                     settingsPresented.toggle()
+                } label: {
+                    Label("Settings", systemImage: "gear")
                 }
             }
             #endif

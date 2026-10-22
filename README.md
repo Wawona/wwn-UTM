@@ -2,11 +2,16 @@
 
 > **Notice:** This repository is a fork of official [UTM](https://github.com/utmapp/UTM) maintained under the Wawona organization. It helps us study UTM virtualization and hypervisor architectures with the goal of exploring a native Wayland implementation for guest display.
 
+[![Build](https://github.com/utmapp/UTM/actions/workflows/build.yml/badge.svg?branch=main&event=push)][1]
+[![Mac App Store](https://img.shields.io/badge/Mac_App_Store-UTM-0D96F6?logo=appstore&logoColor=white)](https://apps.apple.com/us/app/utm-virtual-machines/id1538878817)
+[![App Store](https://img.shields.io/badge/App_Store-UTM_SE-0D96F6?logo=appstore&logoColor=white)](https://apps.apple.com/us/app/utm-se-retro-pc-emulator/id1564628856)
+[![Download](https://img.shields.io/badge/Download-UTM.dmg-24292F?logo=github&logoColor=white)](https://github.com/utmapp/UTM/releases/latest/download/UTM.dmg)
+
 > It is possible to invent a single machine which can be used to compute any computable sequence.
 >
 > (Alan Turing, 1936)
 
-UTM is a full featured system emulator and virtual machine host for iOS and macOS. It is based off of QEMU. In short, it allows you to run Windows, Linux, and more on your Mac, iPhone, and iPad. More information at https://getutm.app/ and https://mac.getutm.app/
+UTM is a full featured system emulator and virtual machine host for iOS, macOS, and visionOS. It is based off of QEMU. In short, it allows you to run Windows, Linux, and more on your Mac, iPhone, and iPad. More information at https://getutm.app/ and https://mac.getutm.app/
 
 <p align="center">
   <img width="450px" alt="UTM running on an iPhone" src="screen.png">
@@ -22,13 +27,13 @@ UTM is a full featured system emulator and virtual machine host for iOS and macO
 * Text terminal mode
 * USB devices
 * JIT based acceleration using QEMU TCG
-* Frontend designed from scratch for macOS 11 and iOS 11+ using the latest and greatest APIs
+* Frontend designed from scratch for macOS 12+ and iOS 15+ using the latest and greatest APIs
 * Create, manage, run VMs directly from your device
 
 ## Additional macOS Features
 
 * Hardware accelerated virtualization using Hypervisor.framework and QEMU
-* Boot macOS guests with Virtualization.framework on macOS 12+
+* Boot macOS guests with Virtualization.framework
 
 ## UTM SE
 
@@ -40,9 +45,9 @@ To optimize for size and build times, only the following architectures are inclu
 
 ## Install
 
-UTM (SE) for iOS: https://getutm.app/install/
+UTM (SE) for iOS: https://docs.getutm.app/installation/ios/
 
-UTM is also available for macOS: https://mac.getutm.app/
+UTM is also available for macOS: https://docs.getutm.app/installation/macos/
 
 ## Development
 
@@ -68,7 +73,7 @@ Additionally, UTM frontend depends on the following MIT/BSD License components:
 * [ZIP Foundation](https://github.com/weichsel/ZIPFoundation)
 * [InAppSettingsKit](https://github.com/futuretap/InAppSettingsKit)
 
-Continuous integration hosting is provided by [MacStadium](https://www.macstadium.com/opensource)
+Continuous integration hosting is provided by [MacStadium](https://macstadium.com/company/opensource)
 
 [<img src="https://uploads-ssl.webflow.com/5ac3c046c82724970fc60918/5c019d917bba312af7553b49_MacStadium-developerlogo.png" alt="MacStadium logo" width="250">](https://www.macstadium.com)
 

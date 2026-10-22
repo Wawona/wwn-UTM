@@ -18,10 +18,10 @@ import Foundation
 import QEMUKit
 #if os(macOS)
 import SwiftPortmap
+import Virtualization
 #endif
 
 private var SpiceIoServiceGuestAgentContext = 0
-private let kSuspendSnapshotName = "suspend"
 private let kProbeSuspendDelay = 1*NSEC_PER_SEC
 
 /// QEMU backend virtual machine
@@ -103,6 +103,7 @@ final class UTMQemuVirtualMachine: UTMSpiceVirtualMachine {
     
     private(set) var snapshotUnsupportedError: Error?
     
+
     private var isScopedAccess: Bool = false
     
     private weak var screenshotTimer: Timer?
@@ -239,7 +240,7 @@ extension UTMQemuVirtualMachine {
             let rawValue = UserDefaults.standard.integer(forKey: "QEMUVulkanDriver")
             let driver = UTMQEMUVulkanDriver(rawValue: rawValue) ?? .qemuVulkanDriverDefault
             if driver == .qemuVulkanDriverKosmicKrisp {
-                if #unavailable(iOS 18, macOS 15, tvOS 18, visionOS 2) {
+                if #unavailable(iOS 26, macOS 26, tvOS 26, visionOS 26) {
                     throw UTMQemuVirtualMachineError.vulkanVersionNotSupported
                 }
             }
@@ -252,6 +253,31 @@ extension UTMQemuVirtualMachine {
             }
             return driver
         }
+    }
+
+    private var directXDriver: UTMQEMUDirectXDriver {
+        get {
+            let rawValue = UserDefaults.standard.integer(forKey: "QEMUDirectXDriver")
+            let driver = UTMQEMUDirectXDriver(rawValue: rawValue) ?? .qemuDirectXDriverDefault
+            if (driver == .qemuDirectXDriverDefault || driver == .qemuDirectXDriverD3DMetal) && !Self.canRunD3DMetal {
+                // the default would pick D3DMetal whenever it is bundled
+                return .qemuDirectXDriverDXMT
+            }
+            return driver
+        }
+    }
+
+    /// D3DMetal is x86_64 only, so on Apple Silicon it needs Rosetta
+    static var canRunD3DMetal: Bool {
+        #if os(macOS) && arch(arm64)
+        if #available(macOS 13, *) {
+            return VZLinuxRosettaDirectoryShare.availability == .installed
+        } else {
+            return false
+        }
+        #else
+        return true
+        #endif
     }
 
     @MainActor private func qemuEnsureEfiVarsAvailable() async throws {
@@ -346,7 +372,9 @@ extension UTMQemuVirtualMachine {
         system.remoteBookmarks = remoteBookmarks
         system.rendererBackend = rendererBackend
         system.vulkanDriver = try vulkanDriver
+        system.directXDriver = directXDriver
         system.shmemDirectoryURL = await config.shmemDirectoryURL
+        system.appSandboxGroupId = await config.appGroupIdentifier
         system.hasDebugLog = hasDebugLog
         try Task.checkCancellation()
 
@@ -420,13 +448,20 @@ extension UTMQemuVirtualMachine {
         
         // load saved state if requested
         let isSuspended = await registryEntry.isSuspended
+        var isStateMissing = false
         if !isRunningAsDisposible && isSuspended {
-            try await monitor.qemuRestoreSnapshot(kSuspendSnapshotName)
-            try Task.checkCancellation()
+            let suspendSnapshotName = suspendSnapshotName
+            if try monitor.snapshots().contains(where: { $0.name == suspendSnapshotName }) {
+                try await _restoreSnapshot(name: suspendSnapshotName)
+                try Task.checkCancellation()
+            } else {
+                // a state that is gone leaves the guest to boot fresh, as nothing of it was loaded
+                isStateMissing = true
+            }
         }
         
         // set up SPICE sharing and removable drives
-        try await self.restoreExternalDrives(withMounting: !isSuspended)
+        try await self.restoreExternalDrives(withMounting: !isSuspended || isStateMissing)
         if let ioService = interface as? UTMSpiceIO {
             try await self.restoreSharedDirectory(for: ioService)
         } else {
@@ -437,7 +472,7 @@ extension UTMQemuVirtualMachine {
         // continue VM boot
         try await monitor.continueBoot()
         
-        // delete saved state
+        // delete saved suspend state
         if isSuspended {
             try? await deleteSnapshot()
         }
@@ -596,31 +631,94 @@ extension UTMQemuVirtualMachine {
             state = prev
         }
         do {
-            try await _saveSnapshot(name: name ?? kSuspendSnapshotName)
-            if name == nil {
+            if let name = name {
+                try await _saveSnapshot(name: name)
+            } else {
+                // a new name each time lets the previous one be kept as a snapshot
+                let suspendName = UUID().uuidString
+                try await _saveSnapshot(name: suspendName)
+                let staleNames = try UTMSnapshotManifest.replaceSuspendState(in: pathUrl, with: suspendName)
                 await registryEntry.setIsSuspended(true)
                 try saveScreenshot()
+                // a state that cannot go now stays listed and goes the next time
+                try? await deleteStaleSnapshots(staleNames)
             }
         } catch {
             throw UTMQemuVirtualMachineError.saveSnapshotFailed(error)
         }
     }
     
+    /// Keep the VM from starting while qemu-img changes its images, which corrupts any that QEMU
+    /// has open. It may have them open without a monitor, so the VM has to be stopped.
+    func changingImages(as state: UTMVirtualMachineState, _ body: () async throws -> Void) async throws {
+        guard self.state == .stopped else {
+            throw UTMQemuVirtualMachineError.invalidVmState
+        }
+        self.state = state
+        defer {
+            self.state = .stopped
+        }
+        try await body()
+    }
+
+    /// Snapshot with the state to resume from, older versions always used the same one
+    private var suspendSnapshotName: String {
+        UTMSnapshotManifest.suspendState(in: pathUrl) ?? kUTMQemuDefaultSuspendSnapshotName
+    }
+
     private func _deleteSnapshot(name: String) async throws {
         if let monitor = await monitor { // if QEMU is running
+            // QEMU only reports a missing snapshot as a failure, which would leave it listed
+            guard try monitor.snapshots().contains(where: { $0.name == name }) else {
+                throw UTMSnapshotError.notFound(name)
+            }
             let result = try await monitor.qemuDeleteSnapshot(name)
             if result.localizedCaseInsensitiveContains("Error") {
                 throw UTMQemuVirtualMachineError.qemuError(result)
             }
-            try? updateLastModified()
+        } else {
+            try await changingImages(as: .saving) {
+                try await UTMQemuFrozenSnapshotBackend(imageURLs: await snapshotImageURLs).delete(identifier: name)
+            }
         }
+        try? updateLastModified()
     }
     
     func deleteSnapshot(name: String? = nil) async throws {
-        if name == nil {
-            await registryEntry.setIsSuspended(false)
+        if let name = name {
+            try await _deleteSnapshot(name: name)
+            return
         }
-        try await _deleteSnapshot(name: name ?? kSuspendSnapshotName)
+        await registryEntry.setIsSuspended(false)
+        // the state stays if it was kept as a snapshot
+        let staleNames = try UTMSnapshotManifest.releaseSuspendState(in: pathUrl, default: kUTMQemuDefaultSuspendSnapshotName)
+        #if !os(macOS)
+        // without qemu-img a state can only go while QEMU runs, which the next suspend sees to
+        guard await monitor != nil else {
+            return
+        }
+        #endif
+        try await deleteStaleSnapshots(staleNames)
+    }
+
+    /// Delete states that nothing needs anymore. Each stays listed in the manifest until it is
+    /// gone so that one that fails is tried again instead of staying in the images for good.
+    private func deleteStaleSnapshots(_ names: [String]) async throws {
+        var firstError: Error?
+        for name in names {
+            do {
+                try await _deleteSnapshot(name: name)
+            } catch UTMSnapshotError.notFound(_) {
+                // already gone
+            } catch {
+                firstError = firstError ?? error
+                continue
+            }
+            try UTMSnapshotManifest.forgetState(name, in: pathUrl)
+        }
+        if let error = firstError {
+            throw error
+        }
     }
     
     private func _resume() async throws {
@@ -664,10 +762,19 @@ extension UTMQemuVirtualMachine {
         let prev = state
         state = .restoring
         do {
-            try await _restoreSnapshot(name: name ?? kSuspendSnapshotName)
+            try await _restoreSnapshot(name: name ?? suspendSnapshotName)
             state = prev
         } catch {
-            state = .stopped
+            if prev == .started, let monitor = await monitor {
+                do {
+                    try await monitor.qemuResume()
+                    state = .started
+                } catch {
+                    state = .paused
+                }
+            } else {
+                state = .paused
+            }
             throw error
         }
     }

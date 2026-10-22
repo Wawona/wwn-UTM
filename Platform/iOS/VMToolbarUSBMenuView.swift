@@ -34,7 +34,7 @@ struct VMToolbarUSBMenuView: View {
                             session.connectDevice(usbDevice)
                         }
                     } label: {
-                        MenuLabel((usbDevice.name ?? usbDevice.description) + suffix(connected: connected), systemImage: connected ? "checkmark.circle.fill" : "")
+                        MenuLabel(usbDevice.name ?? usbDevice.description, systemImage: connected ? "checkmark.circle.fill" : "")
                     }
                 }
             }
@@ -42,20 +42,13 @@ struct VMToolbarUSBMenuView: View {
             if session.isUsbBusy {
                 Spinner(size: .regular)
             } else {
-                Label("USB", image: "Toolbar USB")
+                // cable.connector ships in SF Symbols 3, so it matches the
+                // stroke weight and sizing of the surrounding toolbar items.
+                Label("USB", systemImage: "cable.connector")
             }
         }.simultaneousGesture(TapGesture().onEnded {
             session.refreshDevices()
         })
-    }
-    
-    // When < iOS 14.5, the checkmark label image does not show up
-    private func suffix(connected isConnected: Bool) -> String {
-        if #unavailable(iOS 14.5), isConnected {
-            return " ✓"
-        } else {
-            return ""
-        }
     }
 }
 

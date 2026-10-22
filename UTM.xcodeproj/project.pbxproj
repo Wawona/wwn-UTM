@@ -11,13 +11,28 @@
 		03FA9C732B9BBDB000C53A5A /* UTMConfigurationHostNetwork.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03FA9C712B9BBDB000C53A5A /* UTMConfigurationHostNetwork.swift */; };
 		03FA9C742B9BBDB000C53A5A /* UTMConfigurationHostNetwork.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03FA9C712B9BBDB000C53A5A /* UTMConfigurationHostNetwork.swift */; };
 		03FA9C752B9BBDB000C53A5A /* UTMConfigurationHostNetwork.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03FA9C712B9BBDB000C53A5A /* UTMConfigurationHostNetwork.swift */; };
+		10488F379FF913D2E7770E60 /* VMSnapshotData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16001E3BC682D8470EFCF312 /* VMSnapshotData.swift */; };
+		12618B76026270B5C1C8CD29 /* UTMSnapshotBackend.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE6FCF9E7BD060AB81411ABC /* UTMSnapshotBackend.swift */; };
+		1C5910D866A20395225768B9 /* UTMAppleSnapshotBackend.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CBB52BFA0D55FDEC6497878 /* UTMAppleSnapshotBackend.swift */; };
+		29B2D623BB879D2653CA8C53 /* VMSnapshotData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16001E3BC682D8470EFCF312 /* VMSnapshotData.swift */; };
+		2A3EFF2D980175F4D531E0E3 /* VMKeyboardAccessoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB38A22C8D69DB2D2C64107F /* VMKeyboardAccessoryView.swift */; };
 		2C33B3A92566C9B100A954A6 /* VMContextMenuModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C33B3A82566C9B100A954A6 /* VMContextMenuModifier.swift */; };
 		2C33B3AA2566C9B100A954A6 /* VMContextMenuModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C33B3A82566C9B100A954A6 /* VMContextMenuModifier.swift */; };
 		2C6D9E03256EE454003298E6 /* VMDisplayQemuTerminalWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C6D9E02256EE454003298E6 /* VMDisplayQemuTerminalWindowController.swift */; };
+		31D9CB9DD8370CF0CCCDE85C /* VMConfigQEMUCommandLineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03AEFABA6F4DF195E96AD2D5 /* VMConfigQEMUCommandLineView.swift */; };
+		393A92DAE84A47029BA5F829 /* UTMSnapshotService.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFC4D9A586DD424D85B2FA1C /* UTMSnapshotService.swift */; };
+		41FCD5A63CB34D7F8E20F687 /* UTMSnapshotService.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFC4D9A586DD424D85B2FA1C /* UTMSnapshotService.swift */; };
 		4B224B9D279D4D8100B63CFF /* InListButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B224B9C279D4D8100B63CFF /* InListButtonStyle.swift */; };
 		4B224B9E279D4D8100B63CFF /* InListButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B224B9C279D4D8100B63CFF /* InListButtonStyle.swift */; };
 		4B224B9F279D4D8100B63CFF /* InListButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B224B9C279D4D8100B63CFF /* InListButtonStyle.swift */; };
+		5324DE20FD9339463499B17C /* VMConfigQEMUCommandLineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03AEFABA6F4DF195E96AD2D5 /* VMConfigQEMUCommandLineView.swift */; };
 		53A0BDD726D79FE40010EDC5 /* SavePanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53A0BDD426D79FE40010EDC5 /* SavePanel.swift */; };
+		5A3966538C7644CE9E598CFE /* UTMAppleVmnetNetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F9F544E438D4BE8A5CA9360 /* UTMAppleVmnetNetworkManager.swift */; };
+		63353664DA55B4F6AC8BD07B /* UTMQemuSnapshotBackend.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7335781A3EBC95B7BE01C90 /* UTMQemuSnapshotBackend.swift */; };
+		6E14FA50A12736E32EA02200 /* UTMSnapshotBackend.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE6FCF9E7BD060AB81411ABC /* UTMSnapshotBackend.swift */; };
+		738DDF2A88F46375A0D72177 /* UTMQemuSnapshotBackend.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7335781A3EBC95B7BE01C90 /* UTMQemuSnapshotBackend.swift */; };
+		7591FABAADBC2544E9F0F37B /* VMConfigQEMUCommandLineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03AEFABA6F4DF195E96AD2D5 /* VMConfigQEMUCommandLineView.swift */; };
+		7EFF134EA0581C7A4CBBBAF5 /* VMConfigQEMUArgumentsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF2D14863C5CDE332BC8698C /* VMConfigQEMUArgumentsView.swift */; };
 		83034C0726AB630F006B4BAF /* UTMPendingVMView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83034C0626AB630F006B4BAF /* UTMPendingVMView.swift */; };
 		83034C0826AB630F006B4BAF /* UTMPendingVMView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83034C0626AB630F006B4BAF /* UTMPendingVMView.swift */; };
 		83034C0926AB630F006B4BAF /* UTMPendingVMView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83034C0626AB630F006B4BAF /* UTMPendingVMView.swift */; };
@@ -52,7 +67,7 @@
 		84018699288B71BF0050AC51 /* BusyIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84018696288B71BF0050AC51 /* BusyIndicator.swift */; };
 		8401FD71269BEB2B00265F0D /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = CE6B240A25F1F3CE0020D43E /* main.c */; };
 		8401FD72269BEB3000265F0D /* Bootstrap.c in Sources */ = {isa = PBXBuildFile; fileRef = CE0DF17125A80B6300A51894 /* Bootstrap.c */; };
-		8401FD7A269BECE200265F0D /* QEMULauncher.app in Embed Launcher */ = {isa = PBXBuildFile; fileRef = 8401FD62269BE9C500265F0D /* QEMULauncher.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		8401FD7A269BECE200265F0D /* QEMULauncher.app in Embed Executables */ = {isa = PBXBuildFile; fileRef = 8401FD62269BE9C500265F0D /* QEMULauncher.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		8401FDA0269D266E00265F0D /* VMConfigAppleBootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8401FD9F269D266E00265F0D /* VMConfigAppleBootView.swift */; };
 		8401FDA2269D3E2500265F0D /* VMConfigAppleNetworkingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8401FDA1269D3E2500265F0D /* VMConfigAppleNetworkingView.swift */; };
 		8401FDA4269D43CF00265F0D /* VMConfigAppleDisplayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8401FDA3269D43CF00265F0D /* VMConfigAppleDisplayView.swift */; };
@@ -229,6 +244,14 @@
 		84A0A88A2A47D5D10038F329 /* QEMUKit in Frameworks */ = {isa = PBXBuildFile; productRef = 84A0A8892A47D5D10038F329 /* QEMUKit */; };
 		84A0A88C2A47D5D70038F329 /* QEMUKit in Frameworks */ = {isa = PBXBuildFile; productRef = 84A0A88B2A47D5D70038F329 /* QEMUKit */; };
 		84A381AA268CB30C0048EE4D /* VMDrivesSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A381A9268CB30C0048EE4D /* VMDrivesSettingsView.swift */; };
+		84A57CB830641C6800BA5139 /* iOSHelper.appex in Embed ExtensionKit Extensions */ = {isa = PBXBuildFile; fileRef = 84A57CB130641C6800BA5139 /* iOSHelper.appex */; platformFilter = ios; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		84A57CC230641C9100BA5139 /* iOSHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A57CBF30641C9100BA5139 /* iOSHelper.swift */; };
+		84A57CC330641CCE00BA5139 /* iOSHelper-SE.appex in Embed ExtensionKit Extensions */ = {isa = PBXBuildFile; fileRef = 84A57D0930641D0000BA5139 /* iOSHelper-SE.appex */; platformFilter = ios; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		84A57D0830641D0000BA5139 /* iOSHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A57CBF30641C9100BA5139 /* iOSHelper.swift */; };
+		84A57D0A30641D0000BA5139 /* qemu-img.framework in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 8453DCB0278CE33E0037A0DA /* qemu-img.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		84A57D0B30641D0000BA5139 /* qemu-img.framework in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 8453DCB0278CE33E0037A0DA /* qemu-img.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		84A57D0D30641D0000BA5139 /* UTMHelperProcess.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A57D0C30641D0000BA5139 /* UTMHelperProcess.swift */; };
+		84A57D0E30641D0000BA5139 /* UTMHelperProcess.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A57D0C30641D0000BA5139 /* UTMHelperProcess.swift */; };
 		84B36D1E27B3264600C22685 /* CocoaSpice in Frameworks */ = {isa = PBXBuildFile; productRef = 84B36D1D27B3264600C22685 /* CocoaSpice */; };
 		84B36D2027B3264E00C22685 /* CocoaSpiceNoUsb in Frameworks */ = {isa = PBXBuildFile; productRef = 84B36D1F27B3264E00C22685 /* CocoaSpiceNoUsb */; };
 		84B36D2227B3265400C22685 /* CocoaSpice in Frameworks */ = {isa = PBXBuildFile; productRef = 84B36D2127B3265400C22685 /* CocoaSpice */; };
@@ -280,8 +303,16 @@
 		85EC516427CC8D0F004A51DE /* VMConfigAdvancedNetworkView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85EC516327CC8C98004A51DE /* VMConfigAdvancedNetworkView.swift */; };
 		85EC516527CC8D0F004A51DE /* VMConfigAdvancedNetworkView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85EC516327CC8C98004A51DE /* VMConfigAdvancedNetworkView.swift */; };
 		85EC516627CC8D10004A51DE /* VMConfigAdvancedNetworkView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85EC516327CC8C98004A51DE /* VMConfigAdvancedNetworkView.swift */; };
+		8F8F6CA6377BBED5737019BB /* UTMQemuSnapshotBackend.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7335781A3EBC95B7BE01C90 /* UTMQemuSnapshotBackend.swift */; };
+		947DDF020475E2433DDC2A21 /* VMConfigQEMUCommandLineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03AEFABA6F4DF195E96AD2D5 /* VMConfigQEMUCommandLineView.swift */; };
+		9DFF2F0A05DA5A4B5FA35917 /* VMKeyboardAccessoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB38A22C8D69DB2D2C64107F /* VMKeyboardAccessoryView.swift */; };
+		A1C4F00230C1200000CA9501 /* CapsLockRemapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1C4F00130C1200000CA9501 /* CapsLockRemapper.swift */; };
+		A5A9A26C444286951EC315D9 /* VMSnapshotData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16001E3BC682D8470EFCF312 /* VMSnapshotData.swift */; };
+		AFC3FBE9C92083C52D800437 /* UTMSnapshotManifest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F9CF0C724EB2633D0B87ACE /* UTMSnapshotManifest.swift */; };
 		B329049C270FE136002707AC /* AltKit in Frameworks */ = {isa = PBXBuildFile; productRef = B329049B270FE136002707AC /* AltKit */; };
 		B3DDF57226E9BBA300CE47F0 /* AltKit in Frameworks */ = {isa = PBXBuildFile; productRef = B3DDF57126E9BBA300CE47F0 /* AltKit */; };
+		B56B01FE103C463CC3F84753 /* VMConfigQEMUArgumentsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF2D14863C5CDE332BC8698C /* VMConfigQEMUArgumentsView.swift */; };
+		BCB19D49AC1352354193ACB6 /* UTMSnapshotManifest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F9CF0C724EB2633D0B87ACE /* UTMSnapshotManifest.swift */; };
 		CD77BE422CAB51B40074ADD2 /* UTMScriptingExportCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD77BE412CAB519F0074ADD2 /* UTMScriptingExportCommand.swift */; };
 		CD77BE442CB38F060074ADD2 /* UTMScriptingImportCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD77BE432CB38F060074ADD2 /* UTMScriptingImportCommand.swift */; };
 		CD84C2092D3B446D00829850 /* UTMScriptingRegistryEntryImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD84C2082D3B446D00829850 /* UTMScriptingRegistryEntryImpl.swift */; };
@@ -330,8 +361,6 @@
 		CE03D0D224DCF4B600F76B84 /* VMMetalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE03D0D124DCF4B600F76B84 /* VMMetalView.swift */; };
 		CE03D0D424DCF6DD00F76B84 /* VMMetalViewInputDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE03D0D324DCF6DD00F76B84 /* VMMetalViewInputDelegate.swift */; };
 		CE061CDB289E6DC30000351C /* VMDisplayWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = CE061CDD289E6DC30000351C /* VMDisplayWindow.xib */; };
-		CE061CE6289EB6250000351C /* VMDisplayMetalViewInputAccessory.xib in Resources */ = {isa = PBXBuildFile; fileRef = CE061CE9289EB6250000351C /* VMDisplayMetalViewInputAccessory.xib */; };
-		CE061CE7289EB6250000351C /* VMDisplayMetalViewInputAccessory.xib in Resources */ = {isa = PBXBuildFile; fileRef = CE061CE9289EB6250000351C /* VMDisplayMetalViewInputAccessory.xib */; };
 		CE064C662A563F4B003C833D /* swtpm.0.framework in Embed Libraries */ = {isa = PBXBuildFile; fileRef = CE064C642A563F4A003C833D /* swtpm.0.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		CE064C6A2A563F6E003C833D /* swtpm.0.framework in Embed Libraries */ = {isa = PBXBuildFile; fileRef = CE064C642A563F4A003C833D /* swtpm.0.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		CE064C6C2A563F75003C833D /* swtpm.0.framework in Embed Libraries */ = {isa = PBXBuildFile; fileRef = CE064C642A563F4A003C833D /* swtpm.0.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -439,6 +468,8 @@
 		CE19392826DCB094005CEC17 /* RAMSlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE19392526DCB093005CEC17 /* RAMSlider.swift */; };
 		CE1AEC3F2B78B30700992AFC /* MacDeviceLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE1AEC3E2B78B30700992AFC /* MacDeviceLabel.swift */; };
 		CE1AEC402B78B30700992AFC /* MacDeviceLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE1AEC3E2B78B30700992AFC /* MacDeviceLabel.swift */; };
+		CE1D15AB2F6B100100D15C01 /* UTMAppleDiskImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE1D15AA2F6B100100D15C01 /* UTMAppleDiskImage.swift */; };
+		CE1D15AD2F6B100100D15C01 /* DiskImageKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CE1D15AC2F6B100100D15C01 /* DiskImageKit.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		CE231D422BDDF280006D6DC3 /* UTMDonateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE231D412BDDF280006D6DC3 /* UTMDonateView.swift */; };
 		CE231D432BDDF280006D6DC3 /* UTMDonateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE231D412BDDF280006D6DC3 /* UTMDonateView.swift */; };
 		CE231D462BDDFD03006D6DC3 /* UTMDonateStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE231D452BDDFD03006D6DC3 /* UTMDonateStore.swift */; };
@@ -470,7 +501,8 @@
 		CE2D92DA24AD46670059923A /* VMCursor.m in Sources */ = {isa = PBXBuildFile; fileRef = CE3ADD692411C661002D6A5F /* VMCursor.m */; };
 		CE2D92E624AD46670059923A /* UTMLegacyQemuConfiguration+Networking.m in Sources */ = {isa = PBXBuildFile; fileRef = CEA02A982436C7A30087E45F /* UTMLegacyQemuConfiguration+Networking.m */; };
 		CE2D92EB24AD46670059923A /* UTMLocationManager.m in Sources */ = {isa = PBXBuildFile; fileRef = CE059DC7243E9E3400338317 /* UTMLocationManager.m */; platformFilter = ios; };
-		CE2D92F224AD46670059923A /* VMKeyboardButton.m in Sources */ = {isa = PBXBuildFile; fileRef = CEEB66452284B942002737B2 /* VMKeyboardButton.m */; };
+		CE2D92F224AD46670059923A /* VMKeyboardButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEEB66452284B942002737B2 /* VMKeyboardButton.swift */; };
+		F2C573FB05F34EC584B58E73 /* VMTouchpadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB9E02516884021BE006A10 /* VMTouchpadView.swift */; };
 		CE2D92FC24AD46670059923A /* VMDisplayMetalViewController+Keyboard.m in Sources */ = {isa = PBXBuildFile; fileRef = CE3ADD66240EFBCA002D6A5F /* VMDisplayMetalViewController+Keyboard.m */; };
 		CE2D930424AD46670059923A /* UTMLegacyQemuConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = CE31C244225E555600A965DD /* UTMLegacyQemuConfiguration.m */; };
 		CE2D930524AD46670059923A /* VMDisplayMetalViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5286EC94243748C3007E6CBC /* VMDisplayMetalViewController.m */; };
@@ -632,6 +664,8 @@
 		CE2D958E24AD4F990059923A /* UTMApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE2D955524AD4F980059923A /* UTMApp.swift */; };
 		CE2D958F24AD4FF00059923A /* VMCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE2D954324AD4F980059923A /* VMCardView.swift */; };
 		CE2D959024AD50D50059923A /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 521F3EFB2414F73800130500 /* Localizable.strings */; };
+		CE30F93630200C2000024DB2 /* dxmt-native.framework in Embed Libraries */ = {isa = PBXBuildFile; fileRef = CEA3EDE93016810500AAA8E4 /* dxmt-native.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		CE30F93730200C3300024DB2 /* dxmt-native.framework in Embed Libraries */ = {isa = PBXBuildFile; fileRef = CEA3EDE93016810500AAA8E4 /* dxmt-native.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		CE38EC692B5DB3AE008B324B /* UTMRemoteClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE38EC682B5DB3AE008B324B /* UTMRemoteClient.swift */; };
 		CE4698F924C8FBD9008C1BD6 /* Icons in Resources */ = {isa = PBXBuildFile; fileRef = CE4698F824C8FBD9008C1BD6 /* Icons */; };
 		CE4698FA24C8FBD9008C1BD6 /* Icons in Resources */ = {isa = PBXBuildFile; fileRef = CE4698F824C8FBD9008C1BD6 /* Icons */; };
@@ -641,6 +675,7 @@
 		CE5451AA26AF5F10008594E5 /* GLESv2.framework in Embed Libraries */ = {isa = PBXBuildFile; fileRef = CE5451A326AF5F0F008594E5 /* GLESv2.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		CE5451AC26AF5F10008594E5 /* EGL.framework in Embed Libraries */ = {isa = PBXBuildFile; fileRef = CE5451A426AF5F0F008594E5 /* EGL.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		CE59A7B02AA69AE400E5FFBD /* UTMScriptingUSBDeviceImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE59A7AF2AA69AE400E5FFBD /* UTMScriptingUSBDeviceImpl.swift */; };
+		CE5A7E112E9F4A1100C0FFEE /* VMDisplayWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE5A7E102E9F4A1100C0FFEE /* VMDisplayWindow.swift */; };
 		CE611BE729F50CAD001817BC /* UTMReleaseHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE611BE629F50CAD001817BC /* UTMReleaseHelper.swift */; };
 		CE611BE829F50CAD001817BC /* UTMReleaseHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE611BE629F50CAD001817BC /* UTMReleaseHelper.swift */; };
 		CE611BE929F50CAD001817BC /* UTMReleaseHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE611BE629F50CAD001817BC /* UTMReleaseHelper.swift */; };
@@ -681,6 +716,10 @@
 		CE772AAD25C8B0F600E4E379 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE772AAB25C8B0F600E4E379 /* ContentView.swift */; };
 		CE772AB325C8B7B500E4E379 /* VMCommands.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE772AB225C8B7B500E4E379 /* VMCommands.swift */; };
 		CE772AB425C8B7B500E4E379 /* VMCommands.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE772AB225C8B7B500E4E379 /* VMCommands.swift */; };
+		CE7A1C022EFA0A01001671E9 /* UTMAppleUSBDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE7A1C012EFA0A01001671E9 /* UTMAppleUSBDevice.swift */; };
+		CE7A1C042EFA0A01001671E9 /* UTMAppleUSBManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE7A1C032EFA0A01001671E9 /* UTMAppleUSBManager.swift */; };
+		CE7A1C062EFA0A01001671E9 /* AccessoryAccess.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CE7A1C052EFA0A01001671E9 /* AccessoryAccess.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
+		CE7B3A112EA1B00000C0FFEE /* MultilineTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE7B3A102EA1B00000C0FFEE /* MultilineTextField.swift */; };
 		CE7D972C24B2B17D0080CB69 /* BusyOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE7D972B24B2B17D0080CB69 /* BusyOverlay.swift */; };
 		CE8011202AD4E9E8009001C2 /* UTMApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE80111F2AD4E9E8009001C2 /* UTMApp.swift */; platformFilters = (xros, ); };
 		CE8011212AD4E9E8009001C2 /* UTMApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE80111F2AD4E9E8009001C2 /* UTMApp.swift */; platformFilters = (xros, ); };
@@ -735,6 +774,9 @@
 		CE9B15482B12A87E003A32DD /* GenerateKey.c in Sources */ = {isa = PBXBuildFile; fileRef = CE9B15462B12A87E003A32DD /* GenerateKey.c */; };
 		CE9B15492B12A87E003A32DD /* GenerateKey.c in Sources */ = {isa = PBXBuildFile; fileRef = CE9B15462B12A87E003A32DD /* GenerateKey.c */; };
 		CE9B154A2B12A87E003A32DD /* GenerateKey.c in Sources */ = {isa = PBXBuildFile; fileRef = CE9B15462B12A87E003A32DD /* GenerateKey.c */; };
+		CEA3EDEC3016810500AAA8E4 /* dxmt-native.framework in Embed Libraries */ = {isa = PBXBuildFile; fileRef = CEA3EDE93016810500AAA8E4 /* dxmt-native.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		CEA3EDEE3016810500AAA8E4 /* d3dmetal-native.framework in Embed Libraries */ = {isa = PBXBuildFile; fileRef = CEA3EDEA3016810500AAA8E4 /* d3dmetal-native.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		CEA3EE05301691C500AAA8E4 /* QEMURenderServer.app in Embed Executables */ = {isa = PBXBuildFile; fileRef = CEA3EDFA30168B9000AAA8E4 /* QEMURenderServer.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		CEA45E25263519B5002FA97D /* VMDisplayMetalViewController+Pointer.h in Sources */ = {isa = PBXBuildFile; fileRef = 83FBDD53242FA71900D2C5D7 /* VMDisplayMetalViewController+Pointer.h */; };
 		CEA45E27263519B5002FA97D /* VMRemovableDrivesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE2D954524AD4F980059923A /* VMRemovableDrivesView.swift */; };
 		CEA45E37263519B5002FA97D /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE772AAB25C8B0F600E4E379 /* ContentView.swift */; };
@@ -777,7 +819,8 @@
 		CEA45ECD263519B5002FA97D /* VMConfirmActionModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE6D21DB2553A6ED001D29C5 /* VMConfirmActionModifier.swift */; };
 		CEA45ECF263519B5002FA97D /* VMConfigPortForwardForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE2D955224AD4F980059923A /* VMConfigPortForwardForm.swift */; };
 		CEA45ED3263519B5002FA97D /* VMSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE2D954C24AD4F980059923A /* VMSettingsView.swift */; };
-		CEA45ED8263519B5002FA97D /* VMKeyboardButton.m in Sources */ = {isa = PBXBuildFile; fileRef = CEEB66452284B942002737B2 /* VMKeyboardButton.m */; };
+		CEA45ED8263519B5002FA97D /* VMKeyboardButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEEB66452284B942002737B2 /* VMKeyboardButton.swift */; };
+		106D3764B55E45AC93C0EB34 /* VMTouchpadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB9E02516884021BE006A10 /* VMTouchpadView.swift */; };
 		CEA45EE8263519B5002FA97D /* VMDisplayMetalViewController+Keyboard.m in Sources */ = {isa = PBXBuildFile; fileRef = CE3ADD66240EFBCA002D6A5F /* VMDisplayMetalViewController+Keyboard.m */; };
 		CEA45EEA263519B5002FA97D /* UTMExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE2D954624AD4F980059923A /* UTMExtensions.swift */; };
 		CEA45EEC263519B5002FA97D /* UTMData.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE020BA224AEDC7C00B44AB6 /* UTMData.swift */; };
@@ -1122,7 +1165,8 @@
 		CEF7F5FB2AEEDCC400E34952 /* VMDisplayViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84C60FB9268269D700B58C00 /* VMDisplayViewController.swift */; };
 		CEF7F5FC2AEEDCC400E34952 /* VMWizardStartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEF0305926A2AFDE00667B63 /* VMWizardStartView.swift */; };
 		CEF7F5FD2AEEDCC400E34952 /* QEMUConstantGenerated.swift in Sources */ = {isa = PBXBuildFile; fileRef = 843BF82728441FAF0029D60D /* QEMUConstantGenerated.swift */; };
-		CEF7F5FE2AEEDCC400E34952 /* VMKeyboardButton.m in Sources */ = {isa = PBXBuildFile; fileRef = CEEB66452284B942002737B2 /* VMKeyboardButton.m */; };
+		CEF7F5FE2AEEDCC400E34952 /* VMKeyboardButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEEB66452284B942002737B2 /* VMKeyboardButton.swift */; };
+		E1376DB5705C4E9389EC6326 /* VMTouchpadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB9E02516884021BE006A10 /* VMTouchpadView.swift */; };
 		CEF7F5FF2AEEDCC400E34952 /* UTMDownloadVMTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84B36D2427B704C200C22685 /* UTMDownloadVMTask.swift */; };
 		CEF7F6002AEEDCC400E34952 /* GlobalFileImporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8432329728C3017F00CFBC97 /* GlobalFileImporter.swift */; };
 		CEF7F6022AEEDCC400E34952 /* VMWizardContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84C2E8642AA429E800B17308 /* VMWizardContent.swift */; };
@@ -1227,7 +1271,6 @@
 		CEF7F6792AEEDCC400E34952 /* Icons in Resources */ = {isa = PBXBuildFile; fileRef = CE4698F824C8FBD9008C1BD6 /* Icons */; };
 		CEF7F67B2AEEDCC400E34952 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 521F3EFB2414F73800130500 /* Localizable.strings */; };
 		CEF7F67C2AEEDCC400E34952 /* qemu in Resources */ = {isa = PBXBuildFile; fileRef = CE9D18F72265410E00355E14 /* qemu */; };
-		CEF7F67D2AEEDCC400E34952 /* VMDisplayMetalViewInputAccessory.xib in Resources */ = {isa = PBXBuildFile; fileRef = CE061CE9289EB6250000351C /* VMDisplayMetalViewInputAccessory.xib */; };
 		CEF7F67E2AEEDCC400E34952 /* Localizable.stringsdict in Resources */ = {isa = PBXBuildFile; fileRef = CED8DF7928A120C100C34345 /* Localizable.stringsdict */; };
 		CEF7F67F2AEEDCC400E34952 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 5286EC91243748AC007E6CBC /* Settings.bundle */; };
 		CEF7F6802AEEDCC400E34952 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CE550BD52259479D0063E575 /* Assets.xcassets */; };
@@ -1283,6 +1326,15 @@
 		CEFE96772B69A7CC000F00C9 /* VMRemoteSessionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEFE96762B69A7CC000F00C9 /* VMRemoteSessionState.swift */; };
 		CEFE98DF29485237007CB7A8 /* UTM.sdef in Resources */ = {isa = PBXBuildFile; fileRef = CEFE98DE29485237007CB7A8 /* UTM.sdef */; };
 		CEFE98E129485776007CB7A8 /* UTMScriptingVirtualMachineImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEFE98E029485776007CB7A8 /* UTMScriptingVirtualMachineImpl.swift */; };
+		D38CFF45AB0566027A30677F /* VMSnapshotsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5BB911D9C7D6564198DAC87 /* VMSnapshotsView.swift */; };
+		E1B70310A596175A0E9F3025 /* UTMSnapshotManifest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F9CF0C724EB2633D0B87ACE /* UTMSnapshotManifest.swift */; };
+		E427638537FF5935C6DCAF11 /* VMSnapshotsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5BB911D9C7D6564198DAC87 /* VMSnapshotsView.swift */; };
+		E75442DAFC2ED7AF55CC87CA /* VMConfigQEMUArgumentsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF2D14863C5CDE332BC8698C /* VMConfigQEMUArgumentsView.swift */; };
+		EFAB3C24B8C39BC85EEFE028 /* UTMSnapshotBackend.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE6FCF9E7BD060AB81411ABC /* UTMSnapshotBackend.swift */; };
+		F3B87AB8E7FA8B9648FC0EAD /* VMSnapshotsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5BB911D9C7D6564198DAC87 /* VMSnapshotsView.swift */; };
+		FA897DF5FDA34A4F8F6782AD /* UTMSnapshotService.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFC4D9A586DD424D85B2FA1C /* UTMSnapshotService.swift */; };
+		FC6D2EA0328DA5CD033B9518 /* UTMScriptingSnapshotImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38E2C5FE357F6FEDAEA675CA /* UTMScriptingSnapshotImpl.swift */; };
+		FD2E48FCF9EC5A44E0A35855 /* VMKeyboardAccessoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB38A22C8D69DB2D2C64107F /* VMKeyboardAccessoryView.swift */; };
 		FF0307552A84E3B70049979B /* QEMULauncher-InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = FF0307532A84E3B70049979B /* QEMULauncher-InfoPlist.strings */; };
 		FFB02A8C266CB09C006CD71A /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = FFB02A8A266CB09C006CD71A /* InfoPlist.strings */; };
 		FFB02A8D266CB09C006CD71A /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = FFB02A8A266CB09C006CD71A /* InfoPlist.strings */; };
@@ -1299,6 +1351,20 @@
 			remoteGlobalIDString = 8401FD61269BE9C500265F0D;
 			remoteInfo = QEMULauncher;
 		};
+		84A57CB630641C6800BA5139 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CE550BC1225947990063E575 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 84A57CB030641C6800BA5139;
+			remoteInfo = iOSHelper;
+		};
+		84A57CC430641CCE00BA5139 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CE550BC1225947990063E575 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 84A57D0130641D0000BA5139;
+			remoteInfo = "iOSHelper-SE";
+		};
 		84E3A8FC293DB7720024A740 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = CE550BC1225947990063E575 /* Project object */;
@@ -1313,6 +1379,13 @@
 			remoteGlobalIDString = CE9A352C26533A51005077CF;
 			remoteInfo = JailbreakInterposer;
 		};
+		CEA3EE03301691C500AAA8E4 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CE550BC1225947990063E575 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = CEA3EDEF30168B9000AAA8E4;
+			remoteInfo = QEMURenderServer;
+		};
 		CEBDA1E324D8BDDB0010B5EC /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = CE550BC1225947990063E575 /* Project object */;
@@ -1323,6 +1396,28 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		84A57CB930641C6800BA5139 /* Embed ExtensionKit Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(EXTENSIONS_FOLDER_PATH)";
+			dstSubfolderSpec = 16;
+			files = (
+				84A57CB830641C6800BA5139 /* iOSHelper.appex in Embed ExtensionKit Extensions */,
+			);
+			name = "Embed ExtensionKit Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		84A57CC630641CCE00BA5139 /* Embed ExtensionKit Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(EXTENSIONS_FOLDER_PATH)";
+			dstSubfolderSpec = 16;
+			files = (
+				84A57CC330641CCE00BA5139 /* iOSHelper-SE.appex in Embed ExtensionKit Extensions */,
+			);
+			name = "Embed ExtensionKit Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		84E3A8EE293DB37E0024A740 /* Copy Files */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1364,6 +1459,7 @@
 				CEF83F8F250094EE00557D15 /* gcrypt.20.framework in Embed Libraries */,
 				CE0B6F5424AD67FA00FE012D /* spice-client-glib-2.0.8.framework in Embed Libraries */,
 				CEF83F8B250094D700557D15 /* spice-server.1.framework in Embed Libraries */,
+				CEA3EDEC3016810500AAA8E4 /* dxmt-native.framework in Embed Libraries */,
 				CE0B6F1B24AD679700FE012D /* gstapp-1.0.0.framework in Embed Libraries */,
 				CE0B6F2924AD67AD00FE012D /* gsttag-1.0.0.framework in Embed Libraries */,
 				CE0B6F3124AD67C100FE012D /* phodav-3.0.0.framework in Embed Libraries */,
@@ -1388,6 +1484,7 @@
 				CE03D0C524D913AF00F76B84 /* ffi.8.framework in Embed Libraries */,
 				CEF83F8D250094E700557D15 /* gthread-2.0.0.framework in Embed Libraries */,
 				CE63B0DB2F0ED4FF00C59D13 /* vulkan_kosmickrisp.framework in Embed Libraries */,
+				CEA3EDEE3016810500AAA8E4 /* d3dmetal-native.framework in Embed Libraries */,
 				CE064C662A563F4B003C833D /* swtpm.0.framework in Embed Libraries */,
 				CE03D09024D9124800F76B84 /* intl.8.framework in Embed Libraries */,
 				CE03D0C924D9140A00F76B84 /* pixman-1.0.framework in Embed Libraries */,
@@ -1438,6 +1535,8 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				84A57D0A30641D0000BA5139 /* qemu-img.framework in Embed Libraries */,
+				CE30F93730200C3300024DB2 /* dxmt-native.framework in Embed Libraries */,
 				CE2D937624AD46670059923A /* gpg-error.0.framework in Embed Libraries */,
 				CE2D937724AD46670059923A /* qemu-mips64el-softmmu.framework in Embed Libraries */,
 				CE2D937824AD46670059923A /* gstcontroller-1.0.0.framework in Embed Libraries */,
@@ -1521,15 +1620,16 @@
 			name = "Embed Libraries";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		CE6B241425F1F5630020D43E /* Embed Launcher */ = {
+		CE6B241425F1F5630020D43E /* Embed Executables */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 6;
 			files = (
-				8401FD7A269BECE200265F0D /* QEMULauncher.app in Embed Launcher */,
+				8401FD7A269BECE200265F0D /* QEMULauncher.app in Embed Executables */,
+				CEA3EE05301691C500AAA8E4 /* QEMURenderServer.app in Embed Executables */,
 			);
-			name = "Embed Launcher";
+			name = "Embed Executables";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		CEA45F71263519B5002FA97D /* Embed Libraries */ = {
@@ -1538,6 +1638,8 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				84A57D0B30641D0000BA5139 /* qemu-img.framework in Embed Libraries */,
+				CE30F93630200C2000024DB2 /* dxmt-native.framework in Embed Libraries */,
 				CEA45F72263519B5002FA97D /* gpg-error.0.framework in Embed Libraries */,
 				CE63B0FD2F0EFB0700C59D13 /* vulkan_kosmickrisp.framework in Embed Libraries */,
 				CEA45F74263519B5002FA97D /* gstcontroller-1.0.0.framework in Embed Libraries */,
@@ -1665,13 +1767,19 @@
 		037DAA202B0B92580061ACB3 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = it; path = it.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
 		037DAA212B0B92580061ACB3 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/Localizable.strings; sourceTree = "<group>"; };
 		037DAA222B0B92580061ACB3 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		03AEFABA6F4DF195E96AD2D5 /* VMConfigQEMUCommandLineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VMConfigQEMUCommandLineView.swift; sourceTree = "<group>"; };
 		03FA9C712B9BBDB000C53A5A /* UTMConfigurationHostNetwork.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UTMConfigurationHostNetwork.swift; sourceTree = "<group>"; };
+		0CBB52BFA0D55FDEC6497878 /* UTMAppleSnapshotBackend.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UTMAppleSnapshotBackend.swift; sourceTree = "<group>"; };
+		0F9CF0C724EB2633D0B87ACE /* UTMSnapshotManifest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UTMSnapshotManifest.swift; sourceTree = "<group>"; };
+		16001E3BC682D8470EFCF312 /* VMSnapshotData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VMSnapshotData.swift; sourceTree = "<group>"; };
 		2C33B3A82566C9B100A954A6 /* VMContextMenuModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VMContextMenuModifier.swift; sourceTree = "<group>"; };
 		2C6D9E02256EE454003298E6 /* VMDisplayQemuTerminalWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VMDisplayQemuTerminalWindowController.swift; sourceTree = "<group>"; };
+		38E2C5FE357F6FEDAEA675CA /* UTMScriptingSnapshotImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UTMScriptingSnapshotImpl.swift; sourceTree = "<group>"; };
 		45D72A942B94CE89000D16E9 /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		45D72A952B94CEE0000D16E9 /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		45D72A962B94CEF5000D16E9 /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = "pl.lproj/Info-RemotePlist.strings"; sourceTree = "<group>"; };
 		4B224B9C279D4D8100B63CFF /* InListButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InListButtonStyle.swift; sourceTree = "<group>"; };
+		4F9F544E438D4BE8A5CA9360 /* UTMAppleVmnetNetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UTMAppleVmnetNetworkManager.swift; sourceTree = "<group>"; };
 		521F3EFA2414F73800130500 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		5286EC8E2437488E007E6CBC /* VMDisplayMetalViewController+Gamepad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "VMDisplayMetalViewController+Gamepad.h"; sourceTree = "<group>"; };
 		5286EC8F2437488E007E6CBC /* VMDisplayMetalViewController+Gamepad.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "VMDisplayMetalViewController+Gamepad.m"; sourceTree = "<group>"; };
@@ -1680,7 +1788,6 @@
 		5286EC94243748C3007E6CBC /* VMDisplayMetalViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VMDisplayMetalViewController.m; sourceTree = "<group>"; };
 		52873FD9247F5B1B0063E4C8 /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		53A0BDD426D79FE40010EDC5 /* SavePanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavePanel.swift; sourceTree = "<group>"; };
-		5A17469E28BA9C4300278241 /* fi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fi; path = fi.lproj/VMDisplayMetalViewInputAccessory.strings; sourceTree = "<group>"; };
 		5A17469F28BA9C4300278241 /* fi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fi; path = fi.lproj/VMDisplayWindow.strings; sourceTree = "<group>"; };
 		5A1746A028BA9C4300278241 /* fi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fi; path = fi.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		5A1746A128BA9C4300278241 /* fi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fi; path = fi.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -1701,7 +1808,6 @@
 		83C15C5E26CC441000ADFD45 /* KeyCodeMap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyCodeMap.swift; sourceTree = "<group>"; };
 		83FBDD53242FA71900D2C5D7 /* VMDisplayMetalViewController+Pointer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "VMDisplayMetalViewController+Pointer.h"; sourceTree = "<group>"; };
 		83FBDD55242FA7BC00D2C5D7 /* VMDisplayMetalViewController+Pointer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "VMDisplayMetalViewController+Pointer.m"; sourceTree = "<group>"; };
-		83FE63B628F617CD0047FFEF /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/VMDisplayMetalViewInputAccessory.strings; sourceTree = "<group>"; };
 		83FE63B728F617CE0047FFEF /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/VMDisplayWindow.strings; sourceTree = "<group>"; };
 		83FE63B828F617CE0047FFEF /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		83FE63B928F617CE0047FFEF /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -1807,6 +1913,11 @@
 		84A0A8812A47D51D0038F329 /* QEMUHelperDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = QEMUHelperDelegate.h; sourceTree = "<group>"; };
 		84A0A8822A47D52E0038F329 /* UTMQemuPort.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UTMQemuPort.swift; sourceTree = "<group>"; };
 		84A381A9268CB30C0048EE4D /* VMDrivesSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VMDrivesSettingsView.swift; sourceTree = "<group>"; };
+		84A57CB130641C6800BA5139 /* iOSHelper.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.extensionkit-extension"; includeInIndex = 0; path = iOSHelper.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		84A57CBF30641C9100BA5139 /* iOSHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOSHelper.swift; sourceTree = "<group>"; };
+		84A57D0930641D0000BA5139 /* iOSHelper-SE.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.extensionkit-extension"; includeInIndex = 0; path = "iOSHelper-SE.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		84A57D0C30641D0000BA5139 /* UTMHelperProcess.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UTMHelperProcess.swift; sourceTree = "<group>"; };
+		84A57D0F30641D0000BA5139 /* iOSHelper-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "iOSHelper-Bridging-Header.h"; sourceTree = "<group>"; };
 		84B36D2427B704C200C22685 /* UTMDownloadVMTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UTMDownloadVMTask.swift; sourceTree = "<group>"; };
 		84B36D2827B790BE00C22685 /* DestructiveButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DestructiveButton.swift; sourceTree = "<group>"; };
 		84BB99392899E8D500DF28B2 /* VMHeadlessSessionState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VMHeadlessSessionState.swift; sourceTree = "<group>"; };
@@ -1824,7 +1935,6 @@
 		84CE3DB02904C7A100FF068B /* UTMSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UTMSettingsView.swift; sourceTree = "<group>"; };
 		84CF5DD2288DCE6400D01721 /* VMDisplayHostedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VMDisplayHostedView.swift; sourceTree = "<group>"; };
 		84CF5DF4288F558400D01721 /* VMToolbarDriveMenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VMToolbarDriveMenuView.swift; sourceTree = "<group>"; };
-		84E3A8EB293349370024A740 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/VMDisplayMetalViewInputAccessory.strings; sourceTree = "<group>"; };
 		84E3A8F0293DB37E0024A740 /* utmctl */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = utmctl; sourceTree = BUILT_PRODUCTS_DIR; };
 		84E3A8F2293DB37E0024A740 /* UTMCtl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UTMCtl.swift; sourceTree = "<group>"; };
 		84E3A8F7293DB3B60024A740 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -1837,6 +1947,8 @@
 		84F909FE289488F90008DBE2 /* MenuLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuLabel.swift; sourceTree = "<group>"; };
 		85EC516327CC8C98004A51DE /* VMConfigAdvancedNetworkView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VMConfigAdvancedNetworkView.swift; sourceTree = "<group>"; };
 		9786BB59294056960032B858 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		A1C4F00130C1200000CA9501 /* CapsLockRemapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CapsLockRemapper.swift; sourceTree = "<group>"; };
+		B5BB911D9C7D6564198DAC87 /* VMSnapshotsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VMSnapshotsView.swift; sourceTree = "<group>"; };
 		C03453AD2709E35100AD51AD /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
 		C03453AE2709E35100AD51AD /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
 		C03453AF2709E35100AD51AD /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
@@ -1864,8 +1976,6 @@
 		CE059DC7243E9E3400338317 /* UTMLocationManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UTMLocationManager.m; sourceTree = "<group>"; };
 		CE061CDC289E6DC30000351C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/VMDisplayWindow.xib; sourceTree = "<group>"; };
 		CE061CDF289E6DCF0000351C /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/VMDisplayWindow.strings; sourceTree = "<group>"; };
-		CE061CE8289EB6250000351C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/VMDisplayMetalViewInputAccessory.xib; sourceTree = "<group>"; };
-		CE061CEB289EB62E0000351C /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/VMDisplayMetalViewInputAccessory.strings; sourceTree = "<group>"; };
 		CE064C642A563F4A003C833D /* swtpm.0.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = swtpm.0.framework; path = "$(SYSROOT_DIR)/Frameworks/swtpm.0.framework"; sourceTree = "<group>"; };
 		CE08334A2B784FD400522C03 /* RemoteContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteContentView.swift; sourceTree = "<group>"; };
 		CE0DF17025A80B6300A51894 /* Bootstrap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Bootstrap.h; sourceTree = "<group>"; };
@@ -1875,6 +1985,8 @@
 		CE11C0392BD4656900E103A0 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Info-RemotePlist.strings"; sourceTree = "<group>"; };
 		CE19392526DCB093005CEC17 /* RAMSlider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RAMSlider.swift; sourceTree = "<group>"; };
 		CE1AEC3E2B78B30700992AFC /* MacDeviceLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacDeviceLabel.swift; sourceTree = "<group>"; };
+		CE1D15AA2F6B100100D15C01 /* UTMAppleDiskImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UTMAppleDiskImage.swift; sourceTree = "<group>"; };
+		CE1D15AC2F6B100100D15C01 /* DiskImageKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DiskImageKit.framework; path = System/Library/Frameworks/DiskImageKit.framework; sourceTree = SDKROOT; };
 		CE20FAE62448D2BE0059AE11 /* VMScroll.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VMScroll.h; sourceTree = "<group>"; };
 		CE20FAE72448D2BE0059AE11 /* VMScroll.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VMScroll.m; sourceTree = "<group>"; };
 		CE231D412BDDF280006D6DC3 /* UTMDonateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UTMDonateView.swift; sourceTree = "<group>"; };
@@ -2001,6 +2113,7 @@
 		CE5451A426AF5F0F008594E5 /* EGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = EGL.framework; path = "$(SYSROOT_DIR)/Frameworks/EGL.framework"; sourceTree = "<group>"; };
 		CE550BD52259479D0063E575 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		CE59A7AF2AA69AE400E5FFBD /* UTMScriptingUSBDeviceImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UTMScriptingUSBDeviceImpl.swift; sourceTree = "<group>"; };
+		CE5A7E102E9F4A1100C0FFEE /* VMDisplayWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VMDisplayWindow.swift; sourceTree = "<group>"; };
 		CE611BE629F50CAD001817BC /* UTMReleaseHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UTMReleaseHelper.swift; sourceTree = "<group>"; };
 		CE611BEA29F50D3E001817BC /* VMReleaseNotesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VMReleaseNotesView.swift; sourceTree = "<group>"; };
 		CE612AC524D3B50700FA6300 /* VMDisplayWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VMDisplayWindowController.swift; sourceTree = "<group>"; };
@@ -2027,6 +2140,10 @@
 		CE72B4AC2463579D00716A11 /* VMDisplayViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VMDisplayViewController.m; sourceTree = "<group>"; };
 		CE772AAB25C8B0F600E4E379 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		CE772AB225C8B7B500E4E379 /* VMCommands.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VMCommands.swift; sourceTree = "<group>"; };
+		CE7A1C012EFA0A01001671E9 /* UTMAppleUSBDevice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UTMAppleUSBDevice.swift; sourceTree = "<group>"; };
+		CE7A1C032EFA0A01001671E9 /* UTMAppleUSBManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UTMAppleUSBManager.swift; sourceTree = "<group>"; };
+		CE7A1C052EFA0A01001671E9 /* AccessoryAccess.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AccessoryAccess.framework; path = System/Library/Frameworks/AccessoryAccess.framework; sourceTree = SDKROOT; };
+		CE7B3A102EA1B00000C0FFEE /* MultilineTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultilineTextField.swift; sourceTree = "<group>"; };
 		CE7D972B24B2B17D0080CB69 /* BusyOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BusyOverlay.swift; sourceTree = "<group>"; };
 		CE80111F2AD4E9E8009001C2 /* UTMApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UTMApp.swift; sourceTree = "<group>"; };
 		CE8813D224CD230300532628 /* ActivityView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityView.swift; sourceTree = "<group>"; };
@@ -2075,13 +2192,17 @@
 		CE9D197B226542FE00355E14 /* UTMProcess.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UTMProcess.m; sourceTree = "<group>"; };
 		CEA02A972436C7A30087E45F /* UTMLegacyQemuConfiguration+Networking.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UTMLegacyQemuConfiguration+Networking.h"; sourceTree = "<group>"; };
 		CEA02A982436C7A30087E45F /* UTMLegacyQemuConfiguration+Networking.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UTMLegacyQemuConfiguration+Networking.m"; sourceTree = "<group>"; };
+		CEA3EDE93016810500AAA8E4 /* dxmt-native.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = "dxmt-native.framework"; path = "$(SYSROOT_DIR)/Frameworks/dxmt-native.framework"; sourceTree = "<group>"; };
+		CEA3EDEA3016810500AAA8E4 /* d3dmetal-native.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = "d3dmetal-native.framework"; path = "$(SYSROOT_DIR)/Frameworks/d3dmetal-native.framework"; sourceTree = "<group>"; };
+		CEA3EDFA30168B9000AAA8E4 /* QEMURenderServer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = QEMURenderServer.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		CEA3EDFD30168C9900AAA8E4 /* QEMURenderServer.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = QEMURenderServer.entitlements; sourceTree = "<group>"; };
+		CEA3EE13301C15DD00AAA8E4 /* QEMURenderServer-unsigned.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "QEMURenderServer-unsigned.entitlements"; sourceTree = "<group>"; };
 		CEA45FB9263519B5002FA97D /* UTM SE.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "UTM SE.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		CEA51F862A81EAB700DDD7FA /* VMToolbarOrnamentModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VMToolbarOrnamentModifier.swift; sourceTree = "<group>"; };
 		CEA9053725F981E900801E7C /* usb-1.0.0.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = "usb-1.0.0.framework"; path = "$(SYSROOT_DIR)/Frameworks/usb-1.0.0.framework"; sourceTree = "<group>"; };
 		CEA9058725FC69D100801E7C /* usbredirhost.1.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = usbredirhost.1.framework; path = "$(SYSROOT_DIR)/Frameworks/usbredirhost.1.framework"; sourceTree = "<group>"; };
 		CEA9058825FC69D100801E7C /* usbredirparser.1.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = usbredirparser.1.framework; path = "$(SYSROOT_DIR)/Frameworks/usbredirparser.1.framework"; sourceTree = "<group>"; };
 		CEB20EE9282053320033EFB5 /* DoubleClickHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoubleClickHandler.swift; sourceTree = "<group>"; };
-		CEB54C11293009C5000D2AA9 /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/VMDisplayMetalViewInputAccessory.strings; sourceTree = "<group>"; };
 		CEB54C12293009C5000D2AA9 /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/VMDisplayWindow.strings; sourceTree = "<group>"; };
 		CEB54C14293009C6000D2AA9 /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		CEB54C16293009C7000D2AA9 /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -2135,8 +2256,8 @@
 		CEE7E935287CFDB100282049 /* UTMLegacyQemuConfiguration+Constants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UTMLegacyQemuConfiguration+Constants.h"; sourceTree = "<group>"; };
 		CEE7ED472A90256100E6B4AB /* VMDisplayMetalViewController+Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "VMDisplayMetalViewController+Private.h"; sourceTree = "<group>"; };
 		CEE8B4C12B71DF4C0035AE86 /* UTMQemuSystemBackends.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UTMQemuSystemBackends.h; sourceTree = "<group>"; };
-		CEEB66442284B942002737B2 /* VMKeyboardButton.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VMKeyboardButton.h; sourceTree = "<group>"; };
-		CEEB66452284B942002737B2 /* VMKeyboardButton.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VMKeyboardButton.m; sourceTree = "<group>"; };
+		CEEB66452284B942002737B2 /* VMKeyboardButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VMKeyboardButton.swift; sourceTree = "<group>"; };
+		6EB9E02516884021BE006A10 /* VMTouchpadView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VMTouchpadView.swift; sourceTree = "<group>"; };
 		CEEC811A24E48EC600ACB0B3 /* SettingsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		CEECE13B25E47D9500A2AAB8 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		CEEF26A62CEDAEEA003F7B8C /* UTMDownloadMacSupportToolsTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UTMDownloadMacSupportToolsTask.swift; sourceTree = "<group>"; };
@@ -2163,6 +2284,8 @@
 		CEFE96762B69A7CC000F00C9 /* VMRemoteSessionState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VMRemoteSessionState.swift; sourceTree = "<group>"; };
 		CEFE98DE29485237007CB7A8 /* UTM.sdef */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = UTM.sdef; sourceTree = "<group>"; };
 		CEFE98E029485776007CB7A8 /* UTMScriptingVirtualMachineImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UTMScriptingVirtualMachineImpl.swift; sourceTree = "<group>"; };
+		DB38A22C8D69DB2D2C64107F /* VMKeyboardAccessoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VMKeyboardAccessoryView.swift; sourceTree = "<group>"; };
+		DE6FCF9E7BD060AB81411ABC /* UTMSnapshotBackend.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UTMSnapshotBackend.swift; sourceTree = "<group>"; };
 		E2D64BC7241DB24B0034E0C6 /* UTMSpiceIO.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UTMSpiceIO.h; sourceTree = "<group>"; };
 		E2D64BC8241DB24B0034E0C6 /* UTMSpiceIO.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UTMSpiceIO.m; sourceTree = "<group>"; };
 		E2D64BE0241EAEBE0034E0C6 /* UTMSpiceIODelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UTMSpiceIODelegate.h; sourceTree = "<group>"; };
@@ -2172,8 +2295,6 @@
 		E5F4A2672D4E702000662468 /* ko */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ko; path = ko.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		E5F4A2682D4E726B00662468 /* ko */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ko; path = ko.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		E5F4A2692D4E736C00662468 /* ko */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ko; path = "ko.lproj/Info-RemotePlist.strings"; sourceTree = "<group>"; };
-		E5F4A26D2D4E749100662468 /* ko */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ko; path = ko.lproj/VMDisplayMetalViewInputAccessory.strings; sourceTree = "<group>"; };
-		E68D491B28AC018600D34C54 /* es-419 */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "es-419"; path = "es-419.lproj/VMDisplayMetalViewInputAccessory.strings"; sourceTree = "<group>"; };
 		E68D491C28AC018700D34C54 /* es-419 */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "es-419"; path = "es-419.lproj/VMDisplayWindow.strings"; sourceTree = "<group>"; };
 		E68D491D28AC018D00D34C54 /* es-419 */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "es-419"; path = "es-419.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
 		E68D491E28AC018D00D34C54 /* es-419 */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "es-419"; path = "es-419.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
@@ -2182,7 +2303,7 @@
 		E68D492228AC018E00D34C54 /* es-419 */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "es-419"; path = "es-419.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		E68D492328AC018E00D34C54 /* es-419 */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "es-419"; path = "es-419.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
 		E6F791192903EEC6000BAAC9 /* es-419 */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "es-419"; path = "es-419.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
-		F6DA2DA52AAFED5F0070DCD1 /* zh-HK */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-HK"; path = "zh-HK.lproj/VMDisplayMetalViewInputAccessory.strings"; sourceTree = "<group>"; };
+		EFC4D9A586DD424D85B2FA1C /* UTMSnapshotService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UTMSnapshotService.swift; sourceTree = "<group>"; };
 		F6DA2DA62AAFED5F0070DCD1 /* zh-HK */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-HK"; path = "zh-HK.lproj/VMDisplayWindow.strings"; sourceTree = "<group>"; };
 		F6DA2DA72AAFED5F0070DCD1 /* zh-HK */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-HK"; path = "zh-HK.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
 		F6DA2DA82AAFED5F0070DCD1 /* zh-HK */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-HK"; path = "zh-HK.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
@@ -2191,14 +2312,14 @@
 		F6DA2DAB2AAFED5F0070DCD1 /* zh-HK */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-HK"; path = "zh-HK.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		F6DA2DAC2AAFED5F0070DCD1 /* zh-HK */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-HK"; path = "zh-HK.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
 		F6DA2DAD2AAFEDAC0070DCD1 /* zh-HK */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-HK"; path = "zh-HK.lproj/QEMULauncher-InfoPlist.strings"; sourceTree = "<group>"; };
-		F6DA2DAE2AAFEE060070DCD1 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/VMDisplayMetalViewInputAccessory.strings"; sourceTree = "<group>"; };
 		F6DA2DAF2AAFEE060070DCD1 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/VMDisplayWindow.strings"; sourceTree = "<group>"; };
 		F6DA2DB02AAFF0640070DCD1 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/QEMULauncher-InfoPlist.strings"; sourceTree = "<group>"; };
 		F6DA2DB12AAFF0640070DCD1 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.stringsdict"; sourceTree = "<group>"; };
+		F7335781A3EBC95B7BE01C90 /* UTMQemuSnapshotBackend.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UTMQemuSnapshotBackend.swift; sourceTree = "<group>"; };
 		FF0307542A84E3B70049979B /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/QEMULauncher-InfoPlist.strings"; sourceTree = "<group>"; };
 		FF0307562A84E3B70049979B /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = "zh-Hant"; path = "zh-Hant.lproj/Localizable.stringsdict"; sourceTree = "<group>"; };
-		FF0307572A84E3B70049979B /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/VMDisplayMetalViewInputAccessory.strings"; sourceTree = "<group>"; };
 		FF0307582A84E3B70049979B /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/VMDisplayWindow.strings"; sourceTree = "<group>"; };
+		FF2D14863C5CDE332BC8698C /* VMConfigQEMUArgumentsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VMConfigQEMUArgumentsView.swift; sourceTree = "<group>"; };
 		FFB02A8B266CB09C006CD71A /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
 		FFB02A8F266CB09C006CD71A /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
 		FFB02A92266CB09C006CD71A /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
@@ -2207,6 +2328,20 @@
 
 /* Begin PBXFrameworksBuildPhase section */
 		8401FD5F269BE9C500265F0D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		84A57CAE30641C6800BA5139 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		84A57D0630641D0000BA5139 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -2325,6 +2460,8 @@
 				CE0B6ED324AD677200FE012D /* libgstvideoconvert.a in Frameworks */,
 				CE0B6F0124AD677200FE012D /* libgsttypefindfunctions.a in Frameworks */,
 				848308D5278A1F2200E3E474 /* Virtualization.framework in Frameworks */,
+				CE7A1C062EFA0A01001671E9 /* AccessoryAccess.framework in Frameworks */,
+				CE1D15AD2F6B100100D15C01 /* DiskImageKit.framework in Frameworks */,
 				CE0B6EE124AD677200FE012D /* gstrtsp-1.0.0.framework in Frameworks */,
 				848F71E6277A2466006A0240 /* SwiftTerm in Frameworks */,
 				CE03D08824D90F0700F76B84 /* gio-2.0.0.framework in Frameworks */,
@@ -2592,6 +2729,15 @@
 			path = visionOS;
 			sourceTree = "<group>";
 		};
+		84A57CC030641C9100BA5139 /* iOSHelper */ = {
+			isa = PBXGroup;
+			children = (
+				84A57CBF30641C9100BA5139 /* iOSHelper.swift */,
+				84A57D0F30641D0000BA5139 /* iOSHelper-Bridging-Header.h */,
+			);
+			path = iOSHelper;
+			sourceTree = "<group>";
+		};
 		84E3A8F1293DB37E0024A740 /* utmctl */ = {
 			isa = PBXGroup;
 			children = (
@@ -2606,7 +2752,9 @@
 		CE1BD9FA24F4825C0022A468 /* Display */ = {
 			isa = PBXGroup;
 			children = (
+				A1C4F00130C1200000CA9501 /* CapsLockRemapper.swift */,
 				CE061CDD289E6DC30000351C /* VMDisplayWindow.xib */,
+				CE5A7E102E9F4A1100C0FFEE /* VMDisplayWindow.swift */,
 				CE612AC524D3B50700FA6300 /* VMDisplayWindowController.swift */,
 				84F746B8276FF40900A20C87 /* VMDisplayAppleWindowController.swift */,
 				845F170A289CB07200944904 /* VMDisplayAppleDisplayWindowController.swift */,
@@ -2624,6 +2772,8 @@
 		CE2D63D622653C7300FC7E63 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				CEA3EDEA3016810500AAA8E4 /* d3dmetal-native.framework */,
+				CEA3EDE93016810500AAA8E4 /* dxmt-native.framework */,
 				CE63B0D92F0ED4FF00C59D13 /* MoltenVK.framework */,
 				CE63B0D72F0ED4FE00C59D13 /* vulkan_kosmickrisp.framework */,
 				CE63B0D82F0ED4FE00C59D13 /* vulkan.1.framework */,
@@ -2635,6 +2785,8 @@
 				84818C0B2898A07A009EDB67 /* AVFAudio.framework */,
 				84937EFE28960789003148F4 /* zstd.1.framework */,
 				848308D4278A1F2200E3E474 /* Virtualization.framework */,
+				CE7A1C052EFA0A01001671E9 /* AccessoryAccess.framework */,
+				CE1D15AC2F6B100100D15C01 /* DiskImageKit.framework */,
 				8453DCB0278CE33E0037A0DA /* qemu-img.framework */,
 				CE5451A426AF5F0F008594E5 /* EGL.framework */,
 				CE5451A226AF5F0F008594E5 /* epoxy.0.framework */,
@@ -2747,6 +2899,7 @@
 				835AA7B026AB7C85007A0411 /* UTMPendingVirtualMachine.swift */,
 				CE611BE629F50CAD001817BC /* UTMReleaseHelper.swift */,
 				847BF9A92A49C783000BD9AA /* VMData.swift */,
+				16001E3BC682D8470EFCF312 /* VMSnapshotData.swift */,
 				CE550BD52259479D0063E575 /* Assets.xcassets */,
 				521F3EFB2414F73800130500 /* Localizable.strings */,
 				CED8DF7928A120C100C34345 /* Localizable.stringsdict */,
@@ -2782,6 +2935,7 @@
 				84A381A9268CB30C0048EE4D /* VMDrivesSettingsView.swift */,
 				CE928C3026ACCDEA0099F293 /* VMAppleRemovableDrivesView.swift */,
 				84C584E4268F8C65000FCABF /* VMAppleSettingsView.swift */,
+				CE7B3A102EA1B00000C0FFEE /* MultilineTextField.swift */,
 				845F1706289B5E2600944904 /* VMAppleSettingsAddDeviceMenuView.swift */,
 				846F8D572E3850620037162B /* VMKeyboardShortcutsView.swift */,
 				84C584E2268F8AE7000FCABF /* VMQEMUSettingsView.swift */,
@@ -2802,6 +2956,7 @@
 		CE2D954A24AD4F980059923A /* iOS */ = {
 			isa = PBXGroup;
 			children = (
+				FF2D14863C5CDE332BC8698C /* VMConfigQEMUArgumentsView.swift */,
 				CE7BED4D22600F5000A1E1B6 /* Display */,
 				CE8813D224CD230300532628 /* ActivityView.swift */,
 				CED814EE24C7EB760042F0F1 /* ImagePicker.swift */,
@@ -2862,6 +3017,7 @@
 				848A98B5286A142C006F0550 /* UTMAppleConfigurationSerial.swift */,
 				848A98B3286A1215006F0550 /* UTMAppleConfigurationVirtualization.swift */,
 				841619A5284315C1000034B2 /* UTMQemuConfiguration.swift */,
+				0F9CF0C724EB2633D0B87ACE /* UTMSnapshotManifest.swift */,
 				848D99C328670F650055C215 /* UTMQemuConfiguration+Arguments.swift */,
 				843BF82328441EAD0029D60D /* UTMQemuConfigurationDisplay.swift */,
 				8443EFF12845641600B2E6E2 /* UTMQemuConfigurationDrive.swift */,
@@ -2894,12 +3050,14 @@
 				CE9D18F72265410E00355E14 /* qemu */,
 				CE63B0F02F0ED67700C59D13 /* vulkan */,
 				CE6B240925F1F3CE0020D43E /* QEMULauncher */,
+				CEA3EDFB30168C6300AAA8E4 /* QEMURenderServer */,
 				CE9A352E26533A51005077CF /* JailbreakInterposer */,
 				CE9B153D2B11A4ED003A32DD /* Remote */,
 				CE4698F824C8FBD9008C1BD6 /* Icons */,
 				CEFE98DD2948518D007CB7A8 /* Scripting */,
 				84E3A8F1293DB37E0024A740 /* utmctl */,
 				CE88A0A12E23201100EAA28E /* Intents */,
+				84A57CC030641C9100BA5139 /* iOSHelper */,
 				CE550BCA225947990063E575 /* Products */,
 				CE2D63D622653C7300FC7E63 /* Frameworks */,
 			);
@@ -2917,6 +3075,9 @@
 				8401FD62269BE9C500265F0D /* QEMULauncher.app */,
 				84E3A8F0293DB37E0024A740 /* utmctl */,
 				CEF7F6D32AEEDCC400E34952 /* UTM Remote.app */,
+				CEA3EDFA30168B9000AAA8E4 /* QEMURenderServer.app */,
+				84A57CB130641C6800BA5139 /* iOSHelper.appex */,
+				84A57D0930641D0000BA5139 /* iOSHelper-SE.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -2941,6 +3102,10 @@
 				CE9D197A226542FE00355E14 /* UTMProcess.h */,
 				CE9D197B226542FE00355E14 /* UTMProcess.m */,
 				8453DCB3278CE5410037A0DA /* UTMQemuImage.swift */,
+				84A57D0C30641D0000BA5139 /* UTMHelperProcess.swift */,
+				EFC4D9A586DD424D85B2FA1C /* UTMSnapshotService.swift */,
+				F7335781A3EBC95B7BE01C90 /* UTMQemuSnapshotBackend.swift */,
+				DE6FCF9E7BD060AB81411ABC /* UTMSnapshotBackend.swift */,
 				84A0A8822A47D52E0038F329 /* UTMQemuPort.swift */,
 				CE03D05424D90BE000F76B84 /* UTMQemuSystem.h */,
 				CE03D05024D90B4E00F76B84 /* UTMQemuSystem.m */,
@@ -2954,8 +3119,13 @@
 				E2D64BE0241EAEBE0034E0C6 /* UTMSpiceIODelegate.h */,
 				845F95E22A57628400A016D7 /* UTMSWTPM.swift */,
 				CE68047D2E493D71001671E9 /* UTMUSBManager.swift */,
+				CE7A1C012EFA0A01001671E9 /* UTMAppleUSBDevice.swift */,
+				CE7A1C032EFA0A01001671E9 /* UTMAppleUSBManager.swift */,
+				CE1D15AA2F6B100100D15C01 /* UTMAppleDiskImage.swift */,
+				0CBB52BFA0D55FDEC6497878 /* UTMAppleSnapshotBackend.swift */,
 				CE020BB524B14F8400B44AB6 /* UTMVirtualMachine.swift */,
 				CE928C2926ABE6690099F293 /* UTMAppleVirtualMachine.swift */,
+				4F9F544E438D4BE8A5CA9360 /* UTMAppleVmnetNetworkManager.swift */,
 				841E999728AC817D003C6CB6 /* UTMQemuVirtualMachine.swift */,
 				CEF01DB12B6724A300725A0F /* UTMSpiceVirtualMachine.swift */,
 			);
@@ -3000,10 +3170,10 @@
 				CE056CA5242454100004B68A /* VMDisplayMetalViewController+Touch.m */,
 				5286EC8E2437488E007E6CBC /* VMDisplayMetalViewController+Gamepad.h */,
 				5286EC8F2437488E007E6CBC /* VMDisplayMetalViewController+Gamepad.m */,
-				CE061CE9289EB6250000351C /* VMDisplayMetalViewInputAccessory.xib */,
 				8401865D2887B1620050AC51 /* VMDisplayTerminalViewController.swift */,
-				CEEB66442284B942002737B2 /* VMKeyboardButton.h */,
-				CEEB66452284B942002737B2 /* VMKeyboardButton.m */,
+				DB38A22C8D69DB2D2C64107F /* VMKeyboardAccessoryView.swift */,
+				CEEB66452284B942002737B2 /* VMKeyboardButton.swift */,
+				6EB9E02516884021BE006A10 /* VMTouchpadView.swift */,
 				CE4507D0226A5BE200A28D22 /* VMKeyboardView.h */,
 				CE4507D1226A5BE200A28D22 /* VMKeyboardView.m */,
 				CE4507D3226A5C9900A28D22 /* VMKeyboardViewDelegate.h */,
@@ -3047,9 +3217,19 @@
 			path = Remote;
 			sourceTree = "<group>";
 		};
+		CEA3EDFB30168C6300AAA8E4 /* QEMURenderServer */ = {
+			isa = PBXGroup;
+			children = (
+				CEA3EDFD30168C9900AAA8E4 /* QEMURenderServer.entitlements */,
+				CEA3EE13301C15DD00AAA8E4 /* QEMURenderServer-unsigned.entitlements */,
+			);
+			path = QEMURenderServer;
+			sourceTree = "<group>";
+		};
 		CEB63A9624F47C1200CAF323 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				03AEFABA6F4DF195E96AD2D5 /* VMConfigQEMUCommandLineView.swift */,
 				CEF0304C26A2AFBE00667B63 /* BigButtonStyle.swift */,
 				84B36D2827B790BE00C22685 /* DestructiveButton.swift */,
 				8471772727CD3CAB00D3A50B /* DetailedSection.swift */,
@@ -3089,6 +3269,7 @@
 				8432328F28C2CDAD00CFBC97 /* VMNavigationListView.swift */,
 				CE2D954224AD4F980059923A /* VMPlaceholderView.swift */,
 				CE2D954524AD4F980059923A /* VMRemovableDrivesView.swift */,
+				B5BB911D9C7D6564198DAC87 /* VMSnapshotsView.swift */,
 				84C4D9012880CA8A00EC3B2B /* VMSettingsAddDeviceMenuView.swift */,
 				CE8813D424CD265700532628 /* VMShareFileModifier.swift */,
 				CE2D953824AD4F980059923A /* VMToolbarModifier.swift */,
@@ -3143,6 +3324,7 @@
 				CE59A7AF2AA69AE400E5FFBD /* UTMScriptingUSBDeviceImpl.swift */,
 				CEFE98E029485776007CB7A8 /* UTMScriptingVirtualMachineImpl.swift */,
 				CEC794B9294924E300121A9F /* UTMScriptingSerialPortImpl.swift */,
+				38E2C5FE357F6FEDAEA675CA /* UTMScriptingSnapshotImpl.swift */,
 				CE25124829BFDBA6000790AB /* UTMScriptingGuestFileImpl.swift */,
 				CE25124629BFDB87000790AB /* UTMScriptingGuestProcessImpl.swift */,
 				CE6804842E4E5D84001671E9 /* UTMScriptingInputImpl.swift */,
@@ -3187,6 +3369,44 @@
 			productReference = 8401FD62269BE9C500265F0D /* QEMULauncher.app */;
 			productType = "com.apple.product-type.application";
 		};
+		84A57CB030641C6800BA5139 /* iOSHelper */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 84A57CBD30641C6800BA5139 /* Build configuration list for PBXNativeTarget "iOSHelper" */;
+			buildPhases = (
+				84A57CAD30641C6800BA5139 /* Sources */,
+				84A57CAE30641C6800BA5139 /* Frameworks */,
+				84A57CAF30641C6800BA5139 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = iOSHelper;
+			packageProductDependencies = (
+			);
+			productName = iOSHelper;
+			productReference = 84A57CB130641C6800BA5139 /* iOSHelper.appex */;
+			productType = "com.apple.product-type.extensionkit-extension";
+		};
+		84A57D0130641D0000BA5139 /* iOSHelper-SE */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 84A57D0230641D0000BA5139 /* Build configuration list for PBXNativeTarget "iOSHelper-SE" */;
+			buildPhases = (
+				84A57D0530641D0000BA5139 /* Sources */,
+				84A57D0630641D0000BA5139 /* Frameworks */,
+				84A57D0730641D0000BA5139 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "iOSHelper-SE";
+			packageProductDependencies = (
+			);
+			productName = "iOSHelper-SE";
+			productReference = 84A57D0930641D0000BA5139 /* iOSHelper-SE.appex */;
+			productType = "com.apple.product-type.extensionkit-extension";
+		};
 		84E3A8EF293DB37E0024A740 /* utmctl */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 84E3A8F6293DB37E0024A740 /* Build configuration list for PBXNativeTarget "utmctl" */;
@@ -3216,11 +3436,13 @@
 				CE2D936924AD46670059923A /* Resources */,
 				CE59A7B12ABCC75F00E5FFBD /* Patch Settings bundle */,
 				CE2D937524AD46670059923A /* Embed Libraries */,
+				84A57CB930641C6800BA5139 /* Embed ExtensionKit Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 				CE9A353326533A52005077CF /* PBXTargetDependency */,
+				84A57CB730641C6800BA5139 /* PBXTargetDependency */,
 			);
 			name = iOS;
 			packageProductDependencies = (
@@ -3248,7 +3470,9 @@
 				CE2D951824AD48BE0059923A /* Sources */,
 				CE2D951924AD48BE0059923A /* Frameworks */,
 				CE2D951A24AD48BE0059923A /* Resources */,
+				CEB7C0A12F6A1E3000C4A1CE /* Restore Legacy App Icon */,
 				CE0B6E6D24AD66CE00FE012D /* Embed Libraries */,
+				CEA3EE0F301A5A4900AAA8E4 /* Embed D3DMetal */,
 				CEBDA1E924D8BDDB0010B5EC /* Embed XPC Services */,
 				84E3A8FA293DB70A0024A740 /* Embed CLI Tool */,
 			);
@@ -3293,6 +3517,21 @@
 			productReference = CE9A352D26533A51005077CF /* JailbreakInterposer.framework */;
 			productType = "com.apple.product-type.framework";
 		};
+		CEA3EDEF30168B9000AAA8E4 /* QEMURenderServer */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CEA3EDF730168B9000AAA8E4 /* Build configuration list for PBXNativeTarget "QEMURenderServer" */;
+			buildPhases = (
+				CEA3EE0130168DF000AAA8E4 /* Copy prebuilt binary */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = QEMURenderServer;
+			productName = QEMULauncher;
+			productReference = CEA3EDFA30168B9000AAA8E4 /* QEMURenderServer.app */;
+			productType = "com.apple.product-type.application";
+		};
 		CEA45E1F263519B5002FA97D /* iOS-SE */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = CEA45FB6263519B5002FA97D /* Build configuration list for PBXNativeTarget "iOS-SE" */;
@@ -3303,10 +3542,12 @@
 				CEA45F63263519B5002FA97D /* Resources */,
 				CE59A7B22ABCCB7C00E5FFBD /* Patch Settings bundle */,
 				CEA45F71263519B5002FA97D /* Embed Libraries */,
+				84A57CC630641CCE00BA5139 /* Embed ExtensionKit Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				84A57CC530641CCE00BA5139 /* PBXTargetDependency */,
 			);
 			name = "iOS-SE";
 			packageProductDependencies = (
@@ -3333,12 +3574,13 @@
 				CEBDA1D624D8BDDA0010B5EC /* Sources */,
 				CEBDA1D724D8BDDA0010B5EC /* Frameworks */,
 				CEBDA1D824D8BDDA0010B5EC /* Resources */,
-				CE6B241425F1F5630020D43E /* Embed Launcher */,
+				CE6B241425F1F5630020D43E /* Embed Executables */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 				8401FD7C269BECF200265F0D /* PBXTargetDependency */,
+				CEA3EE04301691C500AAA8E4 /* PBXTargetDependency */,
 			);
 			name = QEMUHelper;
 			productName = QEMUHelper;
@@ -3383,12 +3625,18 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
-				LastSwiftUpdateCheck = 1410;
+				LastSwiftUpdateCheck = 2700;
 				LastUpgradeCheck = 1500;
 				ORGANIZATIONNAME = "Turing Software, LLC";
 				TargetAttributes = {
 					8401FD61269BE9C500265F0D = {
 						CreatedOnToolsVersion = 12.4;
+					};
+					84A57CB030641C6800BA5139 = {
+						CreatedOnToolsVersion = 27.0;
+					};
+					84A57D0130641D0000BA5139 = {
+						CreatedOnToolsVersion = 27.0;
 					};
 					84E3A8EF293DB37E0024A740 = {
 						CreatedOnToolsVersion = 14.1;
@@ -3457,8 +3705,11 @@
 				CE2D951B24AD48BE0059923A /* macOS */,
 				CEBDA1D924D8BDDA0010B5EC /* QEMUHelper */,
 				8401FD61269BE9C500265F0D /* QEMULauncher */,
+				CEA3EDEF30168B9000AAA8E4 /* QEMURenderServer */,
 				CE9A352C26533A51005077CF /* JailbreakInterposer */,
 				84E3A8EF293DB37E0024A740 /* utmctl */,
+				84A57CB030641C6800BA5139 /* iOSHelper */,
+				84A57D0130641D0000BA5139 /* iOSHelper-SE */,
 			);
 		};
 /* End PBXProject section */
@@ -3473,6 +3724,20 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		84A57CAF30641C6800BA5139 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		84A57D0730641D0000BA5139 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		CE2D936924AD46670059923A /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -3483,7 +3748,6 @@
 				CE63B0F22F0ED67700C59D13 /* vulkan in Resources */,
 				CEC1B00B2BBB211C0088119D /* PrivacyInfo.xcprivacy in Resources */,
 				CE2D936C24AD46670059923A /* qemu in Resources */,
-				CE061CE6289EB6250000351C /* VMDisplayMetalViewInputAccessory.xib in Resources */,
 				CED8DF7528A120C100C34345 /* Localizable.stringsdict in Resources */,
 				CE2D937224AD46670059923A /* Settings.bundle in Resources */,
 				846F8D632E4072960037162B /* AppIcon.icon in Resources */,
@@ -3525,7 +3789,6 @@
 				CE63B0F32F0ED67700C59D13 /* vulkan in Resources */,
 				CEC1B00C2BBB211C0088119D /* PrivacyInfo.xcprivacy in Resources */,
 				CEA45F69263519B5002FA97D /* qemu in Resources */,
-				CE061CE7289EB6250000351C /* VMDisplayMetalViewInputAccessory.xib in Resources */,
 				CED8DF7628A120C100C34345 /* Localizable.stringsdict in Resources */,
 				CEA45F6D263519B5002FA97D /* Settings.bundle in Resources */,
 				846F8D622E4072960037162B /* AppIcon.icon in Resources */,
@@ -3551,7 +3814,6 @@
 				CEB5C1172B8C4CD4008AAE5C /* Info-RemotePlist.strings in Resources */,
 				CEF7F67B2AEEDCC400E34952 /* Localizable.strings in Resources */,
 				CEF7F67C2AEEDCC400E34952 /* qemu in Resources */,
-				CEF7F67D2AEEDCC400E34952 /* VMDisplayMetalViewInputAccessory.xib in Resources */,
 				CEF7F67E2AEEDCC400E34952 /* Localizable.stringsdict in Resources */,
 				CEF7F67F2AEEDCC400E34952 /* Settings.bundle in Resources */,
 				CEC1B00D2BBB211C0088119D /* PrivacyInfo.xcprivacy in Resources */,
@@ -3625,6 +3887,68 @@
 			shellScript = "#!/bin/sh\n\nPLISTBUDDY=/usr/libexec/PlistBuddy\nROOT_PLIST=\"$SCRIPT_OUTPUT_FILE_0\"\n\nCOUNT=$($PLISTBUDDY -c \"Print :PreferenceSpecifiers\" \"$ROOT_PLIST\" | grep -c '^    }$')\n\nfor ((i = 0; i < COUNT; i++)); do\n    remove=0\n    platform=$($PLISTBUDDY -c \"Print :PreferenceSpecifiers:$i:Platform\" \"$ROOT_PLIST\" 2> /dev/null)\n    if [ ! -z \"$platform\" ]; then\n        if [ \"$platform\" == \"$PLATFORM_FAMILY_NAME\" ]; then\n            echo \"Found entry $i for $platform\"\n            $PLISTBUDDY -c \"Delete :PreferenceSpecifiers:$i:Platform\" \"$ROOT_PLIST\"\n        else\n            echo \"Exclude $i due to Platform\"\n            remove=1\n        fi\n    fi\n    excludetargets=$($PLISTBUDDY -c \"Print :PreferenceSpecifiers:$i:ExcludeTargets\" \"$ROOT_PLIST\" 2> /dev/null | sed '1d;$d' | xargs)\n    if [ ! -z \"$excludetargets\" ]; then\n        found=0\n        for target in $excludetargets; do\n            if [ \"$target\" == \"$TARGET_NAME\" ]; then\n                found=1\n            fi\n        done\n        if [ $found -eq 1 ]; then\n            echo \"Exclude $i due to ExcludeTargets\"\n            remove=1\n        else\n            echo \"Found entry $i for ExcludeTargets\"\n            $PLISTBUDDY -c \"Delete :PreferenceSpecifiers:$i:ExcludeTargets\" \"$ROOT_PLIST\"\n        fi\n    fi\n    if [ $remove -eq 1 ]; then\n        echo \"Removing entry $i\"\n        $PLISTBUDDY -c \"Delete :PreferenceSpecifiers:$i\" \"$ROOT_PLIST\"\n        ((COUNT--))\n        ((i--))\n    fi\ndone\n";
 			showEnvVarsInLog = 0;
 		};
+		CEA3EE0130168DF000AAA8E4 /* Copy prebuilt binary */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(PROJECT_DIR)/$(SYSROOT_DIR)/libexec/virgl_render_server",
+			);
+			name = "Copy prebuilt binary";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(TARGET_BUILD_DIR)/$(EXECUTABLE_PATH)",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e\n\nSRC=\"${PROJECT_DIR}/${SYSROOT_DIR}/libexec/virgl_render_server\"\nDST=\"${TARGET_BUILD_DIR}/${EXECUTABLE_PATH}\"\nTMP=\"${TARGET_TEMP_DIR}/${EXECUTABLE_NAME}\"\n\nif [ ! -f \"${SRC}\" ]; then\n    echo \"error: prebuilt binary not found at ${SRC}\" >&2\n    exit 1\nfi\n\n# install_name_tool writes a temporary file next to the binary it patches,\n# which the script sandbox disallows inside the product, so patch it here.\nrm -f \"${TMP}\"\ncp -X \"${SRC}\" \"${TMP}\"\nxattr -c \"${TMP}\"\nchmod +x \"${TMP}\"\n\n# The prebuilt binary has no LC_RPATH but links against\n# @rpath/vulkan.1.framework, so add the load paths this target declares.\nfor RPATH in ${LD_RUNPATH_SEARCH_PATHS}; do\n    install_name_tool -add_rpath \"${RPATH}\" \"${TMP}\"\ndone\n\nmkdir -p \"$(dirname \"${DST}\")\"\nrm -f \"${DST}\"\ncp -X \"${TMP}\" \"${DST}\"\n";
+		};
+		CEA3EE0F301A5A4900AAA8E4 /* Embed D3DMetal */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(PROJECT_DIR)/$(SYSROOT_DIR)/Frameworks/D3DMetal.framework",
+			);
+			name = "Embed D3DMetal";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(TARGET_BUILD_DIR)/$(FRAMEWORKS_FOLDER_PATH)/D3DMetal.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e\n\nSRC=\"${PROJECT_DIR}/${SYSROOT_DIR}/Frameworks/D3DMetal.framework\"\nDST=\"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/D3DMetal.framework\"\n\nif [ ! -d \"${SRC}\" ]; then\n    echo \"note: D3DMetal.framework not found in ${SYSROOT_DIR}, skipping\"\n    rm -rf \"${DST}\"\n    exit 0\nfi\n\n# Extended attributes on the input would make codesign refuse the bundle.\nmkdir -p \"$(dirname \"${DST}\")\"\nrm -rf \"${DST}\"\nditto --norsrc --noextattr --noqtn \"${SRC}\" \"${DST}\"\n\nif [ \"${CODE_SIGNING_ALLOWED}\" != \"NO\" ] && [ -n \"${EXPANDED_CODE_SIGN_IDENTITY}\" ]; then\n    if [ \"${ENABLE_HARDENED_RUNTIME}\" = \"YES\" ]; then\n        RUNTIME_FLAGS=\"--options runtime\"\n    fi\n    codesign --force --sign \"${EXPANDED_CODE_SIGN_IDENTITY}\" ${RUNTIME_FLAGS} ${OTHER_CODE_SIGN_FLAGS} \"${DST}\"\nfi\n";
+		};
+		CEB7C0A12F6A1E3000C4A1CE /* Restore Legacy App Icon */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/scripts/carmerge.m",
+				"$(TARGET_BUILD_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/Assets.car",
+			);
+			name = "Restore Legacy App Icon";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/LegacyAppIcon.stamp",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e\n\n# Since Xcode 26.1, actool ignores an .appiconset that shares its name with an .icon\n# and renders the icon for older macOS versions from the .icon instead. Older macOS\n# versions read the icon from Assets.car (not AppIcon.icns), so we compile the\n# .appiconset on its own and merge its renditions into the built Assets.car.\n\nICON_NAME=\"${ASSETCATALOG_COMPILER_APPICON_NAME}\"\nAPPICONSET=\"${SRCROOT}/Platform/Assets.xcassets/${ICON_NAME}.appiconset\"\nASSETS_CAR=\"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Assets.car\"\nWORK_DIR=\"${DERIVED_FILE_DIR}/LegacyAppIcon\"\nCARMERGE=\"${WORK_DIR}/carmerge\"\n\nrm -rf \"${WORK_DIR}\"\nmkdir -p \"${WORK_DIR}/Assets.xcassets\" \"${WORK_DIR}/Output\"\n\n# build tools run with the target's environment, so reset it for the host\nenv -u ARCHS -u SDKROOT -u MACOSX_DEPLOYMENT_TARGET \\\n    xcrun --sdk macosx clang -fobjc-arc -framework Foundation -framework CoreGraphics \\\n    -o \"${CARMERGE}\" \"${SRCROOT}/scripts/carmerge.m\"\n\ncp -R \"${APPICONSET}\" \"${WORK_DIR}/Assets.xcassets/\"\necho '{ \"info\" : { \"author\" : \"xcode\", \"version\" : 1 } }' > \"${WORK_DIR}/Assets.xcassets/Contents.json\"\n\nxcrun actool \\\n    --compile \"${WORK_DIR}/Output\" \\\n    --platform macosx \\\n    --minimum-deployment-target \"${MACOSX_DEPLOYMENT_TARGET}\" \\\n    --target-device mac \\\n    --app-icon \"${ICON_NAME}\" \\\n    --output-partial-info-plist \"${WORK_DIR}/Info.plist\" \\\n    --output-format human-readable-text \\\n    --errors --warnings \\\n    \"${WORK_DIR}/Assets.xcassets\"\n\n\"${CARMERGE}\" \"${ASSETS_CAR}\" \"${WORK_DIR}/Output/Assets.car\" \"${ICON_NAME}\"\ntouch \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
 		CEF7F6812AEEDCC400E34952 /* Patch Settings bundle */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -3658,6 +3982,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		84A57CAD30641C6800BA5139 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				84A57CC230641C9100BA5139 /* iOSHelper.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		84A57D0530641D0000BA5139 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				84A57D0830641D0000BA5139 /* iOSHelper.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		84E3A8EC293DB37E0024A740 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -3671,14 +4011,19 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7591FABAADBC2544E9F0F37B /* VMConfigQEMUCommandLineView.swift in Sources */,
+				7EFF134EA0581C7A4CBBBAF5 /* VMConfigQEMUArgumentsView.swift in Sources */,
+				84A57D0D30641D0000BA5139 /* UTMHelperProcess.swift in Sources */,
 				CE2D926A24AD46670059923A /* VMDisplayMetalViewController+Pointer.h in Sources */,
 				CE231D462BDDFD03006D6DC3 /* UTMDonateStore.swift in Sources */,
 				84C4D9022880CA8A00EC3B2B /* VMSettingsAddDeviceMenuView.swift in Sources */,
 				CE2D956F24AD4F990059923A /* VMRemovableDrivesView.swift in Sources */,
+				F3B87AB8E7FA8B9648FC0EAD /* VMSnapshotsView.swift in Sources */,
 				8443EFF22845641600B2E6E2 /* UTMQemuConfigurationDrive.swift in Sources */,
 				8443EFFA28456F3B00B2E6E2 /* UTMQemuConfigurationSharing.swift in Sources */,
 				CE772AAC25C8B0F600E4E379 /* ContentView.swift in Sources */,
 				847BF9AA2A49C783000BD9AA /* VMData.swift in Sources */,
+				29B2D623BB879D2653CA8C53 /* VMSnapshotData.swift in Sources */,
 				CE2D927A24AD46670059923A /* UTMLegacyQemuConfiguration+System.m in Sources */,
 				843BF8302844853E0029D60D /* UTMQemuConfigurationNetwork.swift in Sources */,
 				CE2D927C24AD46670059923A /* UTMProcess.m in Sources */,
@@ -3766,6 +4111,10 @@
 				CE2D92D724AD46670059923A /* UTMLogging.m in Sources */,
 				848D99A8285DB5550055C215 /* VMConfigConstantPicker.swift in Sources */,
 				8453DCB4278CE5410037A0DA /* UTMQemuImage.swift in Sources */,
+				393A92DAE84A47029BA5F829 /* UTMSnapshotService.swift in Sources */,
+				738DDF2A88F46375A0D72177 /* UTMQemuSnapshotBackend.swift in Sources */,
+				EFAB3C24B8C39BC85EEFE028 /* UTMSnapshotBackend.swift in Sources */,
+				AFC3FBE9C92083C52D800437 /* UTMSnapshotManifest.swift in Sources */,
 				CE2D955924AD4F980059923A /* VMToolbarModifier.swift in Sources */,
 				CE2D92DA24AD46670059923A /* VMCursor.m in Sources */,
 				CE9375A124BBDDD10074066F /* VMConfigDriveDetailsView.swift in Sources */,
@@ -3784,7 +4133,9 @@
 				84C60FBA268269D700B58C00 /* VMDisplayViewController.swift in Sources */,
 				CEF0306A26A2AFDF00667B63 /* VMWizardStartView.swift in Sources */,
 				843BF82828441FAF0029D60D /* QEMUConstantGenerated.swift in Sources */,
-				CE2D92F224AD46670059923A /* VMKeyboardButton.m in Sources */,
+				FD2E48FCF9EC5A44E0A35855 /* VMKeyboardAccessoryView.swift in Sources */,
+				CE2D92F224AD46670059923A /* VMKeyboardButton.swift in Sources */,
+				F2C573FB05F34EC584B58E73 /* VMTouchpadView.swift in Sources */,
 				84B36D2527B704C200C22685 /* UTMDownloadVMTask.swift in Sources */,
 				8432329828C3017F00CFBC97 /* GlobalFileImporter.swift in Sources */,
 				CE68E5442E3912E0006B3645 /* VMKeyboardShortcutsView.swift in Sources */,
@@ -3846,6 +4197,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				947DDF020475E2433DDC2A21 /* VMConfigQEMUCommandLineView.swift in Sources */,
+				A1C4F00230C1200000CA9501 /* CapsLockRemapper.swift in Sources */,
 				CEE06B272B2FC89400A811AE /* UTMServerView.swift in Sources */,
 				CEB63A7724F4654400CAF323 /* Main.swift in Sources */,
 				84E3A91B2946D2590024A740 /* UTMMenuBarExtraScene.swift in Sources */,
@@ -3896,6 +4249,7 @@
 				CE9375A224BBDDD10074066F /* VMConfigDriveDetailsView.swift in Sources */,
 				CE2D955824AD4F980059923A /* VMConfigDisplayView.swift in Sources */,
 				CEC794BA294924E300121A9F /* UTMScriptingSerialPortImpl.swift in Sources */,
+				FC6D2EA0328DA5CD033B9518 /* UTMScriptingSnapshotImpl.swift in Sources */,
 				CE03D05324D90B4E00F76B84 /* UTMQemuSystem.m in Sources */,
 				CE88A1602E24B2B400EAA28E /* UTMInputIntent.swift in Sources */,
 				841619B82843226B000034B2 /* QEMUConstant.swift in Sources */,
@@ -3959,10 +4313,12 @@
 				CEF0300826A25A6900667B63 /* VMWizardView.swift in Sources */,
 				CE88A15A2E247D0100EAA28E /* UTMActionIntent.swift in Sources */,
 				CE928C2A26ABE6690099F293 /* UTMAppleVirtualMachine.swift in Sources */,
+				5A3966538C7644CE9E598CFE /* UTMAppleVmnetNetworkManager.swift in Sources */,
 				CE0B6CF524AD568400FE012D /* UTMLegacyQemuConfiguration+Miscellaneous.m in Sources */,
 				CE25125129C806AF000790AB /* UTMScriptingDeleteCommand.swift in Sources */,
 				CE0B6CFB24AD568400FE012D /* UTMLegacyQemuConfiguration+Networking.m in Sources */,
 				84C584E5268F8C65000FCABF /* VMAppleSettingsView.swift in Sources */,
+				CE7B3A112EA1B00000C0FFEE /* MultilineTextField.swift in Sources */,
 				CE9B15442B11A74E003A32DD /* UTMRemoteKeyManager.swift in Sources */,
 				84F746BB276FF70700A20C87 /* VMDisplayQemuDisplayController.swift in Sources */,
 				CE772AB425C8B7B500E4E379 /* VMCommands.swift in Sources */,
@@ -3999,6 +4355,7 @@
 				CEFE96772B69A7CC000F00C9 /* VMRemoteSessionState.swift in Sources */,
 				CEEF26A72CEDAEEA003F7B8C /* UTMDownloadMacSupportToolsTask.swift in Sources */,
 				CE2D957024AD4F990059923A /* VMRemovableDrivesView.swift in Sources */,
+				D38CFF45AB0566027A30677F /* VMSnapshotsView.swift in Sources */,
 				CE25124B29BFE273000790AB /* UTMScriptable.swift in Sources */,
 				CE0B6CFE24AD56AE00FE012D /* UTMLogging.m in Sources */,
 				843BF82E284482C10029D60D /* UTMQemuConfigurationInput.swift in Sources */,
@@ -4008,6 +4365,10 @@
 				848A98B6286A142C006F0550 /* UTMAppleConfigurationSerial.swift in Sources */,
 				CE2D956224AD4F990059923A /* VMSettingsView.swift in Sources */,
 				8453DCB6278CE5410037A0DA /* UTMQemuImage.swift in Sources */,
+				FA897DF5FDA34A4F8F6782AD /* UTMSnapshotService.swift in Sources */,
+				63353664DA55B4F6AC8BD07B /* UTMQemuSnapshotBackend.swift in Sources */,
+				6E14FA50A12736E32EA02200 /* UTMSnapshotBackend.swift in Sources */,
+				E1B70310A596175A0E9F3025 /* UTMSnapshotManifest.swift in Sources */,
 				CEDF83FA258AE24E0030E4AC /* UTMPasteboard.swift in Sources */,
 				848F71EE277A2F47006A0240 /* UTMSerialPortDelegate.swift in Sources */,
 				848A98BA286A17A8006F0550 /* UTMAppleConfigurationNetwork.swift in Sources */,
@@ -4026,12 +4387,17 @@
 				841E997728AA1191003C6CB6 /* UTMRegistry.swift in Sources */,
 				841E997B28AA119B003C6CB6 /* UTMRegistryEntry.swift in Sources */,
 				CE2D956424AD4F990059923A /* VMConfigNetworkPortForwardView.swift in Sources */,
+				CE5A7E112E9F4A1100C0FFEE /* VMDisplayWindow.swift in Sources */,
 				CE612AC624D3B50700FA6300 /* VMDisplayWindowController.swift in Sources */,
 				53A0BDD726D79FE40010EDC5 /* SavePanel.swift in Sources */,
 				843BF82A28441FAF0029D60D /* QEMUConstantGenerated.swift in Sources */,
 				848A98B4286A1215006F0550 /* UTMAppleConfigurationVirtualization.swift in Sources */,
 				843BF842284555E70029D60D /* UTMQemuConfigurationPortForward.swift in Sources */,
 				CE6804802E493D71001671E9 /* UTMUSBManager.swift in Sources */,
+				CE7A1C022EFA0A01001671E9 /* UTMAppleUSBDevice.swift in Sources */,
+				CE7A1C042EFA0A01001671E9 /* UTMAppleUSBManager.swift in Sources */,
+				CE1D15AB2F6B100100D15C01 /* UTMAppleDiskImage.swift in Sources */,
+				1C5910D866A20395225768B9 /* UTMAppleSnapshotBackend.swift in Sources */,
 				CEF0306F26A2AFDF00667B63 /* VMWizardOSView.swift in Sources */,
 				83034C0926AB630F006B4BAF /* UTMPendingVMView.swift in Sources */,
 				84909A8F27CACD5C005605F1 /* UTMPlaceholderVMView.swift in Sources */,
@@ -4041,6 +4407,7 @@
 				CE9B153F2B11A63E003A32DD /* UTMRemoteServer.swift in Sources */,
 				846F8D5A2E3891FE0037162B /* UTMKeyboardShortcuts.swift in Sources */,
 				847BF9AC2A49C783000BD9AA /* VMData.swift in Sources */,
+				A5A9A26C444286951EC315D9 /* VMSnapshotData.swift in Sources */,
 				CE25124729BFDB87000790AB /* UTMScriptingGuestProcessImpl.swift in Sources */,
 				CE2D958824AD4F990059923A /* VMConfigPortForwardForm.swift in Sources */,
 				03FA9C752B9BBDB000C53A5A /* UTMConfigurationHostNetwork.swift in Sources */,
@@ -4063,9 +4430,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				31D9CB9DD8370CF0CCCDE85C /* VMConfigQEMUCommandLineView.swift in Sources */,
+				B56B01FE103C463CC3F84753 /* VMConfigQEMUArgumentsView.swift in Sources */,
+				84A57D0E30641D0000BA5139 /* UTMHelperProcess.swift in Sources */,
 				CEA45E25263519B5002FA97D /* VMDisplayMetalViewController+Pointer.h in Sources */,
 				84C505AD28C588EC007CE8FF /* SizeTextField.swift in Sources */,
 				CEA45E27263519B5002FA97D /* VMRemovableDrivesView.swift in Sources */,
+				E427638537FF5935C6DCAF11 /* VMSnapshotsView.swift in Sources */,
 				CEF0306E26A2AFDF00667B63 /* VMWizardOSView.swift in Sources */,
 				CE231D432BDDF280006D6DC3 /* UTMDonateView.swift in Sources */,
 				CE65BABF26A4D8DD0001BD6B /* VMConfigDisplayConsoleView.swift in Sources */,
@@ -4145,6 +4516,10 @@
 				CEA45E94263519B5002FA97D /* UTMLegacyQemuConfiguration+Drives.m in Sources */,
 				848A98C5286F332D006F0550 /* UTMConfiguration.swift in Sources */,
 				8453DCB5278CE5410037A0DA /* UTMQemuImage.swift in Sources */,
+				41FCD5A63CB34D7F8E20F687 /* UTMSnapshotService.swift in Sources */,
+				8F8F6CA6377BBED5737019BB /* UTMQemuSnapshotBackend.swift in Sources */,
+				12618B76026270B5C1C8CD29 /* UTMSnapshotBackend.swift in Sources */,
+				BCB19D49AC1352354193ACB6 /* UTMSnapshotManifest.swift in Sources */,
 				84C60FBB268269D700B58C00 /* VMDisplayViewController.swift in Sources */,
 				8443EFFB28456F3B00B2E6E2 /* UTMQemuConfigurationSharing.swift in Sources */,
 				848D99BD28636AC90055C215 /* UTMConfigurationDrive.swift in Sources */,
@@ -4188,7 +4563,9 @@
 				CEF01DB82B674BF000725A0F /* UTMPipeInterface.swift in Sources */,
 				CEF0307226A2B04400667B63 /* VMWizardView.swift in Sources */,
 				83034C0826AB630F006B4BAF /* UTMPendingVMView.swift in Sources */,
-				CEA45ED8263519B5002FA97D /* VMKeyboardButton.m in Sources */,
+				9DFF2F0A05DA5A4B5FA35917 /* VMKeyboardAccessoryView.swift in Sources */,
+				CEA45ED8263519B5002FA97D /* VMKeyboardButton.swift in Sources */,
+				106D3764B55E45AC93C0EB34 /* VMTouchpadView.swift in Sources */,
 				CEF0307526A2B40B00667B63 /* VMWizardHardwareView.swift in Sources */,
 				CE8011212AD4E9E8009001C2 /* UTMApp.swift in Sources */,
 				CE611BEC29F50D3E001817BC /* VMReleaseNotesView.swift in Sources */,
@@ -4202,6 +4579,7 @@
 				CEF0304F26A2AFBF00667B63 /* BigButtonStyle.swift in Sources */,
 				84018691288A73300050AC51 /* VMDisplayViewController.m in Sources */,
 				847BF9AB2A49C783000BD9AA /* VMData.swift in Sources */,
+				10488F379FF913D2E7770E60 /* VMSnapshotData.swift in Sources */,
 				84909A8E27CACD5C005605F1 /* UTMPlaceholderVMView.swift in Sources */,
 				CEA45EF4263519B5002FA97D /* VMConfigSoundView.swift in Sources */,
 				8432329928C3017F00CFBC97 /* GlobalFileImporter.swift in Sources */,
@@ -4245,6 +4623,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5324DE20FD9339463499B17C /* VMConfigQEMUCommandLineView.swift in Sources */,
+				E75442DAFC2ED7AF55CC87CA /* VMConfigQEMUArgumentsView.swift in Sources */,
 				CEF7F5972AEEDCC400E34952 /* VMDisplayMetalViewController+Pointer.h in Sources */,
 				CEF7F5982AEEDCC400E34952 /* VMSettingsAddDeviceMenuView.swift in Sources */,
 				CEF7F5992AEEDCC400E34952 /* VMRemovableDrivesView.swift in Sources */,
@@ -4354,7 +4734,9 @@
 				CEF7F5FB2AEEDCC400E34952 /* VMDisplayViewController.swift in Sources */,
 				CEF7F5FC2AEEDCC400E34952 /* VMWizardStartView.swift in Sources */,
 				CEF7F5FD2AEEDCC400E34952 /* QEMUConstantGenerated.swift in Sources */,
-				CEF7F5FE2AEEDCC400E34952 /* VMKeyboardButton.m in Sources */,
+				2A3EFF2D980175F4D531E0E3 /* VMKeyboardAccessoryView.swift in Sources */,
+				CEF7F5FE2AEEDCC400E34952 /* VMKeyboardButton.swift in Sources */,
+				E1376DB5705C4E9389EC6326 /* VMTouchpadView.swift in Sources */,
 				CEF7F5FF2AEEDCC400E34952 /* UTMDownloadVMTask.swift in Sources */,
 				CEF7F6002AEEDCC400E34952 /* GlobalFileImporter.swift in Sources */,
 				CEF7F6022AEEDCC400E34952 /* VMWizardContent.swift in Sources */,
@@ -4407,6 +4789,18 @@
 			target = 8401FD61269BE9C500265F0D /* QEMULauncher */;
 			targetProxy = 8401FD7B269BECF200265F0D /* PBXContainerItemProxy */;
 		};
+		84A57CB730641C6800BA5139 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			platformFilter = ios;
+			target = 84A57CB030641C6800BA5139 /* iOSHelper */;
+			targetProxy = 84A57CB630641C6800BA5139 /* PBXContainerItemProxy */;
+		};
+		84A57CC530641CCE00BA5139 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			platformFilter = ios;
+			target = 84A57D0130641D0000BA5139 /* iOSHelper-SE */;
+			targetProxy = 84A57CC430641CCE00BA5139 /* PBXContainerItemProxy */;
+		};
 		84E3A8FD293DB7720024A740 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 84E3A8EF293DB37E0024A740 /* utmctl */;
@@ -4425,6 +4819,11 @@
 			platformFilter = ios;
 			target = CE9A352C26533A51005077CF /* JailbreakInterposer */;
 			targetProxy = CE9A353226533A52005077CF /* PBXContainerItemProxy */;
+		};
+		CEA3EE04301691C500AAA8E4 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = CEA3EDEF30168B9000AAA8E4 /* QEMURenderServer */;
+			targetProxy = CEA3EE03301691C500AAA8E4 /* PBXContainerItemProxy */;
 		};
 		CEBDA1E424D8BDDB0010B5EC /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -4484,24 +4883,6 @@
 				E5F4A2662D4E700300662468 /* ko */,
 			);
 			name = VMDisplayWindow.xib;
-			sourceTree = "<group>";
-		};
-		CE061CE9289EB6250000351C /* VMDisplayMetalViewInputAccessory.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				CE061CE8289EB6250000351C /* Base */,
-				CE061CEB289EB62E0000351C /* ja */,
-				5A17469E28BA9C4300278241 /* fi */,
-				E68D491B28AC018600D34C54 /* es-419 */,
-				83FE63B628F617CD0047FFEF /* de */,
-				CEB54C11293009C5000D2AA9 /* pl */,
-				84E3A8EB293349370024A740 /* fr */,
-				FF0307572A84E3B70049979B /* zh-Hant */,
-				F6DA2DA52AAFED5F0070DCD1 /* zh-HK */,
-				F6DA2DAE2AAFEE060070DCD1 /* zh-Hans */,
-				E5F4A26D2D4E749100662468 /* ko */,
-			);
-			name = VMDisplayMetalViewInputAccessory.xib;
 			sourceTree = "<group>";
 		};
 		CEB5C1192B8C4CD4008AAE5C /* Info-RemotePlist.strings */ = {
@@ -4633,7 +5014,6 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = "$(LAUNCHER_CODE_SIGN_ENTITLEMENTS)";
 				CODE_SIGN_IDENTITY = "$(CODE_SIGN_IDENTITY_MAC:default=-)";
-				CODE_SIGN_INJECT_BASE_ENTITLEMENTS = NO;
 				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -4655,7 +5035,6 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = "$(LAUNCHER_CODE_SIGN_ENTITLEMENTS)";
 				CODE_SIGN_IDENTITY = "$(CODE_SIGN_IDENTITY_MAC:default=-)";
-				CODE_SIGN_INJECT_BASE_ENTITLEMENTS = NO;
 				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -4669,6 +5048,158 @@
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = macosx;
 				SWIFT_EMIT_LOC_STRINGS = YES;
+			};
+			name = Release;
+		};
+		84A57CBA30641C6800BA5139 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CODE_SIGN_IDENTITY = "$(CODE_SIGN_IDENTITY_IOS:default=Apple Development)";
+				CODE_SIGN_STYLE = "$(CODE_SIGN_STYLE_IOS:default=)";
+				EX_ENABLE_EXTENSION_POINT_GENERATION = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = iOSHelper;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 Turing Software, LLC. All rights reserved.";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "$(UTM_HOST_BUNDLE_IDENTIFIER).iOSHelper";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "$(PROVISIONING_PROFILE_SPECIFIER_IOS_HELPER:default=)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator xros xrsimulator";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "iOSHelper/iOSHelper-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,7";
+				UTM_HOST_BUNDLE_IDENTIFIER = "$(PRODUCT_BUNDLE_PREFIX:default=com.utmapp).UTM";
+				XROS_DEPLOYMENT_TARGET = 26.0;
+			};
+			name = Debug;
+		};
+		84A57CBB30641C6800BA5139 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CODE_SIGN_IDENTITY = "$(CODE_SIGN_IDENTITY_IOS:default=Apple Development)";
+				CODE_SIGN_STYLE = "$(CODE_SIGN_STYLE_IOS:default=)";
+				EX_ENABLE_EXTENSION_POINT_GENERATION = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = iOSHelper;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 Turing Software, LLC. All rights reserved.";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "$(UTM_HOST_BUNDLE_IDENTIFIER).iOSHelper";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "$(PROVISIONING_PROFILE_SPECIFIER_IOS_HELPER:default=)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator xros xrsimulator";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "iOSHelper/iOSHelper-Bridging-Header.h";
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,7";
+				UTM_HOST_BUNDLE_IDENTIFIER = "$(PRODUCT_BUNDLE_PREFIX:default=com.utmapp).UTM";
+				XROS_DEPLOYMENT_TARGET = 26.0;
+			};
+			name = Release;
+		};
+		84A57D0330641D0000BA5139 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CODE_SIGN_IDENTITY = "$(CODE_SIGN_IDENTITY_IOS:default=Apple Development)";
+				CODE_SIGN_STYLE = "$(CODE_SIGN_STYLE_IOS:default=)";
+				EX_ENABLE_EXTENSION_POINT_GENERATION = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = iOSHelper;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 Turing Software, LLC. All rights reserved.";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "$(UTM_HOST_BUNDLE_IDENTIFIER).iOSHelper";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "$(PROVISIONING_PROFILE_SPECIFIER_SE_HELPER:default=)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator xros xrsimulator";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "iOSHelper/iOSHelper-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,7";
+				UTM_HOST_BUNDLE_IDENTIFIER = "$(PRODUCT_BUNDLE_PREFIX:default=com.utmapp).UTM-SE";
+				XROS_DEPLOYMENT_TARGET = 26.0;
+			};
+			name = Debug;
+		};
+		84A57D0430641D0000BA5139 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CODE_SIGN_IDENTITY = "$(CODE_SIGN_IDENTITY_IOS:default=Apple Development)";
+				CODE_SIGN_STYLE = "$(CODE_SIGN_STYLE_IOS:default=)";
+				EX_ENABLE_EXTENSION_POINT_GENERATION = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = iOSHelper;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 Turing Software, LLC. All rights reserved.";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "$(UTM_HOST_BUNDLE_IDENTIFIER).iOSHelper";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "$(PROVISIONING_PROFILE_SPECIFIER_SE_HELPER:default=)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator xros xrsimulator";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "iOSHelper/iOSHelper-Bridging-Header.h";
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,7";
+				UTM_HOST_BUNDLE_IDENTIFIER = "$(PRODUCT_BUNDLE_PREFIX:default=com.utmapp).UTM-SE";
+				XROS_DEPLOYMENT_TARGET = 26.0;
 			};
 			name = Release;
 		};
@@ -4722,6 +5253,7 @@
 				CODE_SIGN_STYLE = "$(CODE_SIGN_STYLE_IOS:default=)";
 				ENABLE_BITCODE = NO;
 				ENABLE_PREVIEWS = YES;
+				EX_ENABLE_EXTENSION_POINT_GENERATION = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"WITH_JIT=1",
 					"WITH_SOLO_VM=1",
@@ -4760,6 +5292,7 @@
 				CODE_SIGN_STYLE = "$(CODE_SIGN_STYLE_IOS:default=)";
 				ENABLE_BITCODE = NO;
 				ENABLE_PREVIEWS = YES;
+				EX_ENABLE_EXTENSION_POINT_GENERATION = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"WITH_JIT=1",
 					"WITH_SOLO_VM=1",
@@ -4798,6 +5331,7 @@
 				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"WITH_JIT=1",
 					"WITH_SERVER=1",
@@ -4832,6 +5366,7 @@
 				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"WITH_JIT=1",
 					"WITH_SERVER=1",
@@ -4863,7 +5398,6 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
-				ASSETCATALOG_OTHER_FLAGS = "--enable-icon-stack-fallback-generation=disabled";
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -4925,13 +5459,13 @@
 					"$(PROJECT_DIR)/$(QUOTED_SYSROOT_DIR)/include/spice-1",
 					"$(PROJECT_DIR)/$(QUOTED_SYSROOT_DIR)/include/libusb-1.0",
 				);
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(PROJECT_DIR)/$(QUOTED_SYSROOT_DIR)/lib",
 					"$(PROJECT_DIR)/$(QUOTED_SYSROOT_DIR)/lib/gstreamer-1.0",
 					"$(PROJECT_DIR)/$(QUOTED_SYSROOT_DIR)/lib",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 11.3;
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -4952,7 +5486,6 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
-				ASSETCATALOG_OTHER_FLAGS = "--enable-icon-stack-fallback-generation=disabled";
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -5008,13 +5541,13 @@
 					"$(PROJECT_DIR)/$(QUOTED_SYSROOT_DIR)/include/spice-1",
 					"$(PROJECT_DIR)/$(QUOTED_SYSROOT_DIR)/include/libusb-1.0",
 				);
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(PROJECT_DIR)/$(QUOTED_SYSROOT_DIR)/lib",
 					"$(PROJECT_DIR)/$(QUOTED_SYSROOT_DIR)/lib/gstreamer-1.0",
 					"$(PROJECT_DIR)/$(QUOTED_SYSROOT_DIR)/lib",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 11.3;
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				QUOTED_SYSROOT_DIR = "\"$(SYSROOT_DIR)\"";
@@ -5080,6 +5613,46 @@
 			};
 			name = Release;
 		};
+		CEA3EDF830168B9000AAA8E4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = "$(RENDERER_CODE_SIGN_ENTITLEMENTS)";
+				CODE_SIGN_IDENTITY = "$(CODE_SIGN_IDENTITY_MAC:default=-)";
+				CODE_SIGN_STYLE = Manual;
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../../../../../../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "$(PRODUCT_BUNDLE_PREFIX:default=com.utmapp).QEMURenderServer";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = macosx;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+			};
+			name = Debug;
+		};
+		CEA3EDF930168B9000AAA8E4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = "$(RENDERER_CODE_SIGN_ENTITLEMENTS)";
+				CODE_SIGN_IDENTITY = "$(CODE_SIGN_IDENTITY_MAC:default=-)";
+				CODE_SIGN_STYLE = Manual;
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../../../../../../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "$(PRODUCT_BUNDLE_PREFIX:default=com.utmapp).QEMURenderServer";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = macosx;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+			};
+			name = Release;
+		};
 		CEA45FB7263519B5002FA97D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -5092,6 +5665,7 @@
 				CODE_SIGN_STYLE = "$(CODE_SIGN_STYLE_IOS:default=)";
 				ENABLE_BITCODE = NO;
 				ENABLE_PREVIEWS = YES;
+				EX_ENABLE_EXTENSION_POINT_GENERATION = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"WITH_QEMU_TCI=1",
 					"WITH_SOLO_VM=1",
@@ -5131,6 +5705,7 @@
 				CODE_SIGN_STYLE = "$(CODE_SIGN_STYLE_IOS:default=)";
 				ENABLE_BITCODE = NO;
 				ENABLE_PREVIEWS = YES;
+				EX_ENABLE_EXTENSION_POINT_GENERATION = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"WITH_QEMU_TCI=1",
 					"WITH_SOLO_VM=1",
@@ -5282,6 +5857,24 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		84A57CBD30641C6800BA5139 /* Build configuration list for PBXNativeTarget "iOSHelper" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				84A57CBA30641C6800BA5139 /* Debug */,
+				84A57CBB30641C6800BA5139 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		84A57D0230641D0000BA5139 /* Build configuration list for PBXNativeTarget "iOSHelper-SE" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				84A57D0330641D0000BA5139 /* Debug */,
+				84A57D0430641D0000BA5139 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		84E3A8F6293DB37E0024A740 /* Build configuration list for PBXNativeTarget "utmctl" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -5327,6 +5920,15 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		CEA3EDF730168B9000AAA8E4 /* Build configuration list for PBXNativeTarget "QEMURenderServer" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CEA3EDF830168B9000AAA8E4 /* Debug */,
+				CEA3EDF930168B9000AAA8E4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		CEA45FB6263519B5002FA97D /* Build configuration list for PBXNativeTarget "iOS-SE" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -5362,7 +5964,7 @@
 			repositoryURL = "https://github.com/weichsel/ZIPFoundation.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 0.9.17;
+				minimumVersion = 0.9.20;
 			};
 		};
 		84018693288B66370050AC51 /* XCRemoteSwiftPackageReference "swiftui-visual-effects" */ = {
@@ -5375,9 +5977,9 @@
 		};
 		848F71E4277A2466006A0240 /* XCRemoteSwiftPackageReference "SwiftTerm" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/migueldeicaza/SwiftTerm.git";
+			repositoryURL = "https://github.com/osy/SwiftTerm.git";
 			requirement = {
-				branch = main;
+				branch = "fix/visionos-build";
 				kind = branch;
 			};
 		};
@@ -5506,14 +6108,14 @@
 			repositoryURL = "https://github.com/weichsel/ZIPFoundation.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 0.9.17;
+				minimumVersion = 0.9.20;
 			};
 		};
 		CEF7F58F2AEEDCC400E34952 /* XCRemoteSwiftPackageReference "SwiftTerm" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/migueldeicaza/SwiftTerm.git";
+			repositoryURL = "https://github.com/osy/SwiftTerm.git";
 			requirement = {
-				branch = main;
+				branch = "fix/visionos-build";
 				kind = branch;
 			};
 		};

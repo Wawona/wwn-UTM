@@ -18,7 +18,6 @@ import Foundation
 import Virtualization
 
 @available(iOS, unavailable, message: "Apple Virtualization not available on iOS")
-@available(macOS 11, *)
 struct UTMAppleConfigurationBoot: Codable {
     enum OperatingSystem: String, CaseIterable, QEMUConstant {
         case none = "None"
@@ -41,6 +40,7 @@ struct UTMAppleConfigurationBoot: Codable {
     var efiVariableStorageURL: URL?
     var vmSavedStateURL: URL?
     var hasUefiBoot: Bool = false
+    var hasSecureBoot: Bool = false
     
     /// IPSW for installing macOS. Not saved.
     var macRecoveryIpswURL: URL?
@@ -52,6 +52,7 @@ struct UTMAppleConfigurationBoot: Codable {
         case linuxInitialRamdiskPath = "LinuxInitialRamdiskPath"
         case efiVariableStoragePath = "EfiVariableStoragePath"
         case hasUefiBoot = "UEFIBoot"
+        case hasSecureBoot = "SecureBoot"
     }
     
     init(from decoder: Decoder) throws {
@@ -61,14 +62,7 @@ struct UTMAppleConfigurationBoot: Codable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         operatingSystem = try container.decode(OperatingSystem.self, forKey: .operatingSystem)
         hasUefiBoot = try container.decodeIfPresent(Bool.self, forKey: .hasUefiBoot) ?? false
-        #if !arch(arm64)
-        if #available(macOS 12, *) {
-        } else {
-            guard operatingSystem != .macOS else {
-                throw UTMAppleConfigurationError.platformUnsupported
-            }
-        }
-        #endif
+        hasSecureBoot = try container.decodeIfPresent(Bool.self, forKey: .hasSecureBoot) ?? false
         if let linuxKernelPath = try container.decodeIfPresent(String.self, forKey: .linuxKernelPath) {
             linuxKernelURL = dataURL.appendingPathComponent(linuxKernelPath)
         }
@@ -101,6 +95,7 @@ struct UTMAppleConfigurationBoot: Codable {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(operatingSystem, forKey: .operatingSystem)
         try container.encode(hasUefiBoot, forKey: .hasUefiBoot)
+        try container.encode(hasSecureBoot, forKey: .hasSecureBoot)
         if operatingSystem == .linux {
             try container.encodeIfPresent(linuxKernelURL?.lastPathComponent, forKey: .linuxKernelPath)
             try container.encodeIfPresent(linuxCommandLine, forKey: .linuxCommandLine)
@@ -130,11 +125,10 @@ struct UTMAppleConfigurationBoot: Codable {
             return linux
         case .macOS:
             #if arch(arm64)
-            if #available(macOS 12, *) {
-                return VZMacOSBootLoader()
-            }
-            #endif
+            return VZMacOSBootLoader()
+            #else
             return nil
+            #endif
         }
     }
 }
@@ -142,7 +136,6 @@ struct UTMAppleConfigurationBoot: Codable {
 // MARK: - Conversion of old config format
 
 @available(iOS, unavailable, message: "Apple Virtualization not available on iOS")
-@available(macOS 11, *)
 extension UTMAppleConfigurationBoot {
     init(migrating oldBoot: Bootloader) {
         switch oldBoot.operatingSystem {
@@ -158,7 +151,6 @@ extension UTMAppleConfigurationBoot {
 // MARK: - Saving data
 
 @available(iOS, unavailable, message: "Apple Virtualization not available on iOS")
-@available(macOS 11, *)
 extension UTMAppleConfigurationBoot {
     @MainActor mutating func saveData(to dataURL: URL) async throws -> [URL] {
         var urls = [URL]()
@@ -182,8 +174,14 @@ extension UTMAppleConfigurationBoot {
             }
             let fileManager = FileManager.default
             let efiVariableStorageURL = dataURL.appendingPathComponent(QEMUPackageFileName.efiVariables.rawValue)
-            if !fileManager.fileExists(atPath: efiVariableStorageURL.path) {
-                _ = try VZEFIVariableStore(creatingVariableStoreAt: efiVariableStorageURL)
+            let variableStore: VZEFIVariableStore
+            if fileManager.fileExists(atPath: efiVariableStorageURL.path) {
+                variableStore = VZEFIVariableStore(url: efiVariableStorageURL)
+            } else {
+                variableStore = try VZEFIVariableStore(creatingVariableStoreAt: efiVariableStorageURL)
+            }
+            if #available(macOS 27, *) {
+                try updateSecureBoot(in: variableStore)
             }
             self.linuxKernelURL = nil
             self.linuxInitialRamdiskURL = nil
@@ -195,5 +193,25 @@ extension UTMAppleConfigurationBoot {
         self.vmSavedStateURL = vmSavedStateURL
         urls.append(vmSavedStateURL)
         return urls
+    }
+    
+    /// Secure Boot state lives in the variable store, so only write to it when it differs from the configuration.
+    @available(macOS 27, *)
+    private func updateSecureBoot(in variableStore: VZEFIVariableStore) throws {
+        do {
+            if hasSecureBoot {
+                guard try !variableStore.isSecureBootEnabled else {
+                    return
+                }
+                try variableStore.enrollDefaultSecureBootSignatures()
+                try variableStore.enableSecureBootUsingDefaultPlatformKey()
+            } else if (try? variableStore.isSecureBootEnabled) == true {
+                try variableStore.disableSecureBoot()
+            }
+        } catch let error as VZError where error.code == .efiSecureBootEnrollmentFailed {
+            throw UTMAppleConfigurationError.secureBootEnrollmentFailed
+        } catch let error as VZError where error.code == .efiVariableInaccessible {
+            throw UTMAppleConfigurationError.efiVariablesInaccessible
+        }
     }
 }

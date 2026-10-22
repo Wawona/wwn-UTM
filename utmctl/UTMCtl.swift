@@ -37,7 +37,9 @@ struct UTMCtl: ParsableCommand {
             IPAddress.self,
             Clone.self,
             Delete.self,
-            USB.self
+            DiscardState.self,
+            USB.self,
+            Snapshot.self
         ]
     )
 }
@@ -90,6 +92,29 @@ extension UTMAPICommand {
         }
     }
     
+    /// Snapshots of a virtual machine, newest first
+    /// - Parameter vm: Virtual machine
+    /// - Returns: Snapshots of the virtual machine
+    func snapshots(of vm: UTMScriptingVirtualMachine) -> [UTMScriptingSnapshot] {
+        (vm.snapshots!() as? [UTMScriptingSnapshot]) ?? []
+    }
+
+    /// Get a snapshot of a virtual machine from an identifier
+    /// - Parameters:
+    ///   - identifier: Name or identifier of the snapshot
+    ///   - vm: Virtual machine the snapshot belongs to
+    /// - Returns: Snapshot for identifier
+    func snapshot(forIdentifier identifier: UTMCtl.SnapshotIdentifier, of vm: UTMScriptingVirtualMachine) throws -> UTMScriptingSnapshot {
+        let snapshots = snapshots(of: vm)
+        if let snapshot = snapshots.first(where: { $0.id!() == identifier.snapshot }) {
+            return snapshot
+        } else if let snapshot = snapshots.first(where: { $0.name! == identifier.snapshot }) {
+            return snapshot
+        } else {
+            throw UTMCtl.APIError.snapshotNotFound
+        }
+    }
+
     /// Find the path to UTM.app
     private var utmAppUrl: URL {
         if let executableURL = Bundle.main.executableURL?.resolvingSymlinksInPath() {
@@ -113,6 +138,9 @@ extension UTMAPICommand {
 extension UTMCtl {
     @objc class EventErrorHandler: NSObject, SBApplicationDelegate {
         static let shared = EventErrorHandler()
+
+        /// An event failed, so what it returned must not be used
+        private(set) var hasFailed = false
         
         /// Error handler for scripting events
         /// - Parameters:
@@ -120,6 +148,7 @@ extension UTMCtl {
         ///   - error: Error
         /// - Returns: nil
         func eventDidFail(_ event: UnsafePointer<AppleEvent>, withError error: Error) -> Any? {
+            hasFailed = true
             let error = error as NSError
             FileHandle.standardError.write("Error from event: \(error.localizedDescription)")
             if let user = error.userInfo["ErrorString"] as? String {
@@ -139,11 +168,13 @@ extension UTMCtl {
         case virtualMachineNotFound
         case invalidIdentifier(String)
         case deviceNotFound
+        case snapshotNotFound
         
         var errorDescription: String? {
             switch self {
             case .applicationNotFound: return "Application not found."
             case .virtualMachineNotFound: return "Virtual machine not found."
+            case .snapshotNotFound: return "Snapshot not found."
             case .invalidIdentifier(let identifier): return "Identifier '\(identifier)' is invalid."
             case .deviceNotFound: return "Device not found."
             }
@@ -245,9 +276,93 @@ extension UTMCtl {
         @Flag(help: "Boot a VM in recovery mode.")
         var recovery: Bool = false
 
+        struct Provisioning: ParsableArguments {
+            @Option(name: .customLong("provision-username"), help: "Set up a macOS guest with this account on the first start after macOS is installed. Requires macOS 27 or later on both the host and the guest.")
+            var username: String?
+            
+            @Option(name: .customLong("provision-full-name"), help: "Full name of the guest account. Defaults to the username.")
+            var fullName: String?
+            
+            @Option(name: .customLong("provision-password"), help: "Password of the guest account. Other processes can see this, use --provision-password-stdin to avoid that.")
+            var password: String?
+            
+            @Flag(name: .customLong("provision-password-stdin"), help: "Read the password of the guest account from standard input.")
+            var passwordStdin: Bool = false
+            
+            @Flag(name: .customLong("provision-auto-login"), help: "Log in to the guest account automatically when the guest starts up.")
+            var autoLogin: Bool = false
+            
+            @Flag(name: .customLong("provision-ssh"), help: "Turn on Remote Login (SSH) in the guest.")
+            var ssh: Bool = false
+            
+            struct InvalidProvisioningError: LocalizedError {
+                var errorDescription: String?
+            }
+            
+            func validate() throws {
+                guard username != nil else {
+                    guard fullName == nil && password == nil && !passwordStdin && !autoLogin && !ssh else {
+                        throw InvalidProvisioningError(errorDescription: "You must specify --provision-username to set up the guest")
+                    }
+                    return
+                }
+                guard (password != nil) != passwordStdin else {
+                    throw InvalidProvisioningError(errorDescription: "You must specify one of: --provision-password or --provision-password-stdin")
+                }
+            }
+        }
+        
+        @OptionGroup var provisioning: Provisioning
+        
+        struct ProvisioningRecoveryError: LocalizedError {
+            var errorDescription: String? {
+                "You cannot set up the guest when booting in recovery mode"
+            }
+        }
+        
+        func validate() throws {
+            guard !recovery || provisioning.username == nil else {
+                throw ProvisioningRecoveryError()
+            }
+        }
+        
+        /// Read a password from standard input without showing it when typed at a terminal
+        static func readPassword() throws -> String {
+            if isatty(STDIN_FILENO) != 0 {
+                var buffer = [CChar](repeating: 0, count: 1024)
+                guard readpassphrase("Password: ", &buffer, buffer.count, 0) != nil else {
+                    throw Provisioning.InvalidProvisioningError(errorDescription: "Failed to read the password")
+                }
+                return String(cString: buffer)
+            }
+            let data = try FileHandle.standardInput.readToEnd() ?? Data()
+            // a lossy conversion would create an account with a password nobody knows
+            guard var password = String(data: data, encoding: .utf8) else {
+                throw Provisioning.InvalidProvisioningError(errorDescription: "The password must be valid UTF-8 text")
+            }
+            if password.last?.isNewline == true {
+                password.removeLast()
+            }
+            return password
+        }
+        
         func run(with application: UTMScriptingApplication) throws {
             let vm = try virtualMachine(forIdentifier: identifer, in: application)
-            vm.startSaving!(!disposable, recovery: recovery)
+            var provisioningOptions: [AnyHashable : Any]?
+            if let username = provisioning.username {
+                var password = provisioning.password ?? ""
+                if provisioning.passwordStdin {
+                    password = try Self.readPassword()
+                }
+                provisioningOptions = ["username": username,
+                                       "password": password,
+                                       "automaticLogin": provisioning.autoLogin,
+                                       "remoteLogin": provisioning.ssh]
+                if let fullName = provisioning.fullName {
+                    provisioningOptions!["fullName"] = fullName
+                }
+            }
+            vm.startSaving!(!disposable, recovery: recovery, provisioning: provisioningOptions)
             if attach {
                 print("WARNING: attach command is not implemented yet!")
             }
@@ -649,6 +764,205 @@ extension UTMCtl {
         func run(with application: UTMScriptingApplication) throws {
             let device = try USB.usbDevice(forIdentifier: device, in: application)
             device.disconnect!()
+        }
+    }
+}
+
+extension UTMCtl {
+    struct Snapshot: ParsableCommand {
+        static var configuration = CommandConfiguration(
+            abstract: "List and manage the saved states of a virtual machine.",
+            subcommands: [SnapshotList.self, SnapshotCreate.self, SnapshotRestore.self, SnapshotOverwrite.self, SnapshotRename.self, SnapshotDelete.self, SnapshotScan.self]
+        )
+    }
+
+    /// Addresses one snapshot of a virtual machine
+    struct SnapshotIdentifier: ParsableArguments {
+        @Option(name: .shortAndLong, help: "Either the name or the identifier of the snapshot.")
+        var snapshot: String
+    }
+
+    struct SnapshotList: UTMAPICommand {
+        static var configuration = CommandConfiguration(
+            commandName: "list",
+            abstract: "List the snapshots of a virtual machine, newest first."
+        )
+
+        @OptionGroup var environment: EnvironmentOptions
+
+        @OptionGroup var identifer: VMIdentifier
+
+        @Flag(help: "Output the list as JSON.")
+        var json: Bool = false
+
+        @Flag(help: "Look for snapshots made by other tools before listing.")
+        var scan: Bool = false
+
+        func run(with application: UTMScriptingApplication) throws {
+            let vm = try virtualMachine(forIdentifier: identifer, in: application)
+            if scan {
+                vm.scanSnapshots!()
+            }
+            let snapshots = snapshots(of: vm)
+            if json {
+                let rows = snapshots.map { snapshot -> [String: Any] in
+                    ["id": snapshot.id!(),
+                     "name": snapshot.name!,
+                     "created": ISO8601DateFormatter().string(from: snapshot.creationDate!),
+                     "modified": ISO8601DateFormatter().string(from: snapshot.modificationDate!),
+                     "size": snapshot.size!,
+                     "includesRunningState": snapshot.includesRunningState!,
+                     "dataMissing": snapshot.dataMissing!,
+                     "basedOn": snapshot.basedOn!]
+                }
+                let data = try JSONSerialization.data(withJSONObject: rows, options: [.prettyPrinted, .sortedKeys])
+                print(String(data: data, encoding: .utf8) ?? "[]")
+            } else {
+                let formatter = DateFormatter()
+                formatter.dateStyle = .short
+                formatter.timeStyle = .short
+                for snapshot in snapshots {
+                    var notes = [snapshot.includesRunningState! ? "resumes" : "disks only"]
+                    if snapshot.dataMissing! {
+                        notes.append("data missing")
+                    }
+                    let size = snapshot.size! > 0 ? ByteCountFormatter.string(fromByteCount: Int64(snapshot.size!), countStyle: .binary) : "-"
+                    print("\(snapshot.name!)\t\(formatter.string(from: snapshot.creationDate!))\t\(size)\t\(notes.joined(separator: ", "))")
+                }
+            }
+        }
+    }
+
+    struct SnapshotCreate: UTMAPICommand {
+        static var configuration = CommandConfiguration(
+            commandName: "create",
+            abstract: "Save the current state of a virtual machine as a new snapshot."
+        )
+
+        @OptionGroup var environment: EnvironmentOptions
+
+        @OptionGroup var identifer: VMIdentifier
+
+        @Option(help: "Name for the new snapshot. A name already in use gets a number appended.")
+        var name: String?
+
+        func run(with application: UTMScriptingApplication) throws {
+            let vm = try virtualMachine(forIdentifier: identifer, in: application)
+            let snapshot = vm.createSnapshotNamed!(name)
+            // nothing is returned when the event failed, which has been reported already
+            guard !EventErrorHandler.shared.hasFailed else {
+                throw ExitCode.failure
+            }
+            print(snapshot.name!)
+        }
+    }
+
+    struct SnapshotRestore: UTMAPICommand {
+        static var configuration = CommandConfiguration(
+            commandName: "restore",
+            abstract: "Replace the current state of a virtual machine with a snapshot."
+        )
+
+        @OptionGroup var environment: EnvironmentOptions
+
+        @OptionGroup var identifer: VMIdentifier
+
+        @OptionGroup var snapshotIdentifer: SnapshotIdentifier
+
+        func run(with application: UTMScriptingApplication) throws {
+            let vm = try virtualMachine(forIdentifier: identifer, in: application)
+            try snapshot(forIdentifier: snapshotIdentifer, of: vm).restore!()
+        }
+    }
+
+    struct SnapshotOverwrite: UTMAPICommand {
+        static var configuration = CommandConfiguration(
+            commandName: "overwrite",
+            abstract: "Replace what a snapshot holds with the current state of the virtual machine."
+        )
+
+        @OptionGroup var environment: EnvironmentOptions
+
+        @OptionGroup var identifer: VMIdentifier
+
+        @OptionGroup var snapshotIdentifer: SnapshotIdentifier
+
+        func run(with application: UTMScriptingApplication) throws {
+            let vm = try virtualMachine(forIdentifier: identifer, in: application)
+            try snapshot(forIdentifier: snapshotIdentifer, of: vm).overwrite!()
+        }
+    }
+
+    struct SnapshotRename: UTMAPICommand {
+        static var configuration = CommandConfiguration(
+            commandName: "rename",
+            abstract: "Change the name shown for a snapshot."
+        )
+
+        @OptionGroup var environment: EnvironmentOptions
+
+        @OptionGroup var identifer: VMIdentifier
+
+        @OptionGroup var snapshotIdentifer: SnapshotIdentifier
+
+        @Option(help: "New name for the snapshot.")
+        var to: String
+
+        func run(with application: UTMScriptingApplication) throws {
+            let vm = try virtualMachine(forIdentifier: identifer, in: application)
+            let snapshot = try snapshot(forIdentifier: snapshotIdentifer, of: vm)
+            snapshot.setName!(to)
+            print(snapshot.name!)
+        }
+    }
+
+    struct SnapshotDelete: UTMAPICommand {
+        static var configuration = CommandConfiguration(
+            commandName: "delete",
+            abstract: "Delete a snapshot of a virtual machine."
+        )
+
+        @OptionGroup var environment: EnvironmentOptions
+
+        @OptionGroup var identifer: VMIdentifier
+
+        @OptionGroup var snapshotIdentifer: SnapshotIdentifier
+
+        func run(with application: UTMScriptingApplication) throws {
+            let vm = try virtualMachine(forIdentifier: identifer, in: application)
+            try snapshot(forIdentifier: snapshotIdentifer, of: vm).deleteSnapshot!()
+        }
+    }
+
+    struct SnapshotScan: UTMAPICommand {
+        static var configuration = CommandConfiguration(
+            commandName: "scan",
+            abstract: "Look through the disk images for snapshots made by other tools and mark any whose data is missing."
+        )
+
+        @OptionGroup var environment: EnvironmentOptions
+
+        @OptionGroup var identifer: VMIdentifier
+
+        func run(with application: UTMScriptingApplication) throws {
+            let vm = try virtualMachine(forIdentifier: identifer, in: application)
+            vm.scanSnapshots!()
+        }
+    }
+
+    struct DiscardState: UTMAPICommand {
+        static var configuration = CommandConfiguration(
+            commandName: "discard-state",
+            abstract: "Discard the saved state a suspended virtual machine would resume from, so that it starts up normally."
+        )
+
+        @OptionGroup var environment: EnvironmentOptions
+
+        @OptionGroup var identifer: VMIdentifier
+
+        func run(with application: UTMScriptingApplication) throws {
+            let vm = try virtualMachine(forIdentifier: identifer, in: application)
+            vm.discardSavedState!()
         }
     }
 }

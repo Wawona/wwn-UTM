@@ -18,7 +18,6 @@ import Foundation
 import Virtualization
 
 @available(iOS, unavailable, message: "Apple Virtualization not available on iOS")
-@available(macOS 11, *)
 final class UTMAppleConfiguration: UTMConfiguration {
     /// Basic information and icon
     @Published var _information: UTMConfigurationInfo = .init()
@@ -101,6 +100,8 @@ enum UTMAppleConfigurationError: Error {
     case hardwareModelInvalid
     case rosettaNotSupported
     case featureNotSupported
+    case secureBootEnrollmentFailed
+    case efiVariablesInaccessible
 }
 
 extension UTMAppleConfigurationError: LocalizedError {
@@ -118,6 +119,10 @@ extension UTMAppleConfigurationError: LocalizedError {
             return NSLocalizedString("Rosetta is not supported on the current host machine.", comment: "UTMAppleConfiguration")
         case .featureNotSupported:
             return NSLocalizedString("The host operating system needs to be updated to support one or more features requested by the guest.", comment: "UTMAppleConfiguration")
+        case .secureBootEnrollmentFailed:
+            return NSLocalizedString("Failed to set up Secure Boot for this virtual machine.", comment: "UTMAppleConfiguration")
+        case .efiVariablesInaccessible:
+            return NSLocalizedString("The UEFI variables of this virtual machine could not be accessed.", comment: "UTMAppleConfiguration")
         }
     }
 }
@@ -220,13 +225,9 @@ extension UTMAppleConfiguration {
         _information = .init(migrating: oldConfig, dataURL: dataURL)
         _system = .init(migrating: oldConfig)
         _virtualization = .init(migrating: oldConfig)
-        if #available(macOS 12, *) {
-            _sharedDirectories = oldConfig.sharedDirectories.map { .init(migrating: $0) }
-        }
+        _sharedDirectories = oldConfig.sharedDirectories.map { .init(migrating: $0) }
         #if arch(arm64)
-        if #available(macOS 12, *) {
-            _displays = oldConfig.displays.map { .init(migrating: $0) }
-        }
+        _displays = oldConfig.displays.map { .init(migrating: $0) }
         #endif
         _drives = oldConfig.diskImages.map { .init(migrating: $0) }
         _networks = oldConfig.networkDevices.map { .init(migrating: $0) }
@@ -245,21 +246,40 @@ extension UTMAppleConfiguration {
 // MARK: - Creating Apple config
 
 @available(iOS, unavailable, message: "Apple Virtualization not available on iOS")
-@available(macOS 11, *)
 @MainActor extension UTMAppleConfiguration {
-    func appleVZConfiguration(ignoringDrives: Bool = false) throws -> VZVirtualMachineConfiguration {
+    /// Point the firmware variable stores at copies so a disposable run cannot change the originals
+    @available(macOS 27, *)
+    private func redirectFirmwareStorage(of vzconfig: VZVirtualMachineConfiguration, to directoryURL: URL) throws {
+        let fileManager = FileManager.default
+        if let efi = vzconfig.bootLoader as? VZEFIBootLoader, let variableStore = efi.variableStore {
+            let copyURL = directoryURL.appendingPathComponent(variableStore.url.lastPathComponent)
+            try fileManager.copyItem(at: variableStore.url, to: copyURL)
+            efi.variableStore = VZEFIVariableStore(url: copyURL)
+        }
+        #if arch(arm64)
+        if let platform = vzconfig.platform as? VZMacPlatformConfiguration, let auxiliaryStorage = platform.auxiliaryStorage {
+            let copyURL = directoryURL.appendingPathComponent(auxiliaryStorage.url.lastPathComponent)
+            try fileManager.copyItem(at: auxiliaryStorage.url, to: copyURL)
+            platform.auxiliaryStorage = VZMacAuxiliaryStorage(url: copyURL)
+        }
+        #endif
+    }
+
+    /// - Parameter disposableOverlayDirectoryURL: If set, guest writes go to ephemeral layers in this directory and nothing in the package is modified (macOS 27+)
+    func appleVZConfiguration(forValidation: Bool = false, disposableOverlayDirectoryURL: URL? = nil) throws -> VZVirtualMachineConfiguration {
         let vzconfig = VZVirtualMachineConfiguration()
         try system.fillVZConfiguration(vzconfig)
-        if #available(macOS 12, *), !sharedDirectories.isEmpty {
+        if #available(macOS 27, *), let disposableOverlayDirectoryURL = disposableOverlayDirectoryURL {
+            try redirectFirmwareStorage(of: vzconfig, to: disposableOverlayDirectoryURL)
+        }
+        if !sharedDirectories.isEmpty {
             let fsConfig = VZVirtioFileSystemDeviceConfiguration(tag: shareDirectoryTag)
             fsConfig.share = UTMAppleConfigurationSharedDirectory.makeDirectoryShare(from: sharedDirectories)
             vzconfig.directorySharingDevices.append(fsConfig)
-        } else if !sharedDirectories.isEmpty {
-            throw UTMAppleConfigurationError.featureNotSupported
         }
-        if !ignoringDrives {
+        if !forValidation {
             vzconfig.storageDevices = try drives.compactMap { drive in
-                guard let attachment = try drive.vzDiskImage(useFsWorkAround: system.boot.operatingSystem == .linux) else {
+                guard let attachment = try drive.vzDiskImage(useFsWorkAround: system.boot.operatingSystem == .linux, disposableOverlayDirectoryURL: disposableOverlayDirectoryURL) else {
                     return nil
                 }
                 if #available(macOS 13, *), drive.isExternal {
@@ -279,12 +299,12 @@ extension UTMAppleConfiguration {
                 }
             }
         }
-        vzconfig.networkDevices.append(contentsOf: networks.compactMap({ $0.vzNetworking() }))
+        vzconfig.networkDevices.append(contentsOf: try networks.compactMap({ try $0.vzNetworking(forValidation: forValidation) }))
         vzconfig.serialPorts.append(contentsOf: serials.compactMap({ $0.vzSerial() }))
         // add remaining devices
         try virtualization.fillVZConfiguration(vzconfig, isMacOSGuest: system.boot.operatingSystem == .macOS)
         #if arch(arm64)
-        if #available(macOS 12, *), system.boot.operatingSystem == .macOS {
+        if system.boot.operatingSystem == .macOS {
             let graphics = VZMacGraphicsDeviceConfiguration()
             graphics.displays = displays.map({ display in
                 display.vzMacDisplay()
@@ -308,6 +328,10 @@ extension UTMAppleConfiguration {
         if #available(macOS 15, *) {
             vzconfig.usbControllers = [VZXHCIControllerConfiguration()]
         }
+        if #available(macOS 27, *) {
+            // names the virtual machine in system prompts such as USB device access
+            vzconfig.label = information.name.vzLabel
+        }
         return vzconfig
     }
 
@@ -320,10 +344,23 @@ extension UTMAppleConfiguration {
     }
 }
 
+private extension String {
+    /// Label accepted by `VZVirtualMachineConfiguration`: non-empty and at most 64 characters
+    var vzLabel: String? {
+        var label = trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !label.isEmpty else {
+            return nil
+        }
+        while label.utf16.count > 64 {
+            label.removeLast()
+        }
+        return label
+    }
+}
+
 // MARK: - Saving data
 
 @available(iOS, unavailable, message: "Apple Virtualization not available on iOS")
-@available(macOS 11, *)
 @MainActor extension UTMAppleConfiguration {
     func prepareSave(for packageURL: URL) async throws {
         try await virtualization.prepareSave(for: packageURL)
@@ -335,18 +372,21 @@ extension UTMAppleConfiguration {
         existingDataURLs += try await _system.boot.saveData(to: dataURL)
         
         #if arch(arm64)
-        if #available(macOS 12, *), system.macPlatform != nil {
+        if system.macPlatform != nil {
             existingDataURLs += try await _system.macPlatform!.saveData(to: dataURL)
         }
         #endif
 
         // validate before we copy and create drive images
-        try appleVZConfiguration(ignoringDrives: true).validate()
+        try appleVZConfiguration(forValidation: true).validate()
 
         for i in 0..<drives.count {
             existingDataURLs += try await _drives[i].saveData(to: dataURL)
         }
         
+        // what the snapshots hold sits beside the files above and is named after them
+        existingDataURLs += UTMAppleSnapshotFiles.preservedDataURLs(for: existingDataURLs, in: dataURL.deletingLastPathComponent())
+
         return existingDataURLs
     }
 }

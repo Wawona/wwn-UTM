@@ -83,14 +83,26 @@ struct VMSettingsAddDeviceMenuView: View {
             }
             #endif
         } label: {
-            if #available(iOS 15, macOS 11, *) {
-                Label("New…", systemImage: "plus")
-            } else {
-                Label("New…", systemImage: "plus")
-                    .labelStyle(.iconOnly)
-            }
+            Label("New…", systemImage: "plus")
         }.help("Add a new device.")
-        .menuStyle(.borderlessButton)
+        .addDeviceMenuStyle()
+    }
+}
+
+extension View {
+    /// Style the "New…" menu so it matches the other entries in the settings sidebar.
+    @ViewBuilder
+    func addDeviceMenuStyle() -> some View {
+        #if os(macOS)
+        if #available(macOS 26, *) {
+            // .borderlessButton renders as a compact pull-down that no longer matches the sidebar rows
+            self.menuStyle(.button).buttonStyle(.plain)
+        } else {
+            self.menuStyle(.borderlessButton)
+        }
+        #else
+        self.menuStyle(.borderlessButton)
+        #endif
     }
 }
 

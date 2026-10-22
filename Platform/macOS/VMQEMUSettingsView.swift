@@ -23,6 +23,12 @@ struct VMQEMUSettingsView: View {
     @State private var infoActive: Bool = true
     @State private var isResetConfig: Bool = false
     @State private var isNewDriveShown: Bool = false
+    @State private var isCustomArgumentsEnabled: Bool
+    
+    init(config: UTMQemuConfiguration) {
+        self.config = config
+        self._isCustomArgumentsEnabled = State(initialValue: !config.qemu.additionalArguments.isEmpty)
+    }
     
     var body: some View {
         NavigationLink(destination: VMConfigInfoView(config: $config.information).scrollable().settingsToolbar(), isActive: $infoActive) {
@@ -38,20 +44,19 @@ struct VMQEMUSettingsView: View {
             if newValue {
                 config.reset(forArchitecture: config.system.architecture, target: config.system.target)
                 isResetConfig = false
+                isCustomArgumentsEnabled = false
             }
         }
         NavigationLink {
-            VMConfigQEMUView(config: $config.qemu, system: $config.system, fetchFixedArguments: {
-                config.generatedArguments
-            })
-            .scrollable()
-            .settingsToolbar()
+            VMConfigQEMUView(config: config, isCustomArgumentsEnabled: $isCustomArgumentsEnabled)
+                .scrollable()
+                .settingsToolbar()
         } label: {
             Label("QEMU", systemImage: "shippingbox")
         }
-        if #available(macOS 12, *) {
+        if isCustomArgumentsEnabled {
             NavigationLink {
-                VMConfigQEMUArgumentsView(config: $config.qemu, architecture: config.system.architecture, fixedArguments: config.generatedArguments)
+                VMConfigQEMUArgumentsView(config: config)
                     .settingsToolbar()
             } label: {
                 Label("Arguments", systemImage: "character.textbox")
@@ -135,7 +140,7 @@ struct VMQEMUSettingsView: View {
                         refresh()
                     }
                 }
-                if #available(macOS 12, *), network.mode == .emulated {
+                if network.mode == .emulated {
                     NavigationLink {
                         VMConfigNetworkPortForwardView(config: $network)
                             .settingsToolbar()

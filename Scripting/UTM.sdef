@@ -31,6 +31,11 @@
           </property>
         </class-extension>
         
+        <enumeration name="operating system" code="ApOe" description="Guest operating system for an Apple virtual machine.">
+            <enumerator name="linux" code="ApOl" description="Linux guest."/>
+            <enumerator name="macOS" code="ApOm" description="macOS guest (Apple silicon only)."/>
+        </enumeration>
+
         <enumeration name="backend" code="VmEb" description="Backend type.">
             <enumerator name="apple" code="ApPl" description="Apple Virtualization.framework backend."/>
             <enumerator name="qemu" code="QeMu" description="QEMU backend."/>
@@ -67,8 +72,47 @@
           <parameter name="recovery" code="ReCo" description="When true, start the VM in recovery mode. Default value is false." type="boolean" optional="yes">
             <cocoa key="bootRecoveryFlag"/>
           </parameter>
+          <parameter name="provisioning" code="GpOp" description="Set up a macOS guest without user interaction. Only applies to the first start after macOS is installed and is never saved. Requires the Apple backend, macOS 27 or later, and a guest with macOS 27 or later." type="guest provisioning" optional="yes">
+            <cocoa key="provisioningOptions"/>
+          </parameter>
         </command>
         
+        <record-type name="guest provisioning" code="GpCf" description="Account to create when setting up a macOS guest.">
+          <property name="full name" code="GpFn" type="text"
+            description="Full name of the account. Defaults to the username."/>
+          
+          <property name="username" code="GpUs" type="text"
+            description="Short name of the account."/>
+          
+          <property name="password" code="GpPw" type="text"
+            description="Password of the account."/>
+          
+          <property name="automatic login" code="GpAl" type="boolean"
+            description="Log in to the account automatically when the guest starts up. Default value is false."/>
+          
+          <property name="remote login" code="GpRl" type="boolean"
+            description="Turn on Remote Login (SSH) in the guest. Default value is false."/>
+        </record-type>
+        
+        <command name="install" code="UTMvinst" description="Install macOS on a stopped Apple virtual machine from its IPSW recovery image. All data on the primary drive will be erased, there is no confirmation! Returns once the installation starts, use query install to follow its progress.">
+          <direct-parameter description="Virtual machine to install macOS on." type="virtual machine"/>
+        </command>
+        
+        <record-type name="install progress" code="InPr" description="Progress of a macOS installation.">
+          <property name="installing" code="InIn" type="boolean" access="r"
+            description="If true, the installation has not finished yet.">
+            <cocoa key="isInstalling"/>
+          </property>
+          
+          <property name="progress" code="InPg" type="real" access="r"
+            description="Fraction of the installation that is completed, from 0.0 to 1.0."/>
+        </record-type>
+        
+        <command name="query install" code="UTMvqins" description="Query the progress of the last installation started with install. Raises an error if the installation failed.">
+          <direct-parameter description="Virtual machine to query." type="virtual machine"/>
+          <result type="install progress" description="Progress of the installation."/>
+        </command>
+
         <command name="suspend" code="UTMvsusp" description="Suspend a running virtual machine to memory.">
           <direct-parameter description="Virtual machine to suspend." type="virtual machine"/>
           <parameter name="saving" code="SaVe" description="Save VM state to disk after suspend. Default value is false." type="boolean" optional="yes">
@@ -83,6 +127,34 @@
           </parameter>
         </command>
         
+        <command name="create snapshot" code="UTMvcrsn" description="Save the current state of a virtual machine as a new snapshot. A running QEMU virtual machine is saved along with its running state, otherwise only the disks are.">
+          <direct-parameter description="Virtual machine to snapshot." type="virtual machine"/>
+          <parameter name="named" code="SnNm" description="Name for the new snapshot. A name already in use gets a number appended. If omitted, a name is generated." type="text" optional="yes">
+            <cocoa key="snapshotName"/>
+          </parameter>
+          <result description="The snapshot that was created." type="snapshot"/>
+        </command>
+
+        <command name="restore" code="UTMvrssn" description="Replace the current state of a virtual machine with a snapshot. A virtual machine that is not running resumes from it the next time it is started.">
+          <direct-parameter description="Snapshot to restore." type="snapshot"/>
+        </command>
+
+        <command name="delete snapshot" code="UTMvdlsn" description="Delete a snapshot. Its data is deleted with it, there is no confirmation!">
+          <direct-parameter description="Snapshot to delete." type="snapshot"/>
+        </command>
+
+        <command name="overwrite" code="UTMvovsn" description="Replace what a snapshot holds with the current state of the virtual machine. The snapshot keeps its name and its place among the others.">
+          <direct-parameter description="Snapshot to overwrite." type="snapshot"/>
+        </command>
+
+        <command name="scan snapshots" code="UTMvscsn" description="Look through the disk images of a virtual machine for snapshots that UTM does not know about yet, and mark the ones whose data has gone missing. Only needed for snapshots made by other tools.">
+          <direct-parameter description="Virtual machine to scan." type="virtual machine"/>
+        </command>
+
+        <command name="discard saved state" code="UTMvdcss" description="Throw away the state a suspended virtual machine would resume from, so that it starts up normally instead. Snapshots are not affected.">
+          <direct-parameter description="Virtual machine to discard the saved state of." type="virtual machine"/>
+        </command>
+
         <command name="delete" code="coredelo" description="Delete a virtual machine. All data will be deleted, there is no confirmation!">
             <cocoa class="UTMScriptingDeleteCommand"/>
             <access-group identifier="*"/>
@@ -136,17 +208,42 @@
             description="Serial ports exposed by the guest to the host to access.">
             <cocoa key="serialPorts"/>
           </element>
+
+          <element type="snapshot" access="r"
+            description="Saved states of this virtual machine, newest first.">
+            <cocoa key="snapshots"/>
+          </element>
           
           <responds-to command="start">
             <cocoa method="start:"/>
           </responds-to>
           
+          <responds-to command="install">
+            <cocoa method="install:"/>
+          </responds-to>
+          
+          <responds-to command="query install">
+            <cocoa method="queryInstall:"/>
+          </responds-to>
+
           <responds-to command="suspend">
             <cocoa method="suspend:"/>
           </responds-to>
           
           <responds-to command="stop">
             <cocoa method="stop:"/>
+          </responds-to>
+
+          <responds-to command="create snapshot">
+            <cocoa method="createSnapshot:"/>
+          </responds-to>
+
+          <responds-to command="scan snapshots">
+            <cocoa method="scanSnapshots:"/>
+          </responds-to>
+
+          <responds-to command="discard saved state">
+            <cocoa method="discardSavedState:"/>
           </responds-to>
           
           <responds-to command="delete">
@@ -155,6 +252,45 @@
           
         </class>
         
+        <class name="snapshot" code="SnAp" description="A saved state of a virtual machine that it can be returned to." plural="snapshots">
+          <cocoa class="UTMScriptingSnapshotImpl"/>
+          <property name="id" code="ID  " type="text" access="r"
+            description="The unique identifier of the snapshot."/>
+
+          <property name="name" code="pnam" type="text"
+            description="Name shown for the snapshot. Setting it renames the snapshot; a name already in use gets a number appended."/>
+
+          <property name="creation date" code="ascd" type="date" access="r"
+            description="When the snapshot was first saved."/>
+
+          <property name="modification date" code="asmo" type="date" access="r"
+            description="When the snapshot was last renamed or overwritten."/>
+
+          <property name="size" code="SnSz" type="real" access="r"
+            description="Bytes the snapshot occupies."/>
+
+          <property name="includes running state" code="SnRs" type="boolean" access="r"
+            description="Whether the snapshot holds the running machine as well as the disks. Restoring one that does not means the virtual machine starts up instead of resuming."/>
+
+          <property name="data missing" code="SnDm" type="boolean" access="r"
+            description="Whether the data behind the snapshot has gone missing, in which case it can only be deleted."/>
+
+          <property name="based on" code="SnBo" type="text" access="r"
+            description="Identifier of the snapshot the current state was based on when this one was saved, or empty if it was not based on any."/>
+
+          <responds-to command="restore">
+            <cocoa method="restore:"/>
+          </responds-to>
+
+          <responds-to command="overwrite">
+            <cocoa method="overwrite:"/>
+          </responds-to>
+
+          <responds-to command="delete snapshot">
+            <cocoa method="deleteSnapshot:"/>
+          </responds-to>
+        </class>
+
         <class name="serial port" code="SeRi" description="A serial port in the guest that can be connected to from the host." plural="serial ports">
           <cocoa class="UTMScriptingSerialPortImpl"/>
           <property name="id" code="ID  " type="integer" access="r"
@@ -210,7 +346,7 @@
           <parameter name="for" code="OpMd" description="Open mode." type="open mode" optional="yes">
             <cocoa key="mode"/>
           </parameter>
-          <parameter name="updating" code="OpAp" description="If true, will open for both reading and writing. The file existance requirement and creation is still governed by the open mode. Default is false." type="boolean" optional="yes">
+          <parameter name="updating" code="OpAp" description="If true, will open for both reading and writing. The file existence requirement and creation is still governed by the open mode. Default is false." type="boolean" optional="yes">
             <cocoa key="isUpdate"/>
           </parameter>
           <result type="guest file" description="Guest file to operate on."/>
@@ -384,7 +520,7 @@
         </command>
     </suite>
 
-    <suite name="UTM Configuration Suite" code="UTMc" description="UTM virtual machine configuration suite. Use this to create and configurate virtual machines.">
+    <suite name="UTM Configuration Suite" code="UTMc" description="UTM virtual machine configuration suite. Use this to create and configure virtual machines.">
         <access-group identifier="com.utmapp.UTM.vm-access" />
         
         <class-extension extends="virtual machine" description="Virtual machine configuration.">
@@ -397,8 +533,12 @@
             <responds-to command="update configuration">
               <cocoa method="updateConfiguration:"/>
             </responds-to>
+
+            <responds-to command="reload configuration">
+              <cocoa method="reloadConfiguration:"/>
+            </responds-to>
         </class-extension>
-        
+
         <command name="update configuration" code="UTMcUpDt" description="Update the configuration of the virtual machine. The VM must be in the stopped state.">
           <direct-parameter description="Virtual machine to configure." type="virtual machine"/>
           <parameter name="with" code="UpCf" description="The configuration to update the virtual machine. You cannot change the backend with this!">
@@ -406,6 +546,10 @@
             <type type="qemu configuration"/>
             <type type="apple configuration"/>
           </parameter>
+        </command>
+
+        <command name="reload configuration" code="UTMcReLd" description="Reload the configuration of the virtual machine from disk, discarding any unsaved in-memory changes. Useful when the .utm bundle has been modified externally (e.g. by an automation tool) and UTM's cached configuration needs to be refreshed. The VM must be in the stopped state.">
+          <direct-parameter description="Virtual machine to reload." type="virtual machine"/>
         </command>
 
         <record-type name="qemu configuration" code="QeCf" description="QEMU virtual machine configuration.">
@@ -527,6 +671,21 @@
             description="Only used in emulated mode. Allows port forwarding from guest to host.">
             <type type="qemu port forward" list="yes"/>
           </property>
+
+          <property name="vlan guest address" code="VgAd" type="text"
+            description="IPv4 subnet of the emulated VLAN in CIDR notation (e.g. 192.168.222.0/24). Only used in shared or host mode. If empty, the existing value is preserved."/>
+
+          <property name="vlan guest address ipv6" code="Vga6" type="text"
+            description="IPv6 prefix of the emulated VLAN (e.g. fec0::/64). Only used in shared or host mode. If empty, the existing value is preserved."/>
+
+          <property name="vlan dhcp start address" code="VdSt" type="text"
+            description="First IPv4 address of the DHCP pool handed to the guest. Only used in shared or host mode. If empty, the existing value is preserved."/>
+
+          <property name="vlan dhcp end address" code="VdEn" type="text"
+            description="Last IPv4 address of the DHCP pool handed to the guest. Only used in shared or host mode. If empty, the existing value is preserved."/>
+
+          <property name="isolate from host" code="IsFh" type="boolean"
+            description="When true, the guest is isolated from the host on the shared network."/>
         </record-type>
         
         <enumeration name="qemu network mode" code="QeNm" description="Mode for networking device.">
@@ -646,6 +805,12 @@
             description="List of display configuration.">
             <type type="apple display configuration" list="yes"/>
           </property>
+
+          <property name="os" code="ApOs" type="operating system"
+            description="Guest operating system. Only used when creating; defaults to Linux."/>
+
+          <property name="macRecoveryIpsw" code="ApIp" type="file"
+            description="IPSW recovery image used to install macOS. Required when os is macOS."/>
         </record-type>
         
         <record-type name="apple directory share configuration" code="ApDs" description="Apple directory share configuration.">
@@ -689,6 +854,8 @@
         
         <enumeration name="apple network mode" code="ApNm" description="Mode for networking device.">
             <enumerator name="shared" code="ShRd" description="NAT based sharing with the host."/>
+            <enumerator name="nat network" code="NaNw" description="NAT based sharing with the host on a network common to other virtual machines (macOS 26+)."/>
+            <enumerator name="host" code="HoSt" description="Network shared with the host and other virtual machines with no WAN routing (macOS 26+)."/>
             <enumerator name="bridged" code="BrGd" description="Bridged to a host interface."/>
         </enumeration>
         
@@ -722,7 +889,7 @@
         <class name="usb device" code="UsBd" description="A host USB device that is shared with the guest." plural="usb devices">
           <cocoa class="UTMScriptingUSBDeviceImpl"/>
           <property name="id" code="ID  " type="integer" access="r"
-            description="A unique identifier corrosponding to the USB bus and port number."/>
+            description="A unique identifier corresponding to the USB bus and port number."/>
             
           <property name="name" code="pnam" type="text" access="r"
             description="The name of the USB device."/>

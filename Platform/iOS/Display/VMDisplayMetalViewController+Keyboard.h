@@ -21,10 +21,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface VMDisplayMetalViewController (Keyboard) <VMKeyboardViewDelegate>
 
-- (IBAction)keyboardDonePressed:(UIButton *)sender;
-- (IBAction)keyboardPastePressed:(UIButton *)sender;
-- (IBAction)customKeyTouchDown:(VMKeyboardButton *)sender;
-- (IBAction)customKeyTouchUp:(VMKeyboardButton *)sender;
+- (void)keyboardDonePressed:(UIButton *)sender;
+- (void)keyboardPastePressed:(UIButton *)sender;
+- (void)keyboardTouchpadPressed:(UIButton *)sender;
+- (void)touchpadKeyboardPressed:(UIButton *)sender;
+- (void)customKeyTouchDown:(VMKeyboardButton *)sender;
+- (void)customKeyTouchUp:(VMKeyboardButton *)sender;
 
 @end
 

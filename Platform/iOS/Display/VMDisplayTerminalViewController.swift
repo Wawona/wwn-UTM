@@ -24,13 +24,12 @@ import SwiftUI
         willSet {
             vmSerialPort.delegate = nil
             newValue.delegate = self
-            terminalView.getTerminal().resetToInitialState()
-            terminalView.getTerminal().softReset()
+            terminalView.resetToInitialState()
+            terminalView.softReset()
         }
     }
     
     private var style: UTMConfigurationTerminal?
-    private var keyboardDelta: CGFloat = 0
     
     required init(port: CSPort, style: UTMConfigurationTerminal? = nil) {
         self.vmSerialPort = port
@@ -45,26 +44,33 @@ import SwiftUI
     
     override func loadView() {
         super.loadView()
-        terminalView = TerminalView(frame: makeFrame (keyboardDelta: 0))
+        terminalView = TerminalView(frame: .zero)
         terminalView.terminalDelegate = self
         view.insertSubview(terminalView, at: 0)
         styleTerminal()
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        setupKeyboardMonitor()
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        layoutTerminal()
     }
     
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        cleanupKeyboardMonitor()
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        #if !os(visionOS) // SwiftTerm's Metal renderer draws at the wrong scale on visionOS
+        do {
+            try terminalView.setUseMetal(true)
+        } catch {
+            logger.debug("Metal terminal renderer unavailable, using CoreGraphics: \(error)")
+        }
+        #endif
     }
     
     override func enterLive() {
         super.enterLive()
         DispatchQueue.main.async {
-            let terminalSize = CGSize(width: self.terminalView.getTerminal().cols, height: self.terminalView.getTerminal().rows)
+            let dimensions = self.terminalView.terminalDimensions
+            let terminalSize = CGSize(width: dimensions.cols, height: dimensions.rows)
             self.delegate.displayViewSize = terminalSize
         }
     }
@@ -78,85 +84,63 @@ import SwiftUI
         super.hideKeyboard()
         _ = terminalView.resignFirstResponder()
     }
+    
+    func closeTerminal() {
+        if let terminalView = terminalView {
+            Self.closeWhenIdle(terminalView)
+        }
+    }
+    
+    /// Releases the terminal's renderer, retrying while GPU work is still in flight
+    private static func closeWhenIdle(_ terminalView: TerminalView) {
+        guard !terminalView.updateUiClosed() else {
+            return
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            closeWhenIdle(terminalView)
+        }
+    }
 }
 
 // MARK: - Layout terminal
 extension VMDisplayTerminalViewController {
-    var useAutoLayout: Bool {
-        get { true }
+    /// The safe area is not enough to keep the first line of text out of the rounded corners while
+    /// the status bar is hidden, so the system's corner-adapted region is used where it exists.
+    private var contentLayoutGuide: UILayoutGuide {
+        if #available(iOS 26, visionOS 26, *) {
+            return view.layoutGuide(for: .safeArea(cornerAdaptation: .vertical))
+        } else {
+            return view.safeAreaLayoutGuide
+        }
     }
 
-    // This prevents curved edge from cutting off the content
-    var additionalTopPadding: CGFloat {
-        if UIDevice.current.userInterfaceIdiom == .pad {
-            let scenes = UIApplication.shared.connectedScenes
-            let windowScene = scenes.first as? UIWindowScene
-            guard let window = windowScene?.windows.first else { return 0 }
-            return window.safeAreaInsets.bottom
-        } else {
+    private func layoutTerminal() {
+        #if os(visionOS)
+        let inputAccessoryHeight: CGFloat = 0
+        #else
+        let inputAccessoryHeight = terminalView.inputAccessoryView?.frame.height ?? 0
+        #endif
+        let guide = contentLayoutGuide
+        terminalView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            terminalView.topAnchor.constraint(equalTo: guide.topAnchor, constant: fallbackTopPadding),
+            terminalView.leftAnchor.constraint(equalTo: guide.leftAnchor),
+            terminalView.rightAnchor.constraint(equalTo: guide.rightAnchor),
+            terminalView.bottomAnchor.constraint(equalTo: view.keyboardLayoutGuide.topAnchor, constant: -inputAccessoryHeight),
+        ])
+    }
+
+    /// Before the corner-adapted region existed, an iPad kept the first line out of the rounded
+    /// corners with the height of the bottom safe area, which the home indicator rounds alike.
+    private var fallbackTopPadding: CGFloat {
+        if #available(iOS 26, visionOS 26, *) {
             return 0
         }
-    }
-
-    func makeFrame (keyboardDelta: CGFloat, _ fn: String = #function, _ ln: Int = #line) -> CGRect
-    {
-        if useAutoLayout {
-            return CGRect.zero
-        } else {
-            return CGRect (x: view.safeAreaInsets.left,
-                           y: view.safeAreaInsets.top + additionalTopPadding,
-                           width: view.frame.width - view.safeAreaInsets.left - view.safeAreaInsets.right,
-                           height: view.frame.height - view.safeAreaInsets.top - keyboardDelta)
+        guard traitCollection.userInterfaceIdiom == .pad else {
+            return 0
         }
-    }
-    
-    func setupKeyboardMonitor ()
-    {
-        if #available(iOS 15.0, *), useAutoLayout {
-            #if os(visionOS)
-            let inputAccessoryHeight: CGFloat = 0
-            #else
-            let inputAccessoryHeight = terminalView.inputAccessoryView?.frame.height ?? 0
-            #endif
-            terminalView.translatesAutoresizingMaskIntoConstraints = false
-            terminalView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: additionalTopPadding).isActive = true
-            terminalView.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor).isActive = true
-            terminalView.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor).isActive = true
-            terminalView.bottomAnchor.constraint(equalTo: view.keyboardLayoutGuide.topAnchor, constant: -inputAccessoryHeight).isActive = true
-        } else {
-            NotificationCenter.default.addObserver(
-                self,
-                selector: #selector(keyboardWillShow),
-                name: UIWindow.keyboardWillShowNotification,
-                object: nil)
-            NotificationCenter.default.addObserver(
-                self,
-                selector: #selector(keyboardWillHide),
-                name: UIWindow.keyboardWillHideNotification,
-                object: nil)
-        }
-    }
-    
-    func cleanupKeyboardMonitor() {
-        if #unavailable(iOS 15) {
-            NotificationCenter.default.removeObserver(self, name: UIWindow.keyboardWillShowNotification, object: nil)
-            NotificationCenter.default.removeObserver(self, name: UIWindow.keyboardWillHideNotification, object: nil)
-        }
-    }
-    
-    @objc private func keyboardWillShow(_ notification: NSNotification) {
-        guard let keyboardValue = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue else { return }
-        
-        let keyboardScreenEndFrame = keyboardValue.cgRectValue
-        let keyboardViewEndFrame = view.convert(keyboardScreenEndFrame, from: view.window)
-        keyboardDelta = keyboardViewEndFrame.height
-        terminalView.frame = makeFrame(keyboardDelta: keyboardViewEndFrame.height)
-    }
-    
-    @objc private func keyboardWillHide(_ notification: NSNotification) {
-        //let key = UIResponder.keyboardFrameBeginUserInfoKey
-        keyboardDelta = 0
-        terminalView.frame = makeFrame(keyboardDelta: 0)
+        let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene
+        return windowScene?.windows.first?.safeAreaInsets.bottom ?? 0
     }
 }
 
@@ -184,7 +168,7 @@ extension VMDisplayTerminalViewController {
             terminalView.nativeForegroundColor = UIColor(textColor)
             terminalView.nativeBackgroundColor = UIColor(backgroundColor)
         }
-        terminalView.getTerminal().setCursorStyle(style.hasCursorBlink ? .blinkBlock : .steadyBlock)
+        terminalView.setCursorStyle(style.hasCursorBlink ? .blinkBlock : .steadyBlock)
         terminalView.optionAsMetaKey = boolForSetting("OptionAsMetaKey")
     }
 }
@@ -199,6 +183,10 @@ extension VMDisplayTerminalViewController: TerminalViewDelegate {
     }
     
     func requestOpenLink(source: TerminalView, link: String, params: [String : String]) {
+        guard let url = URL(string: link), let scheme = url.scheme?.lowercased(), ["http", "https"].contains(scheme) else {
+            return
+        }
+        UIApplication.shared.open(url)
     }
     
     func hostCurrentDirectoryUpdate(source: TerminalView, directory: String?) {
@@ -211,9 +199,6 @@ extension VMDisplayTerminalViewController: TerminalViewDelegate {
     
     func scrolled(source: TerminalView, position: Double) {
         delegate?.displayDidAssertUserInteraction()
-    }
-    
-    func bell(source: TerminalView) {
     }
     
     func rangeChanged(source: TerminalView, startY: Int, endY: Int) {
@@ -237,10 +222,7 @@ extension VMDisplayTerminalViewController: CSPortDelegate {
     
     func port(_ port: CSPort, didRecieveData data: Data) {
         if let terminalView = terminalView {
-            let arr = [UInt8](data)[...]
-            DispatchQueue.main.async {
-                terminalView.feed(byteArray: arr)
-            }
+            terminalView.feed(byteArray: [UInt8](data)[...])
         }
     }
 }
