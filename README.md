@@ -1,9 +1,10 @@
-#  UTM
-[![Build](https://github.com/utmapp/UTM/workflows/Build/badge.svg?branch=main&event=push)][1]
+# UTM (`wwn-UTM`)
+
+> **Notice:** This repository is a fork of official [UTM](https://github.com/utmapp/UTM) maintained under the Wawona organization. It helps us study UTM virtualization and hypervisor architectures with the goal of exploring a native Wayland implementation for guest display.
 
 > It is possible to invent a single machine which can be used to compute any computable sequence.
-
--- <cite>Alan Turing, 1936</cite>
+>
+> (Alan Turing, 1936)
 
 UTM is a full featured system emulator and virtual machine host for iOS and macOS. It is based off of QEMU. In short, it allows you to run Windows, Linux, and more on your Mac, iPhone, and iPad. More information at https://getutm.app/ and https://mac.getutm.app/
 
